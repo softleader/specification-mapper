@@ -12,7 +12,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
-
+/**
+ * 實作的 subclass 必須提供 Spring, Object 且 public 的 Constructor
+ *
+ * @author Matt Ho
+ */
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "path")
 public abstract class PathSpecification<T> implements Specification<T> {

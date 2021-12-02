@@ -10,8 +10,10 @@ class SpecResolver implements SpecificationResolver<Spec> {
   @Override
   public <R> Specification<R> buildSpecification(
     Spec spec, Expression expression, Class<R> rootType) {
-    return spec.spec().getDeclaredConstructor(String.class, Object.class).newInstance(
-      expression.competePath(spec.path()), expression.getValue()
-    );
+    return spec.spec()
+      .getDeclaredConstructor(String.class, Object.class) // TODO 這邊要想個更好的方式 new instance
+      .newInstance(
+        expression.competePath(spec.path()), expression.getValue()
+      );
   }
 }
