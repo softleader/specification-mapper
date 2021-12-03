@@ -1,10 +1,11 @@
-package tw.com.softleader.data.jpa.spec.domain;
+package tw.com.softleader.data.jpa.spec.bind;
 
 import static org.springframework.core.ResolvableType.forClass;
 
 import java.lang.annotation.Annotation;
 import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
+import tw.com.softleader.data.jpa.spec.domain.Metadata;
 
 /**
  * Specification 解析器, 負責 {@code Specification} 的建構
@@ -16,10 +17,10 @@ public interface SpecificationResolver<T extends Annotation> {
   /**
    * @return true 如果此解析器可以處理所傳入的 annotation
    */
-  default <A extends Annotation> boolean supports(@NonNull A annotation) {
+  default boolean supports(@NonNull T annotation) {
     return forClass(getClass()).as(SpecificationResolver.class).getGeneric(0)
       .resolve().isInstance(annotation);
   }
 
-  <R> Specification<R> buildSpecification(T annotation, Expression expression, Class<R> rootType);
+  Specification<?> buildSpecification(@NonNull Metadata metadata);
 }

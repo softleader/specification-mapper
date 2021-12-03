@@ -1,24 +1,17 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
- * 實作 where equals, e.g. {@code where name = "MyName"}
+ * 實作 equal, e.g. {@code where name = "MyName"}
  *
  * @author Matt Ho
  */
-public class Equal<T> extends PathSpecification<T> {
-
-  public Equal(@NonNull String path, @NonNull Object value) {
-    super(path, value);
-  }
+public class Equal implements Spec {
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-    return cb.equal(path(root), getValue());
+  public Specification<?> build(@NonNull Metadata meta) {
+    return (root, query, builder) -> builder.equal(meta.path(root), meta.getValue());
   }
 }

@@ -1,11 +1,10 @@
-package tw.com.softleader.data.jpa.spec.domain.annotation;
+package tw.com.softleader.data.jpa.spec.bind.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import lombok.experimental.UtilityClass;
-import tw.com.softleader.data.jpa.spec.domain.PathSpecification;
 
 /**
  * @author Matt Ho
@@ -16,7 +15,7 @@ public @interface Spec {
 
   String path() default "";
 
-  Class<? extends PathSpecification> spec();
+  Class<? extends tw.com.softleader.data.jpa.spec.domain.Spec> spec();
 
   int order() default Ordered.LOWEST_PRECEDENCE;
 
