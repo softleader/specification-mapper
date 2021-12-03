@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
-import tw.com.softleader.data.jpa.spec.domain.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.annotation.Spec.Ordered;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.bind.SpecSpecificationResolver;
+import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.bind.annotation.Spec.Ordered;
 
 @Transactional
 @Rollback
@@ -28,7 +30,7 @@ class EqualTest {
   @BeforeEach
   void setup() {
     mapper = SpecMapper.builder()
-      .resolver(new SpecResolver())
+      .resolver(new SpecSpecificationResolver())
       .build();
 
     repository.deleteAll();

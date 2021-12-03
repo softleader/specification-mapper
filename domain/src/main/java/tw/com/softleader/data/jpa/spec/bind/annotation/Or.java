@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec.domain.annotation;
+package tw.com.softleader.data.jpa.spec.bind.annotation;
 
 
 import java.lang.annotation.ElementType;

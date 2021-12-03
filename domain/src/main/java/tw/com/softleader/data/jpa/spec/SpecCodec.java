@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec.domain;
+package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.ofNullable;
 
