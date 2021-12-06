@@ -24,23 +24,22 @@ public interface Spec {
     // 載入在找此 package 當下實作 Spec 的實作
     public Factory() {
       try (var scanned = new ClassGraph()
-        .enableClassInfo()
-        .acceptPackages(Spec.class.getPackageName())
-        .scan()) {
+          .enableClassInfo()
+          .acceptPackages(Spec.class.getPackageName())
+          .scan()) {
         this.specs = scanned.getClassesImplementing(Spec.class).loadClasses(Spec.class)
-          .stream()
-          .collect(Collectors.toMap(
-            Function.identity(),
-            this::createInstance
-          ));
+            .stream()
+            .collect(Collectors.toMap(
+                Function.identity(),
+                this::createInstance));
       }
     }
 
     public Spec create(@NonNull Class<? extends Spec> type) {
       return ofNullable(specs.get(type))
-        .orElseThrow(
-          () -> new UnsupportedOperationException(
-            "Unsupported Spec type: " + type)); // Should not reach here
+          .orElseThrow(
+              () -> new UnsupportedOperationException(
+                  "Unsupported Spec type: " + type)); // Should not reach here
     }
 
     @SneakyThrows
@@ -50,4 +49,3 @@ public interface Spec {
   }
 
 }
-

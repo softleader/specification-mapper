@@ -25,13 +25,12 @@ public interface SpecCodec {
    */
   <T> Specification<T> toSpec(@NonNull Object object, @Nullable Class<T> rootType);
 
-
   default <T> Optional<Specification<T>> trySpec(@NonNull T rootObject) {
     return ofNullable(toSpec(rootObject));
   }
 
   default <T> Optional<Specification<T>> trySpec(@NonNull T rootObject,
-    @Nullable Class<T> rootType) {
+      @Nullable Class<T> rootType) {
     return ofNullable(toSpec(rootObject, rootType));
   }
 }

@@ -15,10 +15,10 @@ public class SpecMapper implements SpecCodec {
   @Override
   public <T> Specification<T> toSpec(Object obj, Class<T> rootType) {
     return (Specification<T>) stream(obj.getClass().getDeclaredFields())
-      .map(field -> new Databind(obj, field))
-      .sorted()
-      .reduce(Databind::reduce)
-      .map(Databind::getSpec)
-      .orElse(null);
+        .map(field -> new Databind(obj, field))
+        .sorted()
+        .reduce(Databind::reduce)
+        .map(Databind::getSpec)
+        .orElse(null);
   }
 }

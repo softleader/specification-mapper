@@ -32,9 +32,9 @@ public class Databind implements Comparable<Databind> {
     var spec = field.getAnnotation(Spec.class);
     this.order = spec.order();
     var metadata = Metadata.builder()
-      .path(spec.path())
-      .value(new PropertyDescriptor(field.getName(), obj.getClass()).getReadMethod().invoke(obj))
-      .build();
+        .path(spec.path())
+        .value(new PropertyDescriptor(field.getName(), obj.getClass()).getReadMethod().invoke(obj))
+        .build();
     this.spec = SPEC_FACTORY.create(spec.spec()).build(metadata);
   }
 
@@ -45,7 +45,7 @@ public class Databind implements Comparable<Databind> {
   @Override
   public int compareTo(Databind other) {
     return Comparator
-      .comparing(Databind::getOrder)
-      .compare(this, other);
+        .comparing(Databind::getOrder)
+        .compare(this, other);
   }
 }

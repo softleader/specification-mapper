@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 public @interface Spec {
 
   String path() default "";

@@ -54,7 +54,7 @@ public class Customer {
   Boolean goldObj;
 
   @Singular
-  @OneToMany(fetch = LAZY, cascade = {PERSIST, REMOVE})
+  @OneToMany(fetch = LAZY, cascade = { PERSIST, REMOVE })
   @JoinColumn(name = "customer_id")
   Set<Badge> badges;
 }
