@@ -13,7 +13,6 @@ import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.SpecSpecificationResolver;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec.Ordered;
 
@@ -29,10 +28,7 @@ class EqualTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-      .resolver(new SpecSpecificationResolver())
-      .build();
-
+    mapper = SpecMapper.builder().build();
     repository.deleteAll();
 
   }

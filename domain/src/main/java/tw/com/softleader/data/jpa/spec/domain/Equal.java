@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class Equal implements Spec {
 
   @Override
-  public Specification<?> build(@NonNull Metadata meta) {
-    return (root, query, builder) -> builder.equal(meta.path(root), meta.getValue());
+  public Specification<?> build(@NonNull Metadata metadata) {
+    return (root, query, builder) -> builder.equal(metadata.path(root), metadata.getValue());
   }
 }

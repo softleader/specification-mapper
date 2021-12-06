@@ -85,6 +85,7 @@
     <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
     <dependency-check-maven.version>5.2.4</dependency-check-maven.version>
     <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+    <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
 
     <spring-boot.version>2.6.1</spring-boot.version>
 
@@ -98,6 +99,8 @@
     </softleader.jboss-public.repository>
     <spring-milestones.repository>https://repo.spring.io/milestone</spring-milestones.repository>
     <spring-release.repository>https://repo.spring.io/release</spring-release.repository>
+
+    <format.skip>false</format.skip>
   </properties>
 
   <repositories>
@@ -131,6 +134,29 @@
       <url>${spring-release.repository}</url>
     </repository>
   </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>${formatter-maven-plugin.version}</version>
+        <configuration>
+          <configFile>${maven.multiModuleProjectDirectory}/ide-config/eclipse-format.xml
+          </configFile>
+          <skip>${format.skip}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <profiles>
     <profile>
