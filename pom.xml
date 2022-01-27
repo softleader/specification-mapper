@@ -87,7 +87,7 @@
     <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
     <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
 
-    <spring-boot.version>2.6.1</spring-boot.version>
+    <spring-boot.version>2.6.3</spring-boot.version>
 
     <softleader.releases.repository>http://svn.softleader.com.tw:8084/repository/maven-releases/
     </softleader.releases.repository>

@@ -9,8 +9,8 @@ import lombok.Value;
 @Builder
 public class Metadata {
 
-  private String path;
-  private Object value;
+  String path;
+  Object value;
 
   Path<?> path(Root<?> root) {
     Path<?> expr = null;

@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration

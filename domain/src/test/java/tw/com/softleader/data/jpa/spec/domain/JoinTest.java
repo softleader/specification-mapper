@@ -7,53 +7,66 @@ import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import tw.com.softleader.data.jpa.spec.Badge;
 import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.bind.annotation.Join;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec.Ordered;
 
 @Transactional
 @Rollback
 @IntegrationTest
-class EqualTest {
+class JoinTest {
 
-  @Autowired
   SpecMapper mapper;
 
   @Autowired
   CustomerRepository repository;
 
-  @Autowired
-  JpaRepositoryFactoryBean factoryBean;
-
   @BeforeEach
   void setup() {
+    mapper = SpecMapper.builder().build();
     repository.deleteAll();
+
   }
 
   @Test
   void test() {
-    var matt = repository.save(Customer.builder().name("matt").build());
-    repository.save(Customer.builder().name("bob").build());
+    var badgeType = "Ya";
+    var matt = repository.save(Customer.builder().name("matt")
+        .badge(Badge.builder()
+            .badgeType(badgeType)
+            .build())
+        .build());
+    var mary = repository.save(Customer.builder().name("mary")
+        .badge(Badge.builder()
+            .badgeType(badgeType)
+            .build())
+        .build());
+    repository.save(Customer.builder().name("bob")
+        .badge(Badge.builder()
+            .badgeType("Oh")
+            .build())
+        .build());
 
-    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var criteria = MyCriteria.builder().hello(badgeType).build();
+
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
+    assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
   @Builder
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class, order = Ordered.HIGHEST_PRECEDENCE)
+    @Join(path = "badges", alias = "b")
+    @Spec(path = "b.badgeType", spec = Equal.class)
     String hello;
-
   }
 }

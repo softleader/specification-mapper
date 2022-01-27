@@ -3,7 +3,6 @@ package tw.com.softleader.data.jpa.spec;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,12 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "badges")
-public class Badge {
+public class Customer {
 
   @Id
   @GeneratedValue
   Long id;
 
-  String badgeType;
+  String name;
 }

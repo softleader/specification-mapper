@@ -7,32 +7,26 @@ import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec.Ordered;
 
 @Transactional
 @Rollback
 @IntegrationTest
-class EqualTest {
+class WithoutSpecTest {
 
-  @Autowired
   SpecMapper mapper;
 
   @Autowired
   CustomerRepository repository;
 
-  @Autowired
-  JpaRepositoryFactoryBean factoryBean;
-
   @BeforeEach
   void setup() {
+    mapper = SpecMapper.builder().build();
     repository.deleteAll();
   }
 
@@ -41,7 +35,7 @@ class EqualTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var criteria = MyCriteria.builder().name(matt.getName()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -52,8 +46,6 @@ class EqualTest {
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class, order = Ordered.HIGHEST_PRECEDENCE)
-    String hello;
-
+    String name;
   }
 }

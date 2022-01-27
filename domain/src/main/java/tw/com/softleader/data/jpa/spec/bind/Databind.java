@@ -1,45 +1,74 @@
 package tw.com.softleader.data.jpa.spec.bind;
 
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PACKAGE;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.Comparator;
-import lombok.AllArgsConstructor;
+import java.util.Optional;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.Value;
-import org.springframework.data.jpa.domain.Specification;
+import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
+import tw.com.softleader.data.jpa.spec.bind.annotation.Or;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.bind.annotation.Spec.Ordered;
+import tw.com.softleader.data.jpa.spec.domain.Equal;
 import tw.com.softleader.data.jpa.spec.domain.Metadata;
-import tw.com.softleader.data.jpa.spec.domain.Spec.Factory;
 
 /**
  * 這隻程式負責綁定 object field 跟 spec
  *
  * @author Matt Ho
  */
-@Value
-@AllArgsConstructor(access = PRIVATE)
+@Setter
+@Accessors(chain = true)
+@NoArgsConstructor(access = PACKAGE)
 public class Databind implements Comparable<Databind> {
 
-  final static Factory SPEC_FACTORY = new Factory();
-
+  @Getter
   int order;
-  Specification spec;
+  Metadata metadata;
+  Class<? extends tw.com.softleader.data.jpa.spec.domain.Spec> specType;
+  @Getter
+  SpecificationResolver resolver;
 
   @SneakyThrows
-  public Databind(Object obj, Field field) {
+  public static Databind of(@NonNull Object obj, @NonNull Field field) {
+    var databind = new Databind();
     var spec = field.getAnnotation(Spec.class);
-    this.order = spec.order();
-    var metadata = Metadata.builder()
-        .path(spec.path())
-        .value(new PropertyDescriptor(field.getName(), obj.getClass()).getReadMethod().invoke(obj))
-        .build();
-    this.spec = SPEC_FACTORY.create(spec.spec()).build(metadata);
-  }
-
-  public Databind reduce(Databind other) {
-    return new Databind(0, spec.and(other.spec));
+    if (spec == null) {
+      databind
+          .setOrder(Ordered.LOWEST_PRECEDENCE)
+          .setMetadata(Metadata.builder()
+              .path(field.getName())
+              .value(
+                  new PropertyDescriptor(field.getName(), obj.getClass()).getReadMethod().invoke(obj))
+              .build())
+          .setSpecType(Equal.class);
+    } else {
+      databind
+          .setOrder(spec.order())
+          .setMetadata(Metadata.builder()
+              .path(Optional.of(spec.path()).filter(StringUtils::hasText).orElseGet(field::getName))
+              .value(
+                  new PropertyDescriptor(field.getName(), obj.getClass()).getReadMethod().invoke(obj))
+              .build())
+          .setSpecType(spec.spec());
+    }
+    if (field.isAnnotationPresent(Or.class)) {
+      databind.setResolver(new OrSpecificationResolver(
+          databind.metadata,
+          databind.specType));
+    } else {
+      databind.setResolver(new AndSpecificationResolver(
+          databind.metadata,
+          databind.specType));
+    }
+    return databind;
   }
 
   @Override

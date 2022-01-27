@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication;
 
 /**
@@ -30,6 +32,7 @@ public @interface IntegrationTest {
    *
    * @author Matt Ho
    */
+  @EnableJpaRepositories
   @SpringBootApplication
   class TestApplication {
 
@@ -37,5 +40,9 @@ public @interface IntegrationTest {
       SpringApplication.run(TestApplication.class, args);
     }
 
+    @Bean
+    SpecMapper specMapper() {
+      return SpecMapper.builder().build();
+    }
   }
 }
