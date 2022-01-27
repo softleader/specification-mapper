@@ -17,7 +17,10 @@ public class SpecMapperProperties {
   boolean enabled;
 
   /**
-   * Configures the repository base class.
+   * Configures the repository base class. the given class must extends {@code
+   * QueryBySpecExecutorImpl}
+   *
+   * @see QueryBySpecExecutorImpl
    */
   Class<? extends QueryBySpecExecutorImpl> repositoryBaseClass = QueryBySpecExecutorImpl.class;
 }

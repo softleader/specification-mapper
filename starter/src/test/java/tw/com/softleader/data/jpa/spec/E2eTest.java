@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
@@ -14,6 +15,7 @@ import tw.com.softleader.data.jpa.spec.domain.Equal;
 
 @SpringBootTest
 @AutoConfigureDataJpa
+@SpringBootApplication
 class E2eTest {
 
   @Autowired
