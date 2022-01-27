@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 
 /**
- * RepositoryFactoryCustomizer injector, which somehow Spring Data doesn't inject...
+ * RepositoryFactoryCustomizer injector, which somehow Spring Data doesn't do the injection...
  *
  * @author Matt Ho
  * @see RepositoryFactoryCustomizer

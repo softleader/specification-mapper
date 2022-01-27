@@ -4,3 +4,4 @@ logging:
     com.zaxxer.hikari.HikariConfig: debug
     tw.com.softleader.data.jpa.spec: debug
     sql: debug
+debug: true
