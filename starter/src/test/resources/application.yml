@@ -3,5 +3,4 @@ logging:
     root: warn
     com.zaxxer.hikari.HikariConfig: debug
     tw.com.softleader.data.jpa.spec: debug
-    "org.springframework.data.repository.core": debug
     sql: debug
