@@ -42,7 +42,7 @@ public @interface IntegrationTest {
 
     @Bean
     SpecMapper specMapper() {
-      return SpecMapper.builder().build();
+      return new SpecMapper();
     }
   }
 }

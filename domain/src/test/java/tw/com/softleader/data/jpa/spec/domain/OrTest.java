@@ -15,7 +15,6 @@ import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.Gender;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.Compose;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Or;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
 
@@ -31,7 +30,7 @@ class OrTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = new SpecMapper();
     repository.deleteAll();
   }
 
@@ -43,7 +42,7 @@ class OrTest {
         .gender(Gender.MALE)
         .build());
     var bob = repository.save(Customer.builder().name("bob")
-        .gold(true)
+        .gold(false)
         .gender(Gender.MALE)
         .build());
     var mary = repository.save(Customer.builder().name("mary")
@@ -59,14 +58,14 @@ class OrTest {
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, bob);
+    assertThat(actual).hasSize(1).contains(matt);
   }
 
   @Builder
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class)
+    @Spec(path = "name")
     String hello;
 
     @Or
@@ -77,10 +76,10 @@ class OrTest {
   @AllArgsConstructor
   public static class NestedOr {
 
-    @Spec(path = "gender", spec = Equal.class)
+    @Spec(path = "gender")
     Gender hello;
 
-    @Spec(path = "gold", spec = Equal.class, compose = Compose.OR)
+    @Spec(path = "gold")
     boolean aaa;
   }
 }

@@ -29,7 +29,7 @@ class AndTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = new SpecMapper();
     repository.deleteAll();
 
   }
@@ -53,7 +53,7 @@ class AndTest {
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class)
+    @Spec(path = "name")
     String hello;
 
     @And
@@ -64,7 +64,7 @@ class AndTest {
   @Data
   public static class NestedAnd {
 
-    @Spec(path = "name", spec = Equal.class)
+    @Spec(path = "name")
     String hello;
   }
 }

@@ -29,7 +29,7 @@ class JoinTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = new SpecMapper();
     repository.deleteAll();
 
   }

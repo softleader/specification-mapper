@@ -13,11 +13,12 @@ import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
 
 @Transactional
 @Rollback
 @IntegrationTest
-class WithoutSpecTest {
+class EmptySpecTest {
 
   SpecMapper mapper;
 
@@ -26,7 +27,7 @@ class WithoutSpecTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = new SpecMapper();
     repository.deleteAll();
   }
 
@@ -46,6 +47,7 @@ class WithoutSpecTest {
   @Data
   public static class MyCriteria {
 
+    @Spec
     String name;
   }
 }

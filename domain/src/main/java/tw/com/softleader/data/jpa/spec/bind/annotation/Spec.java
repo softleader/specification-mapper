@@ -4,7 +4,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import tw.com.softleader.data.jpa.spec.bind.Compose;
+import org.springframework.data.jpa.domain.Specification;
+import tw.com.softleader.data.jpa.spec.domain.Equal;
 
 /**
  * @author Matt Ho
@@ -15,7 +16,5 @@ public @interface Spec {
 
   String path() default "";
 
-  Class<? extends tw.com.softleader.data.jpa.spec.domain.Spec> spec();
-
-  Compose compose() default Compose.AND;
+  Class<? extends Specification> spec() default Equal.class;
 }

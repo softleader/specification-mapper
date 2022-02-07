@@ -6,6 +6,8 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -15,6 +17,13 @@ import org.springframework.lang.Nullable;
 @Slf4j
 @UtilityClass
 public class FieldUtil {
+
+  public Stream<Field> fieldStream(@Nullable Object obj) {
+    if (obj == null) {
+      return Stream.empty();
+    }
+    return Arrays.stream(obj.getClass().getDeclaredFields());
+  }
 
   @SneakyThrows
   public Object getValue(@Nullable Object obj, @NonNull Field field) {

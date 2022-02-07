@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;
 import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec.Ordered;
 import tw.com.softleader.data.jpa.spec.domain.Equal;
 
 @SpringBootTest
@@ -35,7 +34,7 @@ class E2eTest {
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class, order = Ordered.HIGHEST_PRECEDENCE)
+    @Spec(path = "name", spec = Equal.class)
     String hello;
   }
 

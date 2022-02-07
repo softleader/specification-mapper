@@ -2,19 +2,15 @@ package tw.com.softleader.data.jpa.spec.domain;
 
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import lombok.Builder;
-import lombok.Value;
+import org.springframework.data.jpa.domain.Specification;
 
-@Value
-@Builder
-public class Metadata {
+public abstract class PathSpecification<T> implements Specification<T> {
 
-  String path;
-  Object value;
+  protected abstract String getPath();
 
-  Path<?> path(Root<?> root) {
+  protected Path<?> path(Root<?> root) {
     Path<?> expr = null;
-    for (String field : path.split("\\.")) {
+    for (String field : getPath().split("\\.")) {
       if (expr == null) {
         expr = root.get(field);
       } else {
