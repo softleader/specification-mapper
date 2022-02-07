@@ -47,24 +47,20 @@ public class SpecMapper implements SpecCodec {
         .map(field -> resolveSpec(obj, field))
         .filter(Objects::nonNull)
         .collect(toList());
-
     if (specs.size() == 0) {
       return null;
     }
     if (specs.size() == 1) {
       return specs.iterator().next();
     }
-
     return new Conjunction<>(specs);
   }
 
   Specification<Object> resolveSpec(@NonNull Object obj, @NonNull Field field) {
     return resolvers.stream()
-        .filter(
-            resolver -> field.isAnnotationPresent(resolver.getSupportedSpecificationDefinition()))
+        .filter(resolver -> field.isAnnotationPresent(resolver.getSupportedSpecificationDefinition()))
         .findFirst()
-        .map(
-            resolver -> resolver.buildSpecification(obj, field))
+        .map(resolver -> resolver.buildSpecification(obj, field))
         .orElse(null);
   }
 }

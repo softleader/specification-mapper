@@ -34,9 +34,12 @@ public class SimpleSpecificationResolver implements SpecificationResolver {
         def.spec().getSimpleName());
     var value = FieldUtil.getValue(obj, field);
     if (value == null) {
+      log.debug("Value of [{}.{}] is null, skipping it",
+          obj.getClass().getSimpleName(),
+          field.getName());
       return null;
     }
-    return def.spec().getConstructor(String.class, Object.class)
-        .newInstance(of(def.path()).filter(StringUtils::hasText).orElseGet(field::getName), value);
+    var path = of(def.path()).filter(StringUtils::hasText).orElseGet(field::getName);
+    return def.spec().getConstructor(String.class, Object.class).newInstance(path, value);
   }
 }
