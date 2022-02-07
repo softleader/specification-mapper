@@ -16,6 +16,7 @@ public interface SpecCodec {
    * @return null if can not mapper to {@code Specification}
    */
   @SuppressWarnings("unchecked")
+  @Nullable
   default <T> Specification<T> toSpec(@NonNull T rootObject) {
     return toSpec(rootObject, (Class<T>) rootObject.getClass());
   }
@@ -23,12 +24,15 @@ public interface SpecCodec {
   /**
    * @return null if can not mapper to {@code Specification}
    */
+  @Nullable
   <T> Specification<T> toSpec(@NonNull Object object, @Nullable Class<T> rootType);
 
+  @org.springframework.lang.NonNull
   default <T> Optional<Specification<T>> trySpec(@NonNull T rootObject) {
     return ofNullable(toSpec(rootObject));
   }
 
+  @org.springframework.lang.NonNull
   default <T> Optional<Specification<T>> trySpec(@NonNull T rootObject,
       @Nullable Class<T> rootType) {
     return ofNullable(toSpec(rootObject, rootType));

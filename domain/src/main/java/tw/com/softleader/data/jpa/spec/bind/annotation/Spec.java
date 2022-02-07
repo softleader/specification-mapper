@@ -4,7 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import lombok.experimental.UtilityClass;
+import tw.com.softleader.data.jpa.spec.bind.Compose;
 
 /**
  * @author Matt Ho
@@ -17,12 +17,5 @@ public @interface Spec {
 
   Class<? extends tw.com.softleader.data.jpa.spec.domain.Spec> spec();
 
-  int order() default Ordered.LOWEST_PRECEDENCE;
-
-  @UtilityClass
-  class Ordered {
-
-    public static final int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
-    public static final int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
-  }
+  Compose compose() default Compose.AND;
 }

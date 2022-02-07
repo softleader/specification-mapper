@@ -2,5 +2,5 @@ logging:
   level:
     root: warn
     com.zaxxer.hikari.HikariConfig: debug
-    tw.com.softleader.data.jpa.spec: debug
+    tw.com.softleader.data.jpa.spec: trace
     sql: debug

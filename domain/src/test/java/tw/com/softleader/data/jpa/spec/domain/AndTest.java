@@ -53,7 +53,6 @@ class AndTest {
   @Data
   public static class MyCriteria {
 
-    @And
     @Spec(path = "name", spec = Equal.class)
     String hello;
 
@@ -62,6 +61,7 @@ class AndTest {
   }
 
   @AllArgsConstructor
+  @Data
   public static class NestedAnd {
 
     @Spec(path = "name", spec = Equal.class)

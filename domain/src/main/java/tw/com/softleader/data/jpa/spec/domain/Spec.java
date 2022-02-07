@@ -19,6 +19,8 @@ public interface Spec {
 
   class Factory {
 
+    public final static Factory INSTANCE = new Factory();
+
     final Map<Class<Spec>, Spec> specs;
 
     // 載入在找此 package 當下實作 Spec 的實作
