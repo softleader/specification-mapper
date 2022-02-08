@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec;
+package tw.com.softleader.data.jpa.spec.usecase;
 
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;

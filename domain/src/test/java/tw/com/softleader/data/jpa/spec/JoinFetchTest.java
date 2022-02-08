@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec.domain;
+package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import tw.com.softleader.data.jpa.spec.Badge;
-import tw.com.softleader.data.jpa.spec.Customer;
-import tw.com.softleader.data.jpa.spec.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.usecase.Badge;
+import tw.com.softleader.data.jpa.spec.usecase.Customer;
+import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;

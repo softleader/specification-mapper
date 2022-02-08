@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec;
+package tw.com.softleader.data.jpa.spec.usecase;
 
 public enum Gender {
 
