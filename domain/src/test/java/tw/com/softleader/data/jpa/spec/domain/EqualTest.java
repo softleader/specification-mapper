@@ -7,7 +7,6 @@ import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,7 @@ import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 @Transactional
 @Rollback
@@ -52,7 +51,7 @@ class EqualTest {
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class)
+    @Spec(path = "name")
     String hello;
 
   }

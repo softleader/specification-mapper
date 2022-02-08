@@ -1,11 +1,11 @@
-package tw.com.softleader.data.jpa.spec.bind.annotation;
+package tw.com.softleader.data.jpa.spec.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.springframework.data.jpa.domain.Specification;
 import tw.com.softleader.data.jpa.spec.domain.Equal;
+import tw.com.softleader.data.jpa.spec.domain.PathSpecification;
 
 /**
  * @author Matt Ho
@@ -16,5 +16,5 @@ public @interface Spec {
 
   String path() default "";
 
-  Class<? extends Specification> spec() default Equal.class;
+  Class<? extends PathSpecification> value() default Equal.class;
 }

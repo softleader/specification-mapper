@@ -15,8 +15,8 @@ import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.Gender;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Or;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 @Transactional
 @Rollback
@@ -30,12 +30,12 @@ class OrTest {
 
   @BeforeEach
   void setup() {
-    mapper = new SpecMapper();
+    mapper = SpecMapper.builder().build();
     repository.deleteAll();
   }
 
   @Test
-  void test() {
+  void nestedOr() {
     var matt = repository.save(Customer.builder()
         .name("matt")
         .gold(true)
@@ -52,17 +52,18 @@ class OrTest {
 
     var criteria = MyCriteria.builder()
         .hello(matt.getName())
-        .nestedOr(new NestedOr(bob.getGender(), mary.isGold()))
+        .nestedOr(new NestedOr(bob.getGender(), mary.isGold(), new NestedOr2nd(matt.getName())))
         .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
   }
 
   @Builder
   @Data
+  @Or
   public static class MyCriteria {
 
     @Spec(path = "name")
@@ -81,5 +82,16 @@ class OrTest {
 
     @Spec(path = "gold")
     boolean aaa;
+
+    @Or
+    NestedOr2nd nestedOr2nd;
+  }
+
+  @Data
+  @AllArgsConstructor
+  public static class NestedOr2nd {
+
+    @Spec
+    String name;
   }
 }

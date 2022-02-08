@@ -4,9 +4,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -15,14 +13,14 @@ import lombok.ToString;
  * @author Matt Ho
  */
 @ToString
-@RequiredArgsConstructor
 public class Equal<T> extends PathSpecification<T> {
 
-  @Getter
-  @NonNull
-  final String path;
-  @NonNull
-  final Object value;
+  private Object value;
+
+  public Equal(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+    super(context, path);
+    this.value = value;
+  }
 
   @Override
   public Predicate toPredicate(Root<T> root,

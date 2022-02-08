@@ -4,3 +4,4 @@ logging:
     com.zaxxer.hikari.HikariConfig: debug
     tw.com.softleader.data.jpa.spec: trace
     sql: debug
+    org.hibernate.hql.internal.ast.QueryTranslatorImpl: debug

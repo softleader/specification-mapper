@@ -20,11 +20,6 @@
       <groupId>javax.persistence</groupId>
       <artifactId>javax.persistence-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.github.classgraph</groupId>
-      <artifactId>classgraph</artifactId>
-      <version>4.8.137</version>
-    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>

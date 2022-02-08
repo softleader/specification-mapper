@@ -14,8 +14,8 @@ import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.annotation.And;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.annotation.And;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 @Transactional
 @Rollback
@@ -29,7 +29,7 @@ class AndTest {
 
   @BeforeEach
   void setup() {
-    mapper = new SpecMapper();
+    mapper = SpecMapper.builder().build();
     repository.deleteAll();
 
   }

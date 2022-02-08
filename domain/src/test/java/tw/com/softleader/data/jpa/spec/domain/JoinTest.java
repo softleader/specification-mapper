@@ -14,8 +14,8 @@ import tw.com.softleader.data.jpa.spec.Customer;
 import tw.com.softleader.data.jpa.spec.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Join;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.annotation.Join;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 @Transactional
 @Rollback
@@ -29,13 +29,12 @@ class JoinTest {
 
   @BeforeEach
   void setup() {
-    mapper = new SpecMapper();
+    mapper = SpecMapper.builder().build();
     repository.deleteAll();
-
   }
 
   @Test
-  void test() {
+  void joinsCollection() {
     var badgeType = "Ya";
     var matt = repository.save(Customer.builder().name("matt")
         .badge(Badge.builder()
@@ -66,7 +65,8 @@ class JoinTest {
   public static class MyCriteria {
 
     @Join(path = "badges", alias = "b")
-    @Spec(path = "b.badgeType", spec = Equal.class)
+    @Spec(path = "b.badgeType")
     String hello;
   }
+
 }

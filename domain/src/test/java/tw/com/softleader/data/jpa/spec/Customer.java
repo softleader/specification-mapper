@@ -57,4 +57,9 @@ public class Customer {
   @OneToMany(fetch = LAZY, cascade = { PERSIST, REMOVE })
   @JoinColumn(name = "customer_id")
   Set<Badge> badges;
+
+  @Singular
+  @OneToMany(fetch = LAZY, cascade = { PERSIST, REMOVE })
+  @JoinColumn(name = "order_id")
+  Set<Order> orders;
 }

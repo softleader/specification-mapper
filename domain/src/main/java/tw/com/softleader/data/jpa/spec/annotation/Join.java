@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec.bind.annotation;
+package tw.com.softleader.data.jpa.spec.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,5 +25,5 @@ public @interface Join {
    */
   boolean distinct() default true;
 
-  JoinType type() default JoinType.INNER;
+  JoinType joinType() default JoinType.INNER;
 }

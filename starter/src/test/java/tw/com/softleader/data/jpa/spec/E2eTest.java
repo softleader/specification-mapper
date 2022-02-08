@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;
-import tw.com.softleader.data.jpa.spec.bind.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.Equal;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 @SpringBootTest
 @AutoConfigureDataJpa
@@ -34,7 +33,7 @@ class E2eTest {
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name", spec = Equal.class)
+    @Spec(path = "name")
     String hello;
   }
 
