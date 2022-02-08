@@ -1,15 +1,18 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
-import lombok.Builder;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import tw.com.softleader.data.jpa.spec.domain.Context;
@@ -19,20 +22,13 @@ import tw.com.softleader.data.jpa.spec.util.FieldUtil;
  * @author Matt Ho
  */
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class SpecMapper implements SpecCodec {
 
-  final Collection<SpecificationResolver> resolvers; // 順序是重要的
+  private Collection<SpecificationResolver> resolvers; // 順序是重要的
 
-  @Builder
-  private SpecMapper(@Singular Collection<SpecificationResolver> resolvers) {
-    if (resolvers.isEmpty()) {
-      resolvers = List.of(
-          new CompositionSpecificationResolver(this),
-          new JoinFetchSpecificationResolver(),
-          new JoinSpecificationResolver(),
-          new SimpleSpecificationResolver());
-    }
-    this.resolvers = resolvers;
+  public static SpecMapperBuilder builder() {
+    return new SpecMapperBuilder();
   }
 
   @Override
@@ -49,5 +45,43 @@ public class SpecMapper implements SpecCodec {
     return resolvers.stream()
         .filter(resolver -> resolver.supports(obj, field))
         .map(resolver -> resolver.buildSpecification(context, obj, field));
+  }
+
+  @NoArgsConstructor(access = AccessLevel.PACKAGE)
+  public static class SpecMapperBuilder {
+
+    private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers = new LinkedList<>();
+
+    public SpecMapperBuilder resolver(
+        @NonNull Function<SpecCodec, SpecificationResolver> resolver) {
+      this.resolvers.add(resolver);
+      return this;
+    }
+
+    public SpecMapperBuilder resolver(@NonNull Supplier<SpecificationResolver> resolver) {
+      return resolver(codec -> resolver.get());
+    }
+
+    public SpecMapperBuilder resolver(@NonNull SpecificationResolver resolver) {
+      return resolver(codec -> resolver);
+    }
+
+    public SpecMapperBuilder defaultResolvers() {
+      return resolver(CompositionSpecificationResolver::new)
+          .resolver(JoinFetchSpecificationResolver::new)
+          .resolver(JoinSpecificationResolver::new)
+          .resolver(SimpleSpecificationResolver::new);
+    }
+
+    public SpecMapper build() {
+      if (this.resolvers.isEmpty()) {
+        throw new IllegalStateException("At least one resolver must be provided.");
+      }
+      var mapper = new SpecMapper();
+      mapper.resolvers = this.resolvers.stream()
+          .map(resolver -> resolver.apply(mapper))
+          .collect(toUnmodifiableList());
+      return mapper;
+    }
   }
 }

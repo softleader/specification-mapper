@@ -21,7 +21,6 @@ import tw.com.softleader.data.jpa.spec.annotation.Spec;
 @IntegrationTest
 class EqualTest {
 
-  @Autowired
   SpecMapper mapper;
 
   @Autowired
@@ -32,6 +31,9 @@ class EqualTest {
 
   @BeforeEach
   void setup() {
+    mapper = SpecMapper.builder()
+        .resolver(SimpleSpecificationResolver::new)
+        .build();
     repository.deleteAll();
   }
 

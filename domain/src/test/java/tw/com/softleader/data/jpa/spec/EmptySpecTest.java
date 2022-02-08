@@ -27,7 +27,9 @@ class EmptySpecTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = SpecMapper.builder()
+        .resolver(SimpleSpecificationResolver::new)
+        .build();
     repository.deleteAll();
   }
 

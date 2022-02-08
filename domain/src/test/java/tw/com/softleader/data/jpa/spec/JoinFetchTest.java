@@ -32,7 +32,10 @@ class JoinFetchTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = SpecMapper.builder()
+        .resolver(JoinFetchSpecificationResolver::new)
+        .resolver(SimpleSpecificationResolver::new)
+        .build();
     repository.deleteAll();
   }
 

@@ -33,7 +33,7 @@ public class SpecMapperAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   SpecMapper specMapper() {
-    return SpecMapper.builder().build();
+    return SpecMapper.builder().defaultResolvers().build();
   }
 
   @ConditionalOnBean(JpaRepositoryFactoryBean.class)

@@ -30,7 +30,10 @@ class OrTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder().build();
+    mapper = SpecMapper.builder()
+        .resolver(CompositionSpecificationResolver::new)
+        .resolver(SimpleSpecificationResolver::new)
+        .build();
     repository.deleteAll();
   }
 
