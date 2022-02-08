@@ -20,7 +20,7 @@ public class In<T> extends PathSpecification<T> {
     } else if (value.getClass().isArray()) {
       this.value = List.of((Object[]) value);
     } else {
-      throw new IllegalArgumentException("value must be Collection or Array");
+      throw new TypeMismatchException(value, Collection.class, Object[].class);
     }
 
   }

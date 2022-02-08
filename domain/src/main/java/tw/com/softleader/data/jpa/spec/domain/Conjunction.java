@@ -20,10 +20,6 @@ public class Conjunction<T> implements Specification<T> {
 
   public Conjunction(@NonNull Collection<Specification<T>> innerSpecs) {
     this.innerSpecs = innerSpecs;
-
-    if (innerSpecs.isEmpty()) {
-      throw new IllegalArgumentException("innerSpecs must not be empty");
-    }
   }
 
   @Override

@@ -16,7 +16,7 @@ public class GreaterThan<T> extends PathSpecification<T> {
   public GreaterThan(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path);
     if (!(value instanceof Comparable)) {
-      throw new IllegalArgumentException("value must implements java.lang.Comparable");
+      throw new TypeMismatchException(value, Comparable.class);
     }
     this.value = (Comparable) value;
   }

@@ -19,10 +19,6 @@ public class Disjunction<T> implements Specification<T> {
 
   public Disjunction(@NonNull Collection<Specification<T>> innerSpecs) {
     this.innerSpecs = innerSpecs;
-
-    if (innerSpecs.isEmpty()) {
-      throw new IllegalArgumentException("innerSpecs must not be empty");
-    }
   }
 
   @Override
