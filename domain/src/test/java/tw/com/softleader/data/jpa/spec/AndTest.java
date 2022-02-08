@@ -2,6 +2,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import java.lang.reflect.Field;
@@ -34,10 +35,9 @@ class AndTest {
 
   @BeforeEach
   void setup() {
-    simpleSpecificationResolver = Mockito.spy(SimpleSpecificationResolver.class);
+    simpleSpecificationResolver = spy(SimpleSpecificationResolver.class);
     mapper = SpecMapper.builder()
-        .resolver(codec -> compositionSpecificationResolver = Mockito.spy(
-            new CompositionSpecificationResolver(codec)))
+        .resolver(codec -> compositionSpecificationResolver = spy(new CompositionSpecificationResolver(codec)))
         .resolver(simpleSpecificationResolver)
         .build();
     repository.deleteAll();
