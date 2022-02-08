@@ -27,18 +27,18 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 class AndTest {
 
   SpecMapper mapper;
-  SimpleSpecificationResolver simpleSpecificationResolver;
-  CompositionSpecificationResolver compositionSpecificationResolver;
+  SimpleSpecificationResolver simpleResolver;
+  CompositionSpecificationResolver compositionResolver;
 
   @Autowired
   CustomerRepository repository;
 
   @BeforeEach
   void setup() {
-    simpleSpecificationResolver = spy(SimpleSpecificationResolver.class);
+    simpleResolver = spy(SimpleSpecificationResolver.class);
     mapper = SpecMapper.builder()
-        .resolver(codec -> compositionSpecificationResolver = spy(new CompositionSpecificationResolver(codec)))
-        .resolver(simpleSpecificationResolver)
+        .resolver(codec -> compositionResolver = spy(new CompositionSpecificationResolver(codec)))
+        .resolver(simpleResolver)
         .build();
     repository.deleteAll();
   }
@@ -58,13 +58,13 @@ class AndTest {
     assertThat(actual).hasSize(1).contains(matt);
 
     var inOrder = Mockito.inOrder(
-        compositionSpecificationResolver,
-        simpleSpecificationResolver);
-    inOrder.verify(simpleSpecificationResolver, times(1))
+        compositionResolver,
+        simpleResolver);
+    inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(), any(Field.class));
-    inOrder.verify(compositionSpecificationResolver, times(1))
+    inOrder.verify(compositionResolver, times(1))
         .buildSpecification(any(Context.class), any(), any(Field.class));
-    inOrder.verify(simpleSpecificationResolver, times(1))
+    inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(), any(Field.class));
   }
 
