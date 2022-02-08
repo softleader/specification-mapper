@@ -2,6 +2,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static lombok.AccessLevel.PACKAGE;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -10,7 +11,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import tw.com.softleader.data.jpa.spec.util.FieldUtil;
  * @author Matt Ho
  */
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = PACKAGE)
 public class SpecMapper implements SpecCodec {
 
   private Collection<SpecificationResolver> resolvers; // 順序是重要的
@@ -47,7 +47,7 @@ public class SpecMapper implements SpecCodec {
         .map(resolver -> resolver.buildSpecification(context, obj, field));
   }
 
-  @NoArgsConstructor(access = AccessLevel.PACKAGE)
+  @NoArgsConstructor(access = PACKAGE)
   public static class SpecMapperBuilder {
 
     private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers = new LinkedList<>();
@@ -75,7 +75,7 @@ public class SpecMapper implements SpecCodec {
 
     public SpecMapper build() {
       if (this.resolvers.isEmpty()) {
-        throw new IllegalStateException("At least one resolver must be provided.");
+        defaultResolvers();
       }
       var mapper = new SpecMapper();
       mapper.resolvers = this.resolvers.stream()
