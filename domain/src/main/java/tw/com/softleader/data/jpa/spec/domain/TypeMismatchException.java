@@ -28,7 +28,7 @@ public class TypeMismatchException extends RuntimeException {
       @Nullable Class<?> requiredType,
       Class<?>... requiredTypes) {
     super("Failed to convert value of type '" + ClassUtils.getDescriptiveType(value) + "'" +
-        (requiredType != null || requiredTypes.length > 0 ? " to required type '"
+        (requiredType != null ? " to required type '"
             + Stream.concat(Stream.of(requiredType), Stream.of(requiredTypes))
                 .map(ClassUtils::getQualifiedName).collect(
                     joining(" or "))
