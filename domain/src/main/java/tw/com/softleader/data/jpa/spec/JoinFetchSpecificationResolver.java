@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
-import tw.com.softleader.data.jpa.spec.annotation.JoinFetches;
+import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 

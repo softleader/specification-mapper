@@ -15,4 +15,11 @@ public @interface JoinFetch {
   JoinType joinType() default JoinType.LEFT;
 
   boolean distinct() default true;
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ ElementType.TYPE })
+  @interface JoinFetches {
+
+    JoinFetch[] values();
+  }
 }

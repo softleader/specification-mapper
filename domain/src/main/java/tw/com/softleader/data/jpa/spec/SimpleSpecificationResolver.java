@@ -1,11 +1,8 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
-import javax.persistence.Column;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -44,24 +41,18 @@ class SimpleSpecificationResolver implements SpecificationResolver {
       return null;
     }
     var path = of(def.path()).filter(StringUtils::hasText)
-        .or(() -> columnName(field))
+        .or(() -> FieldUtil.getJpaColumnName(field))
         .orElseGet(field::getName);
-    return newPathSpecification(context, def.value(), value, path);
+    return newSpecification(context, def.value(), value, path);
   }
 
   @SneakyThrows
-  private Specification<Object> newPathSpecification(
+  private Specification<Object> newSpecification(
       @NonNull Context context,
       @NonNull Class<? extends PathSpecification> domainClass,
       @NonNull Object value,
       @NonNull String path) {
     return domainClass.getConstructor(Context.class, String.class, Object.class)
         .newInstance(context, path, value);
-  }
-
-  Optional<String> columnName(@NonNull Field field) {
-    return ofNullable(field.getAnnotation(Column.class))
-        .map(Column::name)
-        .filter(StringUtils::hasText);
   }
 }

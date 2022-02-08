@@ -13,12 +13,12 @@ public @interface Join {
   /**
    * Specifies a collection property to join on, e.g. "addresses"
    */
-  String path();
+  String path() default "";
 
   /**
    * Specifies an alias for the joined part, e.g. "a"
    */
-  String alias();
+  String alias() default "";
 
   /**
    * Whether the query should return distinct results or not
@@ -26,4 +26,11 @@ public @interface Join {
   boolean distinct() default true;
 
   JoinType joinType() default JoinType.INNER;
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ ElementType.FIELD })
+  @interface Joins {
+
+    Join[] values();
+  }
 }
