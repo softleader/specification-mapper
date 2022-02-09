@@ -42,7 +42,7 @@ class CompositionSpecificationResolver implements SpecificationResolver {
     log.debug(" -> Looping fields through nested object [{}.{}] ({})",
         obj.getClass().getSimpleName(),
         field.getName(),
-        FieldUtil.getReadMethod(obj, field).getReturnType().getName());
+        field.getType());
     var spec = of(codec.collectSpecs(context, nested))
         .filter(not(Collection::isEmpty))
         .map(newDomain(field)::apply)
