@@ -9,17 +9,14 @@ import lombok.NonNull;
 /**
  * @author Matt Ho
  */
-public class Like<T> extends PathSpecification<T> {
-
-  protected String value;
+public class Like<T> extends SimpleSpecification<T> {
 
   public Like(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path);
-    this.value = "%s" + value + "%s";
+    super(context, path, "%s" + value + "%s");
   }
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.like(path(root), value);
+    return builder.like(path(root), (String) value);
   }
 }

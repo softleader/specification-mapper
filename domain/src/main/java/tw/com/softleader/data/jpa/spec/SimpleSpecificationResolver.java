@@ -10,7 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.PathSpecification;
+import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 
 /**
@@ -43,13 +43,13 @@ class SimpleSpecificationResolver implements SpecificationResolver {
     var path = of(def.path()).filter(StringUtils::hasText)
         .or(() -> FieldUtil.getJpaColumnName(field))
         .orElseGet(field::getName);
-    return newSpecification(context, def.value(), value, path);
+    return newSimpleSpecification(context, def.value(), value, path);
   }
 
   @SneakyThrows
-  private Specification<Object> newSpecification(
+  private Specification<Object> newSimpleSpecification(
       @NonNull Context context,
-      @NonNull Class<? extends PathSpecification> domainClass,
+      @NonNull Class<? extends SimpleSpecification> domainClass,
       @NonNull Object value,
       @NonNull String path) {
     return domainClass.getConstructor(Context.class, String.class, Object.class)

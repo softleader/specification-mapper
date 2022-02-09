@@ -13,13 +13,10 @@ import lombok.ToString;
  * @author Matt Ho
  */
 @ToString
-public class Equal<T> extends PathSpecification<T> {
-
-  private Object value;
+public class Equal<T> extends SimpleSpecification<T> {
 
   public Equal(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path);
-    this.value = value;
+    super(context, path, value);
   }
 
   @Override

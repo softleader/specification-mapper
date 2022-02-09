@@ -9,21 +9,17 @@ import lombok.NonNull;
 /**
  * @author Matt Ho
  */
-public class LessThan<T> extends PathSpecification<T> {
+public class LessThan<T> extends SimpleSpecification<T> {
 
-  private Comparable value;
-
-  public LessThan(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
-    super(context, path);
+  public LessThan(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+    super(context, path, value);
     if (!(value instanceof Comparable)) {
       throw new TypeMismatchException(value, Comparable.class);
     }
-    this.value = (Comparable) value;
   }
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.lessThan(path(root), value);
+    return builder.lessThan(path(root), (Comparable) value);
   }
 }
