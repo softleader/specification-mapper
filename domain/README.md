@@ -3,6 +3,6 @@
 ```xml
 <dependency>
   <groupId>tw.com.softleader.data</groupId>
-  <artifactId>specification-mapper-starter</artifactId>
+  <artifactId>specification-mapper</artifactId>
 </dependency>
 ```
