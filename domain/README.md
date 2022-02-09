@@ -45,9 +45,29 @@ var specification = mapper.toSpec(criteria);
 ```java
 customerRepository.findAll(specification);
 
-// 執行語法將會是: 
+// 執行 SQL 將會是: 
 // select ... from Customer c where c.firstName like '%Hello%'
 ```
+
+### Skipping Strategy
+
+在 POJO 中沒有掛任何 Spec Annotation 或值為 null 的欄位, 在轉換的過程中都將會忽略, 如:
+
+```
+@Data
+public class CustomerCriteria {
+
+  @Spec(Like.class)
+  String firstName;
+  
+  String lastName;
+}
+
+var mapper = SpecMapper.builder().build();
+var specification = mapper.toSpec(new CustomerCriteria());
+```
+
+以上最後執行的 SQL 將不會有任何過濾條件!
 
 ## Simple Specifications
 
