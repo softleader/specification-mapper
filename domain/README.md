@@ -59,7 +59,7 @@ customerRepository.findAll(specification);
 String firstName;
 ```
 
-對應的 entity path 預設會使用 field name, 你也可以透過設定 `@javax.persistence.Column` 或是 `@Spec#path` 來改變
+對應的 entity path 預設會使用 field name, 你也可以透過設定 `@Spec#path` 或是 `@javax.persistence.Column` 來改變
 
 ```java
 @Spec(path = "...") // 最優先使用
