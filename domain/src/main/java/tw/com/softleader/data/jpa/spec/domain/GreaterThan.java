@@ -9,20 +9,17 @@ import lombok.NonNull;
 /**
  * @author Matt Ho
  */
-public class GreaterThan<T> extends PathSpecification<T> {
-
-  private Comparable value;
+public class GreaterThan<T> extends SimpleSpecification<T> {
 
   public GreaterThan(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path);
+    super(context, path, value);
     if (!(value instanceof Comparable)) {
       throw new TypeMismatchException(value, Comparable.class);
     }
-    this.value = (Comparable) value;
   }
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.greaterThan(path(root), value);
+    return builder.greaterThan(path(root), (Comparable) value);
   }
 }

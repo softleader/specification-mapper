@@ -51,6 +51,30 @@ customerRepository.findAll(spec);
 
 ## Simple Specifications
 
+使用 `@Spec` 定義 `Specification` 的實作, 預設是 [`Equal`](#equal;): 
+
+```java
+@Spec
+@Spec(Equal.class) // are same
+String firstName;
+```
+
+對應的 entity path 預設會使用 field name, 你也可以透過設定 `@javax.persistence.Column` 或是 `@Spec#path` 來改變
+
+```java
+@Spec(path = "...") // 最優先使用
+@Column(name = "...")  // 第二順位使用
+String firstName; // 最後使用
+```
+`@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification` 的 subclasses, 以下依序介紹:
+
+### Equal
+
+### Like, EndingWith, StartingWith
+
+### GreaterThan, GreaterThanOrEqualTo
+
+### LessThan, LessThanOrEqualTo
 
 ## Composition
 

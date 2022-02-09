@@ -9,7 +9,7 @@ import lombok.NonNull;
 /**
  * @author Matt Ho
  */
-public class StartingWith<T> extends Like<T> {
+public class StartingWith<T> extends SimpleSpecification<T> {
 
   public StartingWith(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value + "%");
