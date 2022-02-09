@@ -1,3 +1,8 @@
 # specification-mapper
 
-> An alternative API Specification API for Spring Data JPA
+```xml
+<dependency>
+  <groupId>tw.com.softleader.data</groupId>
+  <artifactId>specification-mapper-starter</artifactId>
+</dependency>
+```
