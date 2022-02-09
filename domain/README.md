@@ -37,13 +37,13 @@ var criteria = new CustomerCriteria();
 criteria.setFirstName("Hello")
 
 var mapper = SpecMapper.builder().build();
-var spec = mapper.toSpec(criteria);
+var specification = mapper.toSpec(criteria);
 ```
 
 得到 `Specification` 後, 我們可以依照原本的方式去資料庫查詢, 例如透過 Spring Data JPA 的 repository:
 
 ```java
-customerRepository.findAll(spec);
+customerRepository.findAll(specification);
 
 // 執行語法將會是: 
 // select ... from Customer c where c.firstName like '%Hello%'
