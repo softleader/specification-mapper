@@ -60,7 +60,7 @@ public class PersonService {
 
 在配置的過程中, QBS 會自動配置 Spring Data JPA 的 [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository), 預設的實作為 [`QueryBySpecExecutorImpl`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorImpl.java)
 
-如果你的應用有自己的 Base Repository, 則該 Base Repository 必須實作 `QueryBySpecExecutorImpl`, 如:
+如果你的應用有自己的 Base Repository, 則該 Base Repository 必須改成實作 `QueryBySpecExecutorImpl`, 如:
 
 ```java
 class MyRepositoryImpl<T, ID>
