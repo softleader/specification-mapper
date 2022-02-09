@@ -6,7 +6,7 @@ import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
 
 @Repository
 public interface CustomerRepository extends
-  JpaRepository<Customer, Long>,
-  QueryBySpecExecutor<Customer> {
+    JpaRepository<Customer, Long>,
+    QueryBySpecExecutor<Customer> {
 
 }
