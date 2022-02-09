@@ -51,7 +51,7 @@ customerRepository.findAll(spec);
 
 ## Simple Specifications
 
-使用 `@Spec` 定義 `Specification` 的實作, 預設是 [`Equal`](#equal;): 
+使用 `@Spec` 定義 `Specification` 的實作, 預設是 [`Equal`](#equal): 
 
 ```java
 @Spec
