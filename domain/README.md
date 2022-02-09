@@ -64,7 +64,7 @@ public class CustomerCriteria {
 }
 
 var mapper = SpecMapper.builder().build();
-var specification = mapper.toSpec(new CustomerCriteria());
+customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 ```
 
 以上最後執行的 SQL 將不會有任何過濾條件!
