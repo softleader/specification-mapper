@@ -25,7 +25,7 @@ import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 @NoArgsConstructor(access = PACKAGE)
 public class SpecMapper implements SpecCodec {
 
-  private Collection<SpecificationResolver> resolvers; // 順序是重要的
+  private Collection<SpecificationResolver> resolvers; // Order matters
 
   public static SpecMapperBuilder builder() {
     return new SpecMapperBuilder();
@@ -66,7 +66,7 @@ public class SpecMapper implements SpecCodec {
       return resolver(codec -> resolver);
     }
 
-    public SpecMapperBuilder defaultResolvers() {
+    public SpecMapperBuilder defaultResolvers() { // 順序是重要的, ex: Join 需要比 Simple 還早
       return resolver(CompositionSpecificationResolver::new)
           .resolver(JoinFetchSpecificationResolver::new)
           .resolver(JoinSpecificationResolver::new)
