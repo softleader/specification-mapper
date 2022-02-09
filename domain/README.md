@@ -51,7 +51,7 @@ customerRepository.findAll(specification);
 
 ### Skipping Strategy
 
-在 POJO 中沒有掛任何 Spec Annotation 或值為 null 的欄位, 在轉換的過程中都將會忽略, 如:
+在 POJO 中沒有掛任何 Spec Annotation 或值為 *null* 的欄位, 在轉換的過程中都將會忽略, 如:
 
 ```java
 @Data
