@@ -41,8 +41,8 @@ public interface QueryBySpecExecutor<T> {
 只要在原本的 repository interface 中去繼承 `QueryBySpecExecutor<T>` 就可以直接使用了:
 
 ```java
-public interface PersonRepository extends
-  JpaRepository<Person, Long>, QueryBySpecExecutor<Person> {
+public interface PersonRepository 
+  extends JpaRepository<Person, Long>, QueryBySpecExecutor<Person> {
   ...
 }
 

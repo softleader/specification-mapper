@@ -5,8 +5,7 @@ import org.springframework.stereotype.Repository;
 import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
 
 @Repository
-public interface CustomerRepository extends
-    JpaRepository<Customer, Long>,
-    QueryBySpecExecutor<Customer> {
+public interface CustomerRepository
+    extends JpaRepository<Customer, Long>, QueryBySpecExecutor<Customer> {
 
 }
