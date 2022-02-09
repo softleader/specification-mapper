@@ -14,7 +14,7 @@ public class SpecMapperProperties {
   /**
    * Whether to enable the spec mapper
    */
-  boolean enabled;
+  boolean enabled = true;
 
   /**
    * Configures the repository base class. the given class must extends {@code

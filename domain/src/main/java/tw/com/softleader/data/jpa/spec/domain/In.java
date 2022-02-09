@@ -22,7 +22,6 @@ public class In<T> extends PathSpecification<T> {
     } else {
       throw new TypeMismatchException(value, Collection.class, Object[].class);
     }
-
   }
 
   @Override
