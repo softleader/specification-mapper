@@ -23,7 +23,7 @@ spec:
 
 ## Query by Spec using a Repository
 
-QBS 提供了 `QueryBySpecExecutor<T>` 包含了許多查詢方法:
+QBS 提供了 [`QueryBySpecExecutor<T>`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/QueryBySpecExecutor.java) 包含了許多查詢方法:
 
 ```java
 public interface QueryBySpecExecutor<T> {
