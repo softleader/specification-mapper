@@ -64,7 +64,7 @@ String firstName;
 ```java
 @Spec(path = "...") // 最優先使用
 @Column(name = "...")  // 第二順位使用
-String firstName; // 最後使用
+String firstName; // 最後(預設)使用
 ```
 `@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification` 的 subclasses, 以下依序介紹:
 
