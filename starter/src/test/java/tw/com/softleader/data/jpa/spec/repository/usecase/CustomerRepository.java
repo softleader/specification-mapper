@@ -1,4 +1,4 @@
-package tw.com.softleader.data.jpa.spec;
+package tw.com.softleader.data.jpa.spec.repository.usecase;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * Interface to allow execution of Query by Spec instances.
@@ -14,13 +16,13 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface QueryBySpecExecutor<T> {
 
-  List<T> findBySpec(Object spec);
+  List<T> findBySpec(@Nullable Object spec);
 
-  List<T> findBySpec(Object spec, Sort sort);
+  List<T> findBySpec(@Nullable Object spec, @NonNull Sort sort);
 
-  Page<T> findBySpec(Object spec, Pageable pageable);
+  Page<T> findBySpec(@Nullable Object spec, @NonNull Pageable pageable);
 
-  long countBySpec(Object spec);
+  long countBySpec(@Nullable Object spec);
 
-  boolean existsBySpec(Object spec);
+  boolean existsBySpec(@Nullable Object spec);
 }

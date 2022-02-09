@@ -43,14 +43,13 @@ public class QueryBySpecExecutorImpl<T, ID extends Serializable> extends SimpleJ
 
   @Override
   @Transactional(readOnly = true)
-  public List<T> findBySpec(Object spec, Sort sort) {
+  public List<T> findBySpec(Object spec, @NonNull Sort sort) {
     return findAll(getSpecMapper().toSpec(spec, getDomainClass()), sort);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Page<T> findBySpec(Object spec,
-      Pageable pageable) {
+  public Page<T> findBySpec(Object spec, @NonNull Pageable pageable) {
     return findAll(getSpecMapper().toSpec(spec, getDomainClass()), pageable);
   }
 

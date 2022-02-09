@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 
@@ -33,7 +34,7 @@ public class SpecMapper implements SpecCodec {
 
   @Override
   public Collection<Specification<Object>> collectSpecs(@NonNull Context context,
-      @NonNull Object rootObject) {
+      @Nullable Object rootObject) {
     return FieldUtil.fieldStream(rootObject)
         .flatMap(field -> resolveSpec(context, rootObject, field))
         .filter(Objects::nonNull)
