@@ -1,13 +1,13 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
 import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -17,22 +17,22 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
 
 @Transactional
-@Rollback
 @IntegrationTest
 class JoinTest {
-
-  SpecMapper mapper;
 
   @Autowired
   CustomerRepository repository;
 
+  SpecMapper mapper;
+  JoinSpecificationResolver joinResolver;
+  SimpleSpecificationResolver simpleResolver;
+
   @BeforeEach
   void setup() {
     mapper = SpecMapper.builder()
-        .resolver(JoinSpecificationResolver::new)
-        .resolver(SimpleSpecificationResolver::new)
+        .resolver(joinResolver = spy(new JoinSpecificationResolver()))
+        .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
         .build();
-    repository.deleteAll();
   }
 
   @Test

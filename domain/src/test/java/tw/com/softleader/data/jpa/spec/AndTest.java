@@ -2,6 +2,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
@@ -22,25 +23,22 @@ import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @Transactional
-@Rollback
 @IntegrationTest
 class AndTest {
+
+  @Autowired
+  CustomerRepository repository;
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
   CompositionSpecificationResolver compositionResolver;
 
-  @Autowired
-  CustomerRepository repository;
-
   @BeforeEach
   void setup() {
-    simpleResolver = spy(SimpleSpecificationResolver.class);
     mapper = SpecMapper.builder()
         .resolver(codec -> compositionResolver = spy(new CompositionSpecificationResolver(codec)))
-        .resolver(simpleResolver)
+        .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
-    repository.deleteAll();
   }
 
   @Test
@@ -57,7 +55,7 @@ class AndTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = Mockito.inOrder(
+    var inOrder = inOrder(
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))

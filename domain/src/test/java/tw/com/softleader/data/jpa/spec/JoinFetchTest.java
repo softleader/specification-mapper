@@ -1,42 +1,44 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 
+import java.lang.reflect.Field;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.usecase.Badge;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
-import tw.com.softleader.data.jpa.spec.IntegrationTest;
-import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
-import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 @Transactional
-@Rollback
 @IntegrationTest
 class JoinFetchTest {
-
-  SpecMapper mapper;
 
   @Autowired
   CustomerRepository repository;
 
+  SpecMapper mapper;
+  JoinFetchSpecificationResolver joinFetchResolver;
+  SimpleSpecificationResolver simpleResolver;
+
   @BeforeEach
   void setup() {
     mapper = SpecMapper.builder()
-        .resolver(JoinFetchSpecificationResolver::new)
-        .resolver(SimpleSpecificationResolver::new)
+        .resolver(joinFetchResolver = spy(new JoinFetchSpecificationResolver()))
+        .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
         .build();
-    repository.deleteAll();
   }
 
   @Test
@@ -67,6 +69,14 @@ class JoinFetchTest {
     for (Customer customer : actual) {
       assertTrue(Hibernate.isInitialized(customer.getBadges()));
     }
+
+    var inOrder = inOrder(
+        joinFetchResolver,
+        simpleResolver);
+    inOrder.verify(joinFetchResolver, times(1))
+        .buildSpecification(any(Context.class), any(), any(Field.class));
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(), any(Field.class));
   }
 
   @Test
@@ -98,6 +108,14 @@ class JoinFetchTest {
       assertTrue(Hibernate.isInitialized(customer.getBadges()));
       assertTrue(Hibernate.isInitialized(customer.getOrders()));
     }
+
+    var inOrder = inOrder(
+        joinFetchResolver,
+        simpleResolver);
+    inOrder.verify(joinFetchResolver, times(1))
+        .buildSpecification(any(Context.class), any(), any(Field.class));
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(), any(Field.class));
   }
 
   @Builder
