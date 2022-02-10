@@ -1,6 +1,5 @@
 package tw.com.softleader.data.jpa.spec;
 
-import java.lang.reflect.Field;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -11,8 +10,8 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
  */
 public interface SpecificationResolver {
 
-  boolean supports(@NonNull Object obj, @NonNull Field field);
+  boolean supports(@NonNull Databind databind);
 
   @Nullable
-  Specification<Object> buildSpecification(@NonNull Context context, @NonNull Object obj, @NonNull Field field);
+  Specification<Object> buildSpecification(@NonNull Context context, @NonNull Databind databind);
 }

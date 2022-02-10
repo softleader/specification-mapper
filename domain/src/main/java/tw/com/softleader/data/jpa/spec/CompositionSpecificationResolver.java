@@ -15,7 +15,6 @@ import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.Disjunction;
-import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 
 /**
  * @author Matt Ho
@@ -27,29 +26,29 @@ class CompositionSpecificationResolver implements SpecificationResolver {
   final SpecCodec codec;
 
   @Override
-  public boolean supports(@NonNull Object obj, @NonNull Field field) {
-    return field.isAnnotationPresent(Or.class)
-        || field.isAnnotationPresent(And.class);
+  public boolean supports(@NonNull Databind databind) {
+    return databind.getField().isAnnotationPresent(Or.class)
+        || databind.getField().isAnnotationPresent(And.class);
   }
 
   @Override
-  public Specification<Object> buildSpecification(@NonNull Context context, @NonNull Object obj,
-      @NonNull Field field) {
-    var nested = FieldUtil.getValue(obj, field);
+  public Specification<Object> buildSpecification(@NonNull Context context,
+      @NonNull Databind databind) {
+    var nested = databind.getFieldValue();
     if (nested == null) {
       return null;
     }
     log.debug(" -> Looping fields through nested object [{}.{}] ({})",
-        obj.getClass().getSimpleName(),
-        field.getName(),
-        field.getType());
+        databind.getTarget().getClass().getSimpleName(),
+        databind.getField().getName(),
+        databind.getField().getType());
     var spec = of(codec.collectSpecs(context, nested))
         .filter(not(Collection::isEmpty))
-        .map(newDomain(field)::apply)
+        .map(newDomain(databind.getField())::apply)
         .orElse(null);
     log.debug(" <- Composed specification from [{}.{}]: {}",
-        obj.getClass().getSimpleName(),
-        field.getName(),
+        databind.getTarget().getClass().getSimpleName(),
+        databind.getField().getName(),
         spec);
     return spec;
   }

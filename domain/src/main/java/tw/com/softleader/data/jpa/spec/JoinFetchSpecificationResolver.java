@@ -3,7 +3,6 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +20,17 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 class JoinFetchSpecificationResolver implements SpecificationResolver {
 
   @Override
-  public boolean supports(@NonNull Object obj, @NonNull Field field) {
-    return obj.getClass().isAnnotationPresent(JoinFetch.class) ||
-        obj.getClass().isAnnotationPresent(JoinFetches.class);
+  public boolean supports(@NonNull Databind databind) {
+    return databind.getTarget().getClass().isAnnotationPresent(JoinFetch.class)
+        || databind.getTarget().getClass().isAnnotationPresent(JoinFetches.class);
   }
 
   @Override
-  public Specification<Object> buildSpecification(@NonNull Context context, @NonNull Object obj,
-      @NonNull Field field) {
+  public Specification<Object> buildSpecification(@NonNull Context context,
+      @NonNull Databind databind) {
     var specs = Stream.concat(
-        joinFetchDef(context, obj), joinFetchesDef(context, obj)).filter(Objects::nonNull)
+        joinFetchDef(context, databind.getTarget()),
+        joinFetchesDef(context, databind.getTarget())).filter(Objects::nonNull)
         .collect(toList());
     if (specs.size() == 1) {
       return specs.get(0);

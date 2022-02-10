@@ -6,15 +6,12 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
-import java.lang.reflect.Field;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -59,11 +56,11 @@ class AndTest {
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(compositionResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @Builder

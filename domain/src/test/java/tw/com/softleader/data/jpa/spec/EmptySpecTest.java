@@ -6,13 +6,11 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.lang.reflect.Field;
 import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
@@ -48,7 +46,7 @@ class EmptySpecTest {
     assertThat(actual).hasSize(1).contains(matt);
 
     verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @Builder

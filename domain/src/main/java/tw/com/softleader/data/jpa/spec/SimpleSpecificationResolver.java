@@ -3,7 +3,6 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Optional.of;
 import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
-import java.lang.reflect.Field;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,7 +11,6 @@ import org.springframework.util.StringUtils;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
-import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 
 /**
  * @author Matt Ho
@@ -21,29 +19,29 @@ import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 class SimpleSpecificationResolver implements SpecificationResolver {
 
   @Override
-  public boolean supports(@NonNull Object obj, @NonNull Field field) {
-    return field.isAnnotationPresent(Spec.class);
+  public boolean supports(@NonNull Databind databind) {
+    return databind.getField().isAnnotationPresent(Spec.class);
   }
 
   @Override
-  public Specification<Object> buildSpecification(@NonNull Context context, @NonNull Object obj,
-      @NonNull Field field) {
-    var def = field.getAnnotation(Spec.class);
+  public Specification<Object> buildSpecification(@NonNull Context context,
+      @NonNull Databind databind) {
+    var def = databind.getField().getAnnotation(Spec.class);
     log.debug("Building specification of [{}.{}] for @Spec(path=\"{}\", spec={}.class)",
-        obj.getClass().getSimpleName(),
-        field.getName(),
+        databind.getTarget().getClass().getSimpleName(),
+        databind.getField().getName(),
         def.path(),
         def.value().getSimpleName());
-    var value = FieldUtil.getValue(obj, field);
+    var value = databind.getFieldValue();
     if (value == null) {
       log.debug("Value of [{}.{}] is null, skipping it",
-          obj.getClass().getSimpleName(),
-          field.getName());
+          databind.getTarget().getClass().getSimpleName(),
+          databind.getField().getName());
       return null;
     }
     var path = of(def.path())
         .filter(StringUtils::hasText)
-        .orElseGet(field::getName);
+        .orElseGet(databind.getField()::getName);
     return newSimpleSpecification(context, def.value(), path, value);
   }
 

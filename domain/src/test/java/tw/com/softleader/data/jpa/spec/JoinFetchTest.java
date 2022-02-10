@@ -7,7 +7,6 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
-import java.lang.reflect.Field;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.Hibernate;
@@ -74,9 +73,9 @@ class JoinFetchTest {
         joinFetchResolver,
         simpleResolver);
     inOrder.verify(joinFetchResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @Test
@@ -113,9 +112,9 @@ class JoinFetchTest {
         joinFetchResolver,
         simpleResolver);
     inOrder.verify(joinFetchResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(), any(Field.class));
+        .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @Builder

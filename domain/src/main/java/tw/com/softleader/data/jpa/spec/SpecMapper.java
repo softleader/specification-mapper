@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static lombok.AccessLevel.PACKAGE;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 
 /**
  * @author Matt Ho
@@ -35,18 +33,17 @@ public class SpecMapper implements SpecCodec {
   @Override
   public Collection<Specification<Object>> collectSpecs(@NonNull Context context,
       @Nullable Object rootObject) {
-    return FieldUtil.getLocalFields(rootObject)
+    return ReflectionDatabind.of(rootObject)
         .stream()
-        .flatMap(field -> resolveSpec(context, rootObject, field))
+        .flatMap(databind -> resolveSpec(context, databind))
         .filter(Objects::nonNull)
         .collect(toList());
   }
 
-  Stream<Specification<Object>> resolveSpec(@NonNull Context context, @NonNull Object obj,
-      @NonNull Field field) {
+  Stream<Specification<Object>> resolveSpec(@NonNull Context context, @NonNull Databind databind) {
     return resolvers.stream()
-        .filter(resolver -> resolver.supports(obj, field))
-        .map(resolver -> resolver.buildSpecification(context, obj, field));
+        .filter(resolver -> resolver.supports(databind))
+        .map(resolver -> resolver.buildSpecification(context, databind));
   }
 
   @NoArgsConstructor(access = PACKAGE)

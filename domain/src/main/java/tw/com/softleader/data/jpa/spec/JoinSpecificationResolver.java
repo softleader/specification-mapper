@@ -23,15 +23,17 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 class JoinSpecificationResolver implements SpecificationResolver {
 
   @Override
-  public boolean supports(@NonNull Object obj, @NonNull Field field) {
-    return field.isAnnotationPresent(Join.class) || field.isAnnotationPresent(Joins.class);
+  public boolean supports(@NonNull Databind databind) {
+    return databind.getField().isAnnotationPresent(Join.class)
+        || databind.getField().isAnnotationPresent(Joins.class);
   }
 
   @Override
-  public Specification<Object> buildSpecification(@NonNull Context context, @NonNull Object obj,
-      @NonNull Field field) {
+  public Specification<Object> buildSpecification(@NonNull Context context,
+      @NonNull Databind databind) {
     var specs = Stream.concat(
-        joinDef(context, field), joinsDef(context, field)).filter(Objects::nonNull)
+        joinDef(context, databind.getField()),
+        joinsDef(context, databind.getField())).filter(Objects::nonNull)
         .collect(toList());
     if (specs.size() == 1) {
       return specs.get(0);

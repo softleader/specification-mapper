@@ -69,7 +69,11 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 以上最後執行的 SQL 將不會有任何過濾條件!
 
-## Simple Specifications
+## Specification Resolvers
+
+`SpecMapper` 在建構時, 會自動的加入多個預設的 `SpecificationResolver`, 這些 Resolvers 負責將讀取到欄位及 Annotation  轉換成 *Specification*, 以下介紹各種 Resolver 及對應的 Annotation 使用方式
+
+### Simple Specification Resolver
 
 使用 `@Spec` 定義 `Specification` 的實作, 預設是 [`Equal`](#equal): 
 
@@ -86,22 +90,27 @@ String firstName; // 最後(預設)使用
 ```
 `@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification` 的 subclasses, 以下依序介紹:
 
-### Equal
+- Equal
+- Like
+- EndingWith
+- StartingWith
+- GreaterThan
+- GreaterThanOrEqualTo
+- LessThan
+- LessThanOrEqualTo
 
-### Like
-### EndingWith
-### StartingWith
+#### Adding Customize Simple @Spec
 
-### GreaterThan
-### GreaterThanOrEqualTo
+### Composition Specification Resolver
 
-### LessThan
-### LessThanOrEqualTo
+### Join Specification Resolver
 
-## Composition
+### Join Fetch Specification Resolver
 
-## Join
+### Customize Specification Resolver
 
-## Join Fetch
+若以上所有 Resolver 都不適用, 你可以依照下列方式加入自己的 resolver 實作!
+
+例如, 我想要做一個 subquery, 首先我先設計一個 Annotation
 
 ## Limitation
