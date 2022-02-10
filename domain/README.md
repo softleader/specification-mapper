@@ -111,10 +111,10 @@ String firstname; // 最後(預設)使用
 
 例如, 我有個 *Customer* Table, 有以下欄位: 
 
-- *name (String)* - 名稱, 可重複
+- *firstname (String)* - 人名, 可重複
 - *createdTime (LocalDateTime)* - 建立時間, 不可重複
 
-我希望可以找出每個客戶名稱中, 建立時間為最新的那本資料! 且我打算透過一個 subquery 來完成這需求, 完整的範例如下:
+我希望可以找出每個人名中, 建立時間為最新的那本資料! 且我打算透過一個 subquery 來完成這需求, 完整的範例如下:
 
 首先我們實作 `SimpleSpecification<T>`, 並提供規定的 Constructor:
 
@@ -151,7 +151,7 @@ public class CustomerCriteria {
 }
 
 var criteria = new CustomerCriteria();
-criteria.setMaxBy("name");
+criteria.setMaxBy("firstname");
 
 var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
@@ -163,7 +163,7 @@ repository.findAll(spec);
 select ... from customer customer0_ 
 where customer0_.created_time=(
   select max(customer1_.created_time) from customer customer1_ 
-  where customer0_.name=customer1_.name
+  where customer0_.firstname=customer1_.firstname
 )
 ```
 
@@ -242,7 +242,7 @@ public class CustomerCriteria {
 }
 
 var criteria = new CustomerCriteria();
-criteria.setMaxBy("name");
+criteria.setMaxBy("firstname");
 
 var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
@@ -254,7 +254,7 @@ repository.findAll(spec);
 select ... from customer customer0_ 
 where customer0_.created_time=(
   select max(customer1_.created_time) from customer customer1_ 
-  where customer0_.name=customer1_.name
+  where customer0_.firstname=customer1_.firstname
 )
 ```
 
