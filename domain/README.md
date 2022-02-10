@@ -189,7 +189,7 @@ public class CustomerCriteria {
 ... where c.firstname like %?% or c.lastname like %?% 
 ```
 
-#### Nested Object
+#### Composite Specification from Nested Object
 
 透過註記 `@CompositeSpec` 在 Field 上, 就可以提醒 `SpecMapper` 往下一層物件 (Nested Object) 去組合 Specification,  例如:
 
