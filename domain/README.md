@@ -101,10 +101,10 @@ String firstname; // 最後(預設)使用
 | `@Spec(In.class) Set<String> firstname;` | *Iterable of Any* | `... where x.firstname in (?, ?, ...)` |
 | `@Spec(NotIn.class) Set<String> firstname;` | *Iterable of Any* | `... where x.firstname not in (?, ?, ...)` |
 | `@Spec(Between.class) List<Integer> age;` | *Iterable of Comparable* <br> (Expected exact **2 elements** in *Iterable*)| `... where x.age between ? and ?` |
-| `@Spec(GreaterThan.class) int age;` | *Comparable* | `... where x.age > ?` |
-| `@Spec(GreaterThanEqual.class) int age;` | *Comparable* | `... where x.age >= ?` |
-| `@Spec(LessThan.class) int age;` | *Comparable* | `... where x.age < ?` |
-| `@Spec(LessThanEqual.class) int age;` | *Comparable* | `... where x.age <= ?` |
+| `@Spec(GreaterThan.class) Integer age;` | *Comparable* | `... where x.age > ?` |
+| `@Spec(GreaterThanEqual.class) Integer age;` | *Comparable* | `... where x.age >= ?` |
+| `@Spec(LessThan.class) Integer age;` | *Comparable* | `... where x.age < ?` |
+| `@Spec(LessThanEqual.class) Integer age;` | *Comparable* | `... where x.age <= ?` |
 
 #### Customize @Spec
 
