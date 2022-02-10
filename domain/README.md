@@ -96,7 +96,7 @@ String firstname; // 最後(預設)使用
 | `@Spec(Not.class) String firstname;` | *Any* | `... where x.firstname <> ?` |
 | `@Spec(Like.class) String firstname;` | *String* | `... where x.firstname like %?%` |
 | `@Spec(StartingWith.class) String firstname;` | *String* | `... where x.firstname like %?` |
-| `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname not like ?%` |
+| `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname like ?%` |
 | `@Spec(NotLike.class) String firstname;` | *String* | `... where x.firstname not like %?%` |
 | `@Spec(In.class) Set<String> firstname;` | *Iterable of Any* | `... where x.firstname in (?, ?, ...)` |
 | `@Spec(NotIn.class) Set<String> firstname;` | *Iterable of Any* | `... where x.firstname not in (?, ?, ...)` |
