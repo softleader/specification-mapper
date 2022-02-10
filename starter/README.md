@@ -15,14 +15,6 @@ Query by Spec (QBS) 是一個  user-friendly 的查詢方式, 可以動態的建
 
 只要在 `pom.xml` 中加入 dependency, Spring Boot 在啟動時就會自動的配置, 包含了 [Query By Spec](#query-by-spec) 的設定及註冊了一個 `SpecMapper` 的成 *@Bean*.
 
-透過 properties 中的 `spec.mapper.enabled` 可以控制開關, 預設是開啟的, 如要關閉則:
-
-```yaml
-spec:
-  mapper:
-    enabled: false
-```
-
 如果你需要自定義 `SpecMapper`, 例如你有[客製 Resolver](../domain#customize-specification-resolver), 只需要將你的 `SpecMapper` 註冊成 *@Bean* 就會優先使用:
 
 ```java
@@ -37,6 +29,14 @@ class MyConfig {
       .build();
   }
 }
+```
+
+透過 properties 中的 `spec.mapper.enabled` 可以控制開關, 預設是開啟的, 如要關閉則:
+
+```yaml
+spec:
+  mapper:
+    enabled: false
 ```
 
 ## Query by Spec
