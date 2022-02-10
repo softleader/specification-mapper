@@ -8,6 +8,8 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
+ * {@code ... where x.firstname like %?%}
+ *
  * @author Matt Ho
  */
 public class Like<T> extends SimpleSpecification<T> {

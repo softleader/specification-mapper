@@ -8,7 +8,7 @@ import lombok.NonNull;
 import lombok.ToString;
 
 /**
- * 實作 equal, e.g. {@code where name = "MyName"}
+ * {@code ... where x.firstname <> ?}
  *
  * @author Matt Ho
  */

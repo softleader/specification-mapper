@@ -7,6 +7,8 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
+ * {@code ... where x.age >= ?}
+ *
  * @author Matt Ho
  */
 public class GreaterThanEqual<T> extends SimpleSpecification<T> {

@@ -7,6 +7,8 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
+ * {@code ... where x.firstname <= ?}
+ *
  * @author Matt Ho
  */
 public class LessThanEqual<T> extends SimpleSpecification<T> {

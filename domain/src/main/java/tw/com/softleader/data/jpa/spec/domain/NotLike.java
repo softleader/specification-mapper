@@ -8,6 +8,8 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
+ * {@code ... where x.firstname not like %?%}
+ *
  * @author Matt Ho
  */
 public class NotLike<T> extends SimpleSpecification<T> {

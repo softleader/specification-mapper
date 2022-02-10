@@ -8,6 +8,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
+/**
+ * {@code ... where x.firstname in (?, ?, ...)}
+ *
+ * @author Matt Ho
+ */
 public class In<T> extends SimpleSpecification<T> {
 
   public In(@NonNull Context context, @NonNull String path, @NonNull Object value) {

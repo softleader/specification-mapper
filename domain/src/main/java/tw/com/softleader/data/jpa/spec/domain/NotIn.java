@@ -6,6 +6,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
+/**
+ * {@code ... where x.firstname not in (?, ?, ...)}
+ *
+ * @author Matt Ho
+ */
 public class NotIn<T> extends In<T> {
 
   public NotIn(@NonNull Context context, @NonNull String path, @NonNull Object value) {

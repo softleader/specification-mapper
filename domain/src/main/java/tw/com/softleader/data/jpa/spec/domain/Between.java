@@ -9,6 +9,8 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
+ * {@code ... where x.age between ? and ?}
+ *
  * @author Matt Ho
  */
 public class Between<T> extends SimpleSpecification<T> {
