@@ -88,9 +88,9 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 @Spec(path = "...") // 優先使用
 String firstName; // 最後(預設)使用
 ```
-`@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification<T>` 的 subclasses, 包含:
+`@Spec` 中可定義的 class 清單如下:
 
-| Sample | Support field type | JPQL snippet |
+| Sample | Supported field type | JPQL snippet |
 |---|---|---|
 | `@Spec(Equal.class) String name;` | *Any* | `... where x.name = ?` |
 | `@Spec(NotEqual.class) String name;` | *Any* | `... where x.name <> ?` |
@@ -104,16 +104,6 @@ String firstName; // 最後(預設)使用
 | `@Spec(GreaterThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age >= ?` |
 | `@Spec(LessThan.class) int age;` | *Comparable* | `... where x.age < ?` |
 | `@Spec(LessThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age <= ?` |
-
-
-- Equal
-- Like
-- EndingWith
-- StartingWith
-- GreaterThan
-- GreaterThanOrEqualTo
-- LessThan
-- LessThanOrEqualTo
 
 #### Customize @Spec
 
