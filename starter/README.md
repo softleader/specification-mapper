@@ -23,6 +23,22 @@ spec:
     enabled: false
 ```
 
+如果你需要自定義 `SpecMapper`, 例如你有[客製 Resolver](../domain#customize-specification-resolver), 只需要將你的 `SpecMapper` 註冊成 *@Bean* 就會優先使用:
+
+```java
+@Configuration
+public class InAnyConfig {
+
+  @Bean
+  SpecMapper specMapper() {
+    return SpecMapper.builder()
+      .defaultResolvers()
+      .resolver(...)
+      .build();
+  }
+}
+```
+
 ## Query by Spec
 
 Query by Spec (QBS) 提供了 [`QueryBySpecExecutor<T>`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/QueryBySpecExecutor.java) 包含了許多查詢方法:
