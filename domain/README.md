@@ -138,7 +138,7 @@ public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
 
 ```java
 @Data
-public static class CustomerCriteria {
+public class CustomerCriteria {
 
   @Spec(MaxCustomerCreatedTime.class)
   String maxBy;
@@ -229,7 +229,7 @@ var mapper = SpecMapper.builder()
 
 ```java
 @Data
-public static class CustomerCriteria {
+public class CustomerCriteria {
 
   @MaxCreatedTime(from = Customer.class)
   String maxBy;
