@@ -218,7 +218,7 @@ public class MaxCreatedTimeSpecificationResolver implements SpecificationResolve
 
 接著我們在 `SpecMapper` 建構時加入此 resolver:
 
-```
+```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
       .resolver(new MaxCreatedTimeSpecificationResolver())
