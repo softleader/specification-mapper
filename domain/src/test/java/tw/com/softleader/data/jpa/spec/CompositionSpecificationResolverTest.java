@@ -10,18 +10,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.usecase.Gender;
 
 @Transactional
 @IntegrationTest
-class AndTest {
+class CompositionSpecificationResolverTest {
 
   @Autowired
   CustomerRepository repository;
@@ -38,13 +41,14 @@ class AndTest {
         .build();
   }
 
+  @DisplayName("AND 連接多個條件")
   @Test
-  void test() {
+  void and() {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder().hello(matt.getName())
-        .nestedAnd(new NestedAnd(matt.getName()))
+    var criteria = CriteriaAnd.builder().hello(matt.getName())
+        .nestedAnd(new NestedAnd(matt.getName(), new NestedInNested(matt.getName())))
         .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
@@ -63,9 +67,48 @@ class AndTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("OR 連接多個條件")
+  @Test
+  void or() {
+    var matt = repository.save(Customer.builder()
+        .name("matt")
+        .gold(true)
+        .gender(Gender.MALE)
+        .build());
+    var bob = repository.save(Customer.builder().name("bob")
+        .gold(false)
+        .gender(Gender.MALE)
+        .build());
+    var mary = repository.save(Customer.builder().name("mary")
+        .gold(true)
+        .gender(Gender.FEMALE)
+        .build());
+
+    var criteria = CriteriaOr.builder()
+        .hello(matt.getName())
+        .nestedOr(
+            new NestedOr(bob.getGender(), mary.isGold(), new NestedInNested(matt.getName())))
+        .build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
+
+    var inOrder = inOrder(
+        compositionResolver,
+        simpleResolver);
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(compositionResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
   @Builder
   @Data
-  public static class MyCriteria {
+  public static class CriteriaAnd {
 
     @Spec(path = "name")
     String hello;
@@ -80,5 +123,41 @@ class AndTest {
 
     @Spec(path = "name")
     String hello;
+
+    NestedInNested nin;
+  }
+
+  @Builder
+  @Data
+  @Or
+  public static class CriteriaOr {
+
+    @Spec(path = "name")
+    String hello;
+
+    @Or
+    NestedOr nestedOr;
+  }
+
+  @AllArgsConstructor
+  @Data
+  public static class NestedOr {
+
+    @Spec(path = "gender")
+    Gender hello;
+
+    @Spec(path = "gold")
+    boolean aaa;
+
+    @Or
+    NestedInNested nin;
+  }
+
+  @Data
+  @AllArgsConstructor
+  public static class NestedInNested {
+
+    @Spec
+    String name;
   }
 }

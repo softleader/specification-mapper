@@ -34,23 +34,23 @@ class CompositionSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    var nested = databind.getFieldValue();
-    if (nested == null) {
-      return null;
-    }
-    log.debug(" -> Looping fields through nested object [{}.{}] ({})",
-        databind.getTarget().getClass().getSimpleName(),
-        databind.getField().getName(),
-        databind.getField().getType());
-    var spec = of(codec.collectSpecs(context, nested))
-        .filter(not(Collection::isEmpty))
-        .map(newDomain(databind.getField())::apply)
+    return databind.getFieldValue()
+        .map(nested -> {
+          log.debug(" -> Looping fields through nested object [{}.{}] ({})",
+              databind.getTarget().getClass().getSimpleName(),
+              databind.getField().getName(),
+              databind.getField().getType());
+          var spec = of(codec.collectSpecs(context, nested))
+              .filter(not(Collection::isEmpty))
+              .map(newDomain(databind.getField())::apply)
+              .orElse(null);
+          log.debug(" <- Composed specification from [{}.{}]: {}",
+              databind.getTarget().getClass().getSimpleName(),
+              databind.getField().getName(),
+              spec);
+          return spec;
+        })
         .orElse(null);
-    log.debug(" <- Composed specification from [{}.{}]: {}",
-        databind.getTarget().getClass().getSimpleName(),
-        databind.getField().getName(),
-        spec);
-    return spec;
   }
 
   <T> Function<Collection<Specification<T>>, Specification<T>> newDomain(Field field) {

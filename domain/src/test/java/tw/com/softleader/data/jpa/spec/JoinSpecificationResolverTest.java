@@ -18,7 +18,7 @@ import tw.com.softleader.data.jpa.spec.usecase.Order;
 
 @Transactional
 @IntegrationTest
-class JoinTest {
+class JoinSpecificationResolverTest {
 
   @Autowired
   CustomerRepository repository;

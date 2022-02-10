@@ -8,7 +8,7 @@ import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- * To constraint the constructor
+ * To constraint the constructor, the implementations must provide accessible constructor.
  *
  * @author Matt Ho
  */

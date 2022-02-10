@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @Transactional
 @IntegrationTest
-class EqualTest {
+class SimpleSpecificationResolverTest {
 
   @Autowired
   CustomerRepository repository;
@@ -34,12 +35,13 @@ class EqualTest {
         .build();
   }
 
+  @DisplayName("空的 @Spec")
   @Test
-  void test() {
+  void emptySpec() {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var criteria = MyCriteria.builder().name(matt.getName()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -53,8 +55,7 @@ class EqualTest {
   @Data
   public static class MyCriteria {
 
-    @Spec(path = "name")
-    String hello;
-
+    @Spec
+    String name;
   }
 }

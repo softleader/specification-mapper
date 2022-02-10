@@ -7,6 +7,7 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -36,8 +37,8 @@ class ReflectionDatabind implements Databind {
   }
 
   @Override
-  public Object getFieldValue() {
+  public Optional<Object> getFieldValue() {
     makeAccessible(field);
-    return ReflectionUtils.getField(field, target);
+    return Optional.ofNullable(ReflectionUtils.getField(field, target));
   }
 }

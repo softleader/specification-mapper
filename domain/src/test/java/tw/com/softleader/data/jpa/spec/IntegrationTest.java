@@ -6,12 +6,16 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Function;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication;
+import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
  * 會啟動 Spring Boot Data JPA 以及 H2 的整合測試
@@ -34,6 +38,20 @@ public @interface IntegrationTest {
   @EnableJpaRepositories
   @SpringBootApplication
   class TestApplication {
+
+    public static Context noopContext() {
+      return new Context() {
+        @Override
+        public Join<?, ?> getJoin(String key, Root<?> root) {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void putLazyJoin(String key, Function<Root<?>, Join<?, ?>> function) {
+          throw new UnsupportedOperationException();
+        }
+      };
+    }
 
     public static void main(String[] args) {
       SpringApplication.run(TestApplication.class, args);

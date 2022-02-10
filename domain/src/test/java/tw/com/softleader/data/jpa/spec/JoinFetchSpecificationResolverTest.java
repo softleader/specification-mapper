@@ -23,7 +23,7 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @Transactional
 @IntegrationTest
-class JoinFetchTest {
+class JoinFetchSpecificationResolverTest {
 
   @Autowired
   CustomerRepository repository;

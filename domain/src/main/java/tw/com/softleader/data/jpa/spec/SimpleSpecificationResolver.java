@@ -32,17 +32,18 @@ class SimpleSpecificationResolver implements SpecificationResolver {
         databind.getField().getName(),
         def.path(),
         def.value().getSimpleName());
-    var value = databind.getFieldValue();
-    if (value == null) {
-      log.debug("Value of [{}.{}] is null, skipping it",
-          databind.getTarget().getClass().getSimpleName(),
-          databind.getField().getName());
-      return null;
-    }
-    var path = of(def.path())
-        .filter(StringUtils::hasText)
-        .orElseGet(databind.getField()::getName);
-    return newSimpleSpecification(context, def.value(), path, value);
+    return databind.getFieldValue()
+        .map(value -> {
+          var path = of(def.path())
+              .filter(StringUtils::hasText)
+              .orElseGet(databind.getField()::getName);
+          return newSimpleSpecification(context, def.value(), path, value);
+        }).orElseGet(() -> {
+          log.debug("Value of [{}.{}] is null, skipping it",
+              databind.getTarget().getClass().getSimpleName(),
+              databind.getField().getName());
+          return null;
+        });
   }
 
   @SneakyThrows
