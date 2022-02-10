@@ -231,7 +231,7 @@ var mapper = SpecMapper.builder()
       .build();
 ```
 
-最後我們定義 POJO 及進  `Specification` 的轉換:
+最後我們定義 POJO 及進行  `Specification` 的轉換:
 
 ```java
 @Data
