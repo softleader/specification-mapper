@@ -99,7 +99,67 @@ String firstName; // 最後(預設)使用
 - LessThan
 - LessThanOrEqualTo
 
-#### Adding Customize Simple @Spec
+#### Customize @Spec
+
+*@Spec* 是可以很容易擴充的, 只要實作了 `SimpleSpecification<T>` 並提供規定的 Constructor, 這些 class 就可以被定義在 *@Spec* 中
+
+例如, 我有個 *Customer* Table, 有以下欄位: 
+
+- *name (String)* - 名稱, 可重複
+- *createdTime (LocalDateTime)* - 建立時間, 不可重複
+
+我希望可以找出每個客戶名稱中, 建立時間為最新的那本資料! 且我打算透過一個 subquery 來完成這需求, 完整的範例如下:
+
+首先我們實作 `SimpleSpecification<T>`, 並提供規定的 Constructor:
+
+```java
+public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
+
+  // 這是規定必須提供的建構值
+  public MaxCustomerCreatedTime(Context context, String path, Object value) {
+    super(context, path, value);
+  }
+
+  @Override
+  public Predicate toPredicate(Root<Customer> root,
+    CriteriaQuery<?> query,
+    CriteriaBuilder builder) {
+    // 以下提供 subquery 的實作, 僅供參考
+    var subquery = query.subquery(Long.class);
+    var subroot = subquery.from(Customer.class);
+    subquery.select(builder.max(subroot.get("createdTime")))
+      .where(builder.equal(root.get((String) value), subroot.get((String) value)));
+    return builder.equal(root.get("createdTime"), subquery);
+  }
+}
+```
+
+上面完成的 `MaxCustomerCreatedTime` 就可以被應用在 *@Spec* 中了, 接著我們定義 POJO 及進  `Specification` 的轉換:
+
+```java
+@Data
+public static class CustomerCriteria {
+
+  @Spec(MaxCustomerCreatedTime.class)
+  String maxBy;
+}
+
+var criteria = new CustomerCriteria();
+criteria.setMaxBy("name");
+
+var spec = mapper.toSpec(criteria, Customer.class);
+repository.findAll(spec);
+```
+
+最終執行的 SQL 將會是:
+
+```
+select ... from customer customer0_ 
+where customer0_.created_time=(
+  select max(customer1_.created_time) from customer customer1_ 
+  where customer0_.name=customer1_.name
+)
+```
 
 ### Composition Specification Resolver
 
@@ -109,8 +169,87 @@ String firstName; // 最後(預設)使用
 
 ### Customize Specification Resolver
 
-若以上所有 Resolver 都不適用, 你可以依照下列方式加入自己的 resolver 實作!
+延續 [Customize @Spec](#customize-spec) 章節範例, 進階一點現在我們希望可以將 Entity Class 設計成可以配置, 這樣才能在 Customer 以外的 Entity 都可以使用!
 
-例如, 我想要做一個 subquery, 首先我先設計一個 Annotation
+要完成這需求我們需要在 Annotation 中定義更多參數, 因此 Simple @Spec 不適用了, 我們需要的是定義新的 Annotation 及擴充 Resolver, 完整的程式碼如下:
+
+首先我們定義 Annotation:
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface MaxCreatedTime {
+
+  Class<?> from();
+}
+```
+
+接著我們實作 `SpecificationResolver` 來擴充:
+
+```java
+public class MaxCreatedTimeSpecificationResolver implements SpecificationResolver {
+
+  @Override
+  public boolean supports(Databind databind) { 
+    // 這邊告訴 SpecMapper 什麼時候要使用此 resolver
+    return databind.getField().isAnnotationPresent(MaxCreatedTime.class);
+  }
+
+  @Override
+  public Specification<Object> buildSpecification(Context context, Databind databind) {
+    var def = databind.getField().getAnnotation(MaxCreatedTime.class);
+    return databind.getFieldValue()
+        .map(value -> subquery(def.from(), value.toString()))
+        .orElse(null);
+  }
+
+  Specification<Object> subquery(Class<?> entityClass, String by) {
+    // 以下提供 subquery 的實作, 僅供參考
+    return (root, query, builder) -> {
+      var subquery = query.subquery(Long.class);
+      var subroot = subquery.from(entityClass);
+      subquery.select(builder.max(subroot.get("createdTime")))
+          .where(builder.equal(root.get(by), subroot.get(by)));
+      return builder.equal(root.get("createdTime"), subquery);
+    };
+  }
+}
+```
+
+接著我們在 `SpecMapper` 建構時加入此 resolver:
+
+```
+var mapper = SpecMapper.builder()
+      .defaultResolvers()
+      .resolver(new MaxCreatedTimeSpecificationResolver())
+      .build();
+```
+
+最後我們定義 POJO 及進  `Specification` 的轉換:
+
+```java
+@Data
+public static class CustomerCriteria {
+
+  @MaxCreatedTime(from = Customer.class)
+  String maxBy;
+}
+
+var criteria = new CustomerCriteria();
+criteria.setMaxBy("name");
+
+var spec = mapper.toSpec(criteria, Customer.class);
+repository.findAll(spec);
+```
+
+最終執行的 SQL 將會是:
+
+```
+select ... from customer customer0_ 
+where customer0_.created_time=(
+  select max(customer1_.created_time) from customer customer1_ 
+  where customer0_.name=customer1_.name
+)
+```
 
 ## Limitation

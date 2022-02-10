@@ -113,13 +113,13 @@ class CustomizationTest {
 
   public static class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
 
-    public MaxCustomerCreatedTime(@NonNull Context context, @NonNull String path,
-        @NonNull Object value) {
+    public MaxCustomerCreatedTime(Context context, String path, Object value) {
       super(context, path, value);
     }
 
     @Override
-    public Predicate toPredicate(Root<Customer> root, CriteriaQuery<?> query,
+    public Predicate toPredicate(Root<Customer> root,
+        CriteriaQuery<?> query,
         CriteriaBuilder builder) {
       var subquery = query.subquery(Long.class);
       var subroot = subquery.from(Customer.class);
