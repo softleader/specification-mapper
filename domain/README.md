@@ -105,7 +105,7 @@ String firstname; // 最後(預設)使用
 
 *@Spec* 是可以很容易擴充的, 只要實作了 `SimpleSpecification<T>` 並提供規定的 Constructor, 這些 class 就可以被定義在 *@Spec* 中
 
-例如, 我有個 *Customer* Table, 有以下欄位: 
+例如, 我有個 *Customer* Entity, 有以下欄位: 
 
 - *firstname (String)* - 人名, 可重複
 - *createdTime (LocalDateTime)* - 建立時間, 不可重複
