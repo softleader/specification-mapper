@@ -26,7 +26,7 @@ var mapepr = SpecMapper.builder().build();
 public class CustomerCriteria {
 
   @Spec(Like.class)
-  String firstName;
+  String firstname;
 }
 ```
 
@@ -34,7 +34,7 @@ public class CustomerCriteria {
 
 ```java
 var criteria = new CustomerCriteria();
-criteria.setFirstName("Hello")
+criteria.setFirstname("Hello")
 
 var mapper = SpecMapper.builder().build();
 var specification = mapper.toSpec(criteria);
@@ -46,7 +46,7 @@ var specification = mapper.toSpec(criteria);
 customerRepository.findAll(specification);
 
 // 執行 SQL 將會是: 
-// select ... from Customer c where c.firstName like '%Hello%'
+// select ... from Customer c where c.firstname like '%Hello%'
 ```
 
 ### Skipping Strategy
@@ -58,9 +58,9 @@ customerRepository.findAll(specification);
 public class CustomerCriteria {
 
   @Spec(Like.class)
-  String firstName;
+  String firstname;
   
-  String lastName;
+  String lastname;
 }
 
 var mapper = SpecMapper.builder().build();
@@ -86,20 +86,20 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 ```java
 @Spec(path = "...") // 優先使用
-String firstName; // 最後(預設)使用
+String firstname; // 最後(預設)使用
 ```
 `@Spec` 中可定義的 class 清單如下:
 
 | Sample | Supported field type | JPQL snippet |
 |---|---|---|
-| `@Spec(Equal.class) String name;` | *Any* | `... where x.name = ?` |
-| `@Spec(NotEqual.class) String name;` | *Any* | `... where x.name <> ?` |
-| `@Spec(Like.class) String name;` | *String* | `... where x.name like %?%` |
-| `@Spec(StartingWith.class) String name;` | *String* | `... where x.name like %?` |
-| `@Spec(EndingWith.class) String name;` | *String* | `... where x.name not like ?%` |
-| `@Spec(NotLike.class) String name;` | *String* | `... where x.name not like %?%` |
-| `@Spec(In.class) Collection<String> name;` | *Iterable* | `... where x.name in (?1, ?2, ...)` |
-| `@Spec(NotIn.class) Collection<String> name;` | *Iterable* | `... where x.name not in (?1, ?2, ...)` |
+| `@Spec(Equal.class) String firstname;` | *Any* | `... where x.firstname = ?` |
+| `@Spec(NotEqual.class) String firstname;` | *Any* | `... where x.firstname <> ?` |
+| `@Spec(Like.class) String firstname;` | *String* | `... where x.firstname like %?%` |
+| `@Spec(StartingWith.class) String firstname;` | *String* | `... where x.firstname like %?` |
+| `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname not like ?%` |
+| `@Spec(NotLike.class) String firstname;` | *String* | `... where x.firstname not like %?%` |
+| `@Spec(In.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname in (?1, ?2, ...)` |
+| `@Spec(NotIn.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname not in (?1, ?2, ...)` |
 | `@Spec(GreaterThan.class) int age;` | *Comparable* | `... where x.age > ?` |
 | `@Spec(GreaterThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age >= ?` |
 | `@Spec(LessThan.class) int age;` | *Comparable* | `... where x.age < ?` |

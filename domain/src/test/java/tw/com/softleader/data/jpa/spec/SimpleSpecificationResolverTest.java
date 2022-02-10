@@ -51,6 +51,14 @@ class SimpleSpecificationResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("空的 Criteria")
+  @Test
+  void emptyCriteria() {
+    var criteria = MyCriteria.builder().build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNull();
+  }
+
   @Builder
   @Data
   public static class MyCriteria {
