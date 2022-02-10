@@ -12,7 +12,7 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @Transactional
 @IntegrationTest
-class EqualTest {
+class EndingWithTest {
 
   @Autowired
   CustomerRepository repository;
@@ -22,7 +22,7 @@ class EqualTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var spec = new Equal<Customer>(noopContext(), "name", "matt");
+    var spec = new EndingWith<Customer>(noopContext(), "name", "tt");
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }

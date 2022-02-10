@@ -1,5 +1,6 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
+import java.util.Objects;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -12,11 +13,11 @@ import lombok.NonNull;
 public class NotLike<T> extends SimpleSpecification<T> {
 
   public NotLike(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path, "%s" + value + "%s");
+    super(context, path, "%" + value + "%");
   }
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.notLike(path(root), (String) value);
+    return builder.notLike(path(root), Objects.toString(value));
   }
 }

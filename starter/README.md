@@ -31,7 +31,7 @@ class MyConfig {
 }
 ```
 
-透過 properties 中的 `spec.mapper.enabled` 可以控制開關, 預設是開啟的, 如要關閉則:
+透過 properties 中的 `spec.mapper.enabled` 可以控制自動配置的開關, 預設是開啟的, 如要關閉則:
 
 ```yaml
 spec:

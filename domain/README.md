@@ -88,7 +88,23 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 @Spec(path = "...") // 優先使用
 String firstName; // 最後(預設)使用
 ```
-`@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification` 的 subclasses, 以下依序介紹:
+`@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification<T>` 的 subclasses, 包含:
+
+| Sample | Support field type | JPQL snippet |
+|---|---|---|
+| `@Spec(Equal.class) String name;` | *Any* | `... where x.name = ?` |
+| `@Spec(NotEqual.class) String name;` | *Any* | `... where x.name <> ?` |
+| `@Spec(Like.class) String name;` | *String* | `... where x.name like %?%` |
+| `@Spec(StartingWith.class) String name;` | *String* | `... where x.name like %?` |
+| `@Spec(EndingWith.class) String name;` | *String* | `... where x.name not like ?%` |
+| `@Spec(NotLike.class) String name;` | *String* | `... where x.name not like %?%` |
+| `@Spec(In.class) Collection<String> name;` | *Iterable* | `... where x.name in (?1, ?2, ...)` |
+| `@Spec(NotIn.class) Collection<String> name;` | *Iterable* | `... where x.name not in (?1, ?2, ...)` |
+| `@Spec(GreaterThan.class) int age;` | *Comparable* | `... where x.age > ?` |
+| `@Spec(GreaterThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age >= ?` |
+| `@Spec(LessThan.class) int age;` | *Comparable* | `... where x.age < ?` |
+| `@Spec(LessThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age <= ?` |
+
 
 - Equal
 - Like
