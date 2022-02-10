@@ -76,28 +76,32 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 ```java
 @Spec
 @Spec(Equal.class) // are same
-String firstName;
 ```
 
-對應的 entity path 預設會使用 field name, 你也可以透過設定 `@Spec#path` 或是 `@javax.persistence.Column` 來改變
+對應的 entity path 預設會使用 field name, 你也可以透過設定 `@Spec#path` 來改變
 
 ```java
-@Spec(path = "...") // 最優先使用
-@Column(name = "...")  // 第二順位使用
+@Spec(path = "...") // 優先使用
 String firstName; // 最後(預設)使用
 ```
 `@Spec` 中可定義的 `Specification` 實作支援了所有 `SimpleSpecification` 的 subclasses, 以下依序介紹:
 
 ### Equal
 
-### Like, EndingWith, StartingWith
+### Like
+### EndingWith
+### StartingWith
 
-### GreaterThan, GreaterThanOrEqualTo
+### GreaterThan
+### GreaterThanOrEqualTo
 
-### LessThan, LessThanOrEqualTo
+### LessThan
+### LessThanOrEqualTo
 
 ## Composition
 
 ## Join
 
 ## Join Fetch
+
+## Limitation

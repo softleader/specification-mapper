@@ -15,7 +15,6 @@ import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.util.FieldUtil;
 
 /**
  * @author Matt Ho
@@ -59,11 +58,11 @@ class JoinSpecificationResolver implements SpecificationResolver {
   Specification<Object> newJoin(@NonNull Context context, @NonNull Join def, @NonNull Field field) {
     return new tw.com.softleader.data.jpa.spec.domain.Join<>(
         context,
-        of(def.path()).filter(StringUtils::hasText)
-            .or(() -> FieldUtil.getJpaColumnName(field))
+        of(def.path())
+            .filter(StringUtils::hasText)
             .orElseGet(field::getName),
-        of(def.alias()).filter(StringUtils::hasText)
-            .or(() -> FieldUtil.getJpaColumnName(field))
+        of(def.alias())
+            .filter(StringUtils::hasText)
             .orElseGet(field::getName),
         def.joinType(),
         def.distinct());

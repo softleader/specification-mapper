@@ -35,7 +35,8 @@ public class SpecMapper implements SpecCodec {
   @Override
   public Collection<Specification<Object>> collectSpecs(@NonNull Context context,
       @Nullable Object rootObject) {
-    return FieldUtil.fieldStream(rootObject)
+    return FieldUtil.getLocalFields(rootObject)
+        .stream()
         .flatMap(field -> resolveSpec(context, rootObject, field))
         .filter(Objects::nonNull)
         .collect(toList());

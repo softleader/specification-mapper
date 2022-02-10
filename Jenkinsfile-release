@@ -1,0 +1,170 @@
+#!/usr/bin/env groovy
+
+currentBuild.description = "${ref}"
+// https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+def semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+
+pipeline {
+  agent {
+    kubernetes {
+      cloud 'SLKE'
+      workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace-claim', readOnly: false)
+      defaultContainer 'maven'
+      yaml """
+kind: Pod
+spec:
+  # All containers should have the same UID
+  securityContext:
+    runAsUser: 0
+  containers:
+  - name: maven
+    image: harbor.softleader.com.tw/library/maven:3-azulzulu-11
+    imagePullPolicy: Always
+    command: ['cat']
+    tty: true
+    resources:
+      limits:
+        memory: "2.5Gi"
+        cpu: "2"
+    volumeMounts:
+    - name: m2
+      mountPath: /root/.m2
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  - name: git
+    image: harbor.softleader.com.tw/library/git:2
+    command: ['cat']
+    tty: true
+    resources:
+      limits:
+        memory: "100Mi"
+        cpu: "100m"
+  volumes:
+  - name: m2
+    persistentVolumeClaim:
+      claimName: m2-claim
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+    }
+  }
+
+  environment {
+    // 在 Jenkins 中 System Configuration > Manage Credential
+    // ref: https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/injecting-secrets
+    CREDENTIAL = credentials("a84db61d-b4a4-4e05-a368-c1b283860090")
+    MAVEN_OPTS="-Xmx2048m -XX:MaxMetaspaceSize=128m"
+  }
+
+  stages {
+
+    stage('Setup') {
+      steps {
+        script {
+          if (!"${ref}".startsWith("refs/tags/")) {
+            error "Ref must start with 'refs/tags/' but got: ${ref}";
+          }
+          env.TAG = "${ref}".replace("refs/tags/", "")
+          def isSemVer = ("${TAG}" ==~ semverPattern)
+          if (!isSemVer) {
+            error "Tag must matches semantic versioning 2 (https://semver.org/) but got: ${TAG}";
+          }
+          env.PR_BRANCH = "jenkins-bot/bump-version-to-${TAG}"
+        }
+        container('git') {
+          script {
+            sh """
+            git remote set-url origin https://$CREDENTIAL_USR:"$CREDENTIAL_PSW"@github.com/softleader/transglobe-framework.git
+            git config --global user.email "jenkins-bot@softleader.com.tw"
+            git config --global user.name "jenkins-bot"
+            echo $CREDENTIAL_PSW | gh auth login --with-token
+            """
+            env.LAST_COMMIT_AUTHOR_NAME = sh(
+              script: 'git --no-pager show -s --format=%an',
+              returnStdout: true
+            ).trim()
+            env.LAST_COMMIT_AUTHOR_EMAIL = sh(
+              script: 'git --no-pager show -s --format=%ae',
+              returnStdout: true
+            ).trim()
+            env.LAST_COMMIT_TIME = sh(
+              script: 'git --no-pager show -s --date=format:"%Y/%m/%d %T" --format=%ad',
+              returnStdout: true
+            ).trim()
+          }
+        }
+        sh 'printenv'
+        sh 'java -version'
+        sh 'mvn --version'
+        echo "${params}"
+      }
+    }
+
+    stage('Compile and Style Check') {
+      steps {
+        sh "make compile"
+        container('git') {
+          sh '[ ! -z "$(git status -s)" ] && echo "排版檢查不通過!" && exit 1 || echo "Good to go!"'
+        }
+      }
+    }
+
+    stage('Bump Version') {
+      steps {
+        sh "make new-version VERSION=${TAG}"
+        container('git') {
+          sh '[ -z "$(git status -s)" ] && echo "版本號沒異動喔! 是不是用到重複的版本號了!?" && exit 1 || echo "Good to go!"'
+        }
+      }
+    }
+
+    stage('Unit Testing') {
+      steps {
+        sh "make test"
+      }
+      post {
+        always {
+          junit "**/target/surefire-reports/**/*.xml"
+        }
+      }
+    }
+
+    stage('Release') {
+      steps {
+        sh "make release"
+      }
+    }
+
+    stage ('Merge Main') {
+      steps {
+        container('git') {
+          sh """
+          git checkout -b ${PR_BRANCH}
+          git commit -am "chore: bump version to ${TAG}"
+          git push --set-upstream origin ${PR_BRANCH}
+          gh pr create --title "chore: bump version to ${TAG}" --body "Bump version to ${TAG}"
+          gh pr merge ${PR_BRANCH} --admin --merge --delete-branch
+          """
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      slackSend(
+        color: 'good',
+        channel: 'gardenia-transglobe',
+        message: "TransGlobe Framework ${TAG} has been released\nSee what's changed <https://github.com/softleader/transglobe-framework/releases/tag/${TAG}|here> :eyes:"
+      )
+    }
+    failure {
+      slackSend(
+        color: "danger",
+        channel: "dept-rd",
+        message: "Attention @here, The pipeline <$BUILD_URL|*${env.JOB_NAME} #${env.BUILD_NUMBER}*> has failed! :omg:\n>Last commit by ${env.LAST_COMMIT_AUTHOR_NAME} (${env.LAST_COMMIT_AUTHOR_EMAIL}) @ ${env.LAST_COMMIT_TIME}"
+      )
+    }
+  }
+}

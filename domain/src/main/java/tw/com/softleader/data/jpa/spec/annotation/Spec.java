@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import tw.com.softleader.data.jpa.spec.domain.Equal;
-import tw.com.softleader.data.jpa.spec.domain.PathSpecification;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**

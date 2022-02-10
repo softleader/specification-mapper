@@ -1,5 +1,7 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Optional.of;
+
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -8,20 +10,21 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
-public class In<T> extends PathSpecification<T> {
+public class In<T> extends SimpleSpecification<T> {
 
   private Collection value;
 
   public In(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path);
-
-    if (value instanceof Collection) {
-      this.value = ((Collection) value);
-    } else if (value.getClass().isArray()) {
-      this.value = List.of((Object[]) value);
-    } else {
-      throw new TypeMismatchException(value, Collection.class, Object[].class);
-    }
+    super(context, path,
+        of(value).map(val -> {
+          if (val instanceof Collection) {
+            return ((Collection) val);
+          }
+          if (val.getClass().isArray()) {
+            return List.of((Object[]) val);
+          }
+          return null;
+        }).orElseThrow(() -> new TypeMismatchException(value, Collection.class, Object[].class)));
   }
 
   @Override

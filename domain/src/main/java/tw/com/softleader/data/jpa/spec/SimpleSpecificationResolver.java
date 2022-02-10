@@ -1,6 +1,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
+import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
 import java.lang.reflect.Field;
 import lombok.SneakyThrows;
@@ -40,19 +41,19 @@ class SimpleSpecificationResolver implements SpecificationResolver {
           field.getName());
       return null;
     }
-    var path = of(def.path()).filter(StringUtils::hasText)
-        .or(() -> FieldUtil.getJpaColumnName(field))
+    var path = of(def.path())
+        .filter(StringUtils::hasText)
         .orElseGet(field::getName);
-    return newSimpleSpecification(context, def.value(), value, path);
+    return newSimpleSpecification(context, def.value(), path, value);
   }
 
   @SneakyThrows
   private Specification<Object> newSimpleSpecification(
       @NonNull Context context,
       @NonNull Class<? extends SimpleSpecification> domainClass,
-      @NonNull Object value,
-      @NonNull String path) {
-    return domainClass.getConstructor(Context.class, String.class, Object.class)
+      @NonNull String path,
+      @NonNull Object value) {
+    return accessibleConstructor(domainClass, Context.class, String.class, Object.class)
         .newInstance(context, path, value);
   }
 }

@@ -1,22 +1,19 @@
 package tw.com.softleader.data.jpa.spec.util;
 
-import static java.util.Arrays.stream;
-import static java.util.Optional.ofNullable;
+import static org.springframework.util.ReflectionUtils.doWithLocalFields;
+import static org.springframework.util.ReflectionUtils.getField;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
-import javax.persistence.Column;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Matt Ho
@@ -25,35 +22,25 @@ import org.springframework.util.StringUtils;
 @UtilityClass
 public class FieldUtil {
 
-  private final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentReferenceHashMap<>(256);
-  private final Field[] EMPTY_FIELD_ARRAY = new Field[0];
-
-  public Optional<String> getJpaColumnName(@Nullable Field field) {
-    return ofNullable(field)
-        .map(f -> f.getAnnotation(Column.class))
-        .map(Column::name)
-        .filter(StringUtils::hasText);
-  }
-
-  public Stream<Field> fieldStream(@Nullable Object target) {
+  /**
+   * Get all locally declared fields of stream in the given object's class. (will not going up the
+   * class hierarchy)
+   */
+  public List<Field> getLocalFields(@Nullable Object target) {
     if (target == null) {
-      return Stream.empty();
+      return List.of();
     }
-    return fieldStream(target.getClass());
+    return getLocalFields(target.getClass());
   }
 
-  public Stream<Field> fieldStream(@NonNull Class<?> clazz) {
-    Field[] result = declaredFieldsCache.get(clazz);
-    if (result == null) {
-      try {
-        result = clazz.getDeclaredFields();
-        declaredFieldsCache.put(clazz, (result.length == 0 ? EMPTY_FIELD_ARRAY : result));
-      } catch (Throwable ex) {
-        throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
-            "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
-      }
-    }
-    return stream(result);
+  /**
+   * Get all locally declared fields of stream in the given class. (will not going up the class
+   * hierarchy)
+   */
+  public List<Field> getLocalFields(@NonNull Class<?> clazz) {
+    var lookup = new ArrayList<Field>();
+    doWithLocalFields(clazz, lookup::add);
+    return lookup;
   }
 
   @SneakyThrows
@@ -61,7 +48,7 @@ public class FieldUtil {
     if (target == null) {
       return null;
     }
-    ReflectionUtils.makeAccessible(field);
-    return ReflectionUtils.getField(field, target);
+    makeAccessible(field);
+    return getField(field, target);
   }
 }
