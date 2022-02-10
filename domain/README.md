@@ -226,7 +226,7 @@ public class CustomerAddress {
 
 延續 [Extending Simple @Spec](#extending-simple-spec) 章節範例, 進階一點現在我們希望可以將 Entity Class 設計成可以配置, 這樣才能在 Customer 以外的 Entity 都可以使用!
 
-要完成這需求我們需要在 Annotation 中定義更多參數, 因此 Simple @Spec 不適用了, 我們需要的是定義新的 Annotation 及擴充 Resolver, 完整的程式碼如下:
+要完成這需求我們需要在 Annotation 中定義更多參數, 因此 Simple @Spec 不適用了, 我們需要的是定義新的 Annotation, 完整的程式碼如下:
 
 首先我們定義 Annotation:
 
@@ -239,7 +239,7 @@ public @interface MaxCreatedTime {
 }
 ```
 
-接著我們實作 `SpecificationResolver` 來擴充:
+接著我們要撰寫負責處理 `@MaxCreatedTime` 的邏輯, 透過實作 `SpecificationResolver` 來擴充:
 
 ```java
 public class MaxCreatedTimeSpecificationResolver implements SpecificationResolver {
