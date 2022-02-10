@@ -75,7 +75,7 @@ spec:
         container('git') {
           script {
             sh """
-            git remote set-url origin https://$CREDENTIAL_USR:"$CREDENTIAL_PSW"@github.com/softleader/transglobe-framework.git
+            git remote set-url origin https://$CREDENTIAL_USR:"$CREDENTIAL_PSW"@github.com/softleader/specification-mapper.git
             git config --global user.email "jenkins-bot@softleader.com.tw"
             git config --global user.name "jenkins-bot"
             echo $CREDENTIAL_PSW | gh auth login --with-token
