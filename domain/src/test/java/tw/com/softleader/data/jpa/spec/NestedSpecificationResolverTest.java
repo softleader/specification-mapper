@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
-import tw.com.softleader.data.jpa.spec.annotation.CompositeSpec;
+import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
@@ -26,14 +26,14 @@ import tw.com.softleader.data.jpa.spec.usecase.Gender;
 
 @Transactional
 @IntegrationTest
-class CompositionSpecificationResolverTest {
+class NestedSpecificationResolverTest {
 
   @Autowired
   CustomerRepository repository;
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
-  CompositionSpecificationResolver compositionResolver;
+  NestedSpecificationResolver compositionResolver;
 
   Customer matt;
   Customer bob;
@@ -42,7 +42,7 @@ class CompositionSpecificationResolverTest {
   @BeforeEach
   void setup() {
     mapper = SpecMapper.builder()
-        .resolver(codec -> compositionResolver = spy(new CompositionSpecificationResolver(codec)))
+        .resolver(codec -> compositionResolver = spy(new NestedSpecificationResolver(codec)))
         .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
 
@@ -158,7 +158,7 @@ class CompositionSpecificationResolverTest {
     @Spec
     String name;
 
-    @CompositeSpec
+    @NestedSpec
     NestedAnd nestedAnd;
   }
 
@@ -170,7 +170,7 @@ class CompositionSpecificationResolverTest {
     @Spec
     String name;
 
-    @CompositeSpec
+    @NestedSpec
     NestedInNestedAnd nin;
   }
 
@@ -179,7 +179,7 @@ class CompositionSpecificationResolverTest {
   @AllArgsConstructor
   public static class NestedInNestedAnd {
 
-    @CompositeSpec
+    @NestedSpec
     String name;
   }
 
@@ -191,7 +191,7 @@ class CompositionSpecificationResolverTest {
     @Spec
     String name;
 
-    @CompositeSpec
+    @NestedSpec
     NestedOr nestedOr;
   }
 
@@ -203,7 +203,7 @@ class CompositionSpecificationResolverTest {
     @Spec
     String name;
 
-    @CompositeSpec
+    @NestedSpec
     NestedInNestedOr nin;
   }
 
@@ -223,7 +223,7 @@ class CompositionSpecificationResolverTest {
     @Spec
     String name;
 
-    @CompositeSpec
+    @NestedSpec
     NestedMix nestedMix;
   }
 
@@ -238,7 +238,7 @@ class CompositionSpecificationResolverTest {
     @Spec
     LocalDate birthday;
 
-    @CompositeSpec
+    @NestedSpec
     NestedInNestedMix nin;
   }
 

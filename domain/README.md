@@ -68,11 +68,7 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 以上最後執行的 SQL 將不會有任何過濾條件!
 
-## Specification Resolvers
-
-`SpecMapper` 在建構時, 會自動的加入多個預設的 `SpecificationResolver`, 這些 Resolvers 負責將讀取到欄位及 Annotation  轉換成 *Specification*, 以下介紹各種 Resolver 及對應的 Annotation 使用方式
-
-### Simple Specification Resolver
+## Simple Specifications
 
 使用 `@Spec` 定義 `Specification` 的實作, 預設是 [`Equal`](#equal): 
 
@@ -105,7 +101,7 @@ String firstname; // 最後(預設)使用
 | `@Spec(LessThan.class) Integer age;` | *Comparable* | `... where x.age < ?` |
 | `@Spec(LessThanEqual.class) Integer age;` | *Comparable* | `... where x.age <= ?` |
 
-#### Customize @Spec
+### Extending Simple @Spec
 
 *@Spec* 是可以很容易擴充的, 只要實作了 `SimpleSpecification<T>` 並提供規定的 Constructor, 這些 class 就可以被定義在 *@Spec* 中
 
@@ -166,7 +162,7 @@ repository.findAll(spec);
 )
 ```
 
-### Composition Specification Resolver
+## Combining Specs
 
 透過 `@And` 或 `@Or` 可以組合多個 Specification, 組合的預設是 `@And`, 透過在 POJO 的 class 層級定義可以變更組合邏輯, 例如我想要改成 `@Or` 則:
 
@@ -189,9 +185,9 @@ public class CustomerCriteria {
 ... where c.firstname like %?% or c.lastname like %?% 
 ```
 
-#### Composite Specification from Nested Object
+## Nested Specs
 
-透過註記 `@CompositeSpec` 在 Field 上, 就可以提醒 `SpecMapper` 往下一層物件 (Nested Object) 去組合 Specification,  例如:
+透過註記 `@NestedSpec` 在 Field 上, 就可以提醒 `SpecMapper` 往下一層物件 (Nested Object) 去組合 Specification,  例如:
 
 ```java
 @Data
@@ -200,7 +196,7 @@ public class CustomerCriteria {
   @Spec(Like.class)
   String firstname;
   
-  @CompositeSpec
+  @NestedSpec
   CustomerAddress address;
 }
 
@@ -222,13 +218,13 @@ public class CustomerAddress {
 ```
 
 
-### Join Specification Resolver
+## Join
 
-### Join Fetch Specification Resolver
+## Join Fetch
 
-### Customize Specification Resolver
+## Customize Spec Annotation
 
-延續 [Customize @Spec](#customize-spec) 章節範例, 進階一點現在我們希望可以將 Entity Class 設計成可以配置, 這樣才能在 Customer 以外的 Entity 都可以使用!
+延續 [Extending Simple @Spec](#extending-simple-spec) 章節範例, 進階一點現在我們希望可以將 Entity Class 設計成可以配置, 這樣才能在 Customer 以外的 Entity 都可以使用!
 
 要完成這需求我們需要在 Annotation 中定義更多參數, 因此 Simple @Spec 不適用了, 我們需要的是定義新的 Annotation 及擴充 Resolver, 完整的程式碼如下:
 
@@ -312,4 +308,4 @@ repository.findAll(spec);
 
 ## Limitation
 
-`SpecMapper` 在找 POJO 欄位時, 只會找當前 Class 的 Local Field, 而不去往上找 Hierarchy Classes 的 Field, 如果你共用的欄位想要用在多個 POJO, 請考慮使用 [Composite Specification from Nested Object](#composite-specification-from-nested-object) 方式
+`SpecMapper` 在找 POJO 欄位時, 只會找當前 Class 的 Local Field, 而不去往上找 Hierarchy Classes 的 Field, 如果你共用的欄位想要用在多個 POJO, 請考慮使用 [Nested Specs](#nested-Specs) 方式

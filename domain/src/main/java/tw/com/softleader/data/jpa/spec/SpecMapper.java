@@ -74,7 +74,7 @@ public class SpecMapper implements SpecCodec {
     }
 
     public SpecMapperBuilder defaultResolvers() { // 順序是重要的, ex: Join 需要比 Simple 還早
-      return resolver(CompositionSpecificationResolver::new)
+      return resolver(NestedSpecificationResolver::new)
           .resolver(JoinFetchSpecificationResolver::new)
           .resolver(JoinSpecificationResolver::new)
           .resolver(SimpleSpecificationResolver::new);
