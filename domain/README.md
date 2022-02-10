@@ -79,7 +79,7 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 ```java
 @Spec
-@Spec(Equal.class) // are same
+@Spec(Equals.class) // are same
 ```
 
 對應的 entity path 預設會使用 field name, 你也可以透過設定 `@Spec#path` 來改變
@@ -92,14 +92,15 @@ String firstname; // 最後(預設)使用
 
 | Sample | Supported field type | JPQL snippet |
 |---|---|---|
-| `@Spec(Equal.class) String firstname;` | *Any* | `... where x.firstname = ?` |
-| `@Spec(NotEqual.class) String firstname;` | *Any* | `... where x.firstname <> ?` |
-| `@Spec(Like.class) String firstname;` | *String* | `... where x.firstname like %?%` |
-| `@Spec(StartingWith.class) String firstname;` | *String* | `... where x.firstname like %?` |
-| `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname not like ?%` |
-| `@Spec(NotLike.class) String firstname;` | *String* | `... where x.firstname not like %?%` |
-| `@Spec(In.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname in (?1, ?2, ...)` |
-| `@Spec(NotIn.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname not in (?1, ?2, ...)` |
+| `@Spec(Equals.class) String firstname;` | *Any* | `... where x.firstname = ?` |
+| `@Spec(Not.class) String firstname;` | *Any* | `... where x.firstname <> ?` |
+| `@Spec(Like.class) String firstname;` | *String* | `... where x.firstname like %?%` (parameter bound wrapped in `%`)|
+| `@Spec(StartingWith.class) String firstname;` | *String* | `... where x.firstname like %?` (parameter bound wrapped in `%`)|
+| `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname not like ?%` (parameter bound wrapped in `%`)|
+| `@Spec(NotLike.class) String firstname;` | *String* | `... where x.firstname not like %?%` (parameter bound wrapped in `%`)|
+| `@Spec(In.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname in (?, ?, ...)` |
+| `@Spec(NotIn.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname not in (?, ?, ...)` |
+| `@Spec(Between.class) Collection<Integer> age;` | *Iterable of Comparable* (Expected exact **2 elements** in *Iterable*)| `... where x.age between ? and ?` |
 | `@Spec(GreaterThan.class) int age;` | *Comparable* | `... where x.age > ?` |
 | `@Spec(GreaterThanEqual.class) int age;` | *Comparable* | `... where x.age >= ?` |
 | `@Spec(LessThan.class) int age;` | *Comparable* | `... where x.age < ?` |

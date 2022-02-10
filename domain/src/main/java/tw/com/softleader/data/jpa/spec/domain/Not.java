@@ -13,9 +13,9 @@ import lombok.ToString;
  * @author Matt Ho
  */
 @ToString
-public class Equal<T> extends SimpleSpecification<T> {
+public class Not<T> extends SimpleSpecification<T> {
 
-  public Equal(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+  public Not(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 
@@ -23,6 +23,6 @@ public class Equal<T> extends SimpleSpecification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    return builder.equal(path(root), value);
+    return builder.notEqual(path(root), value);
   }
 }

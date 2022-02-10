@@ -4,7 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import tw.com.softleader.data.jpa.spec.domain.Equal;
+import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
@@ -16,5 +16,5 @@ public @interface Spec {
 
   String path() default "";
 
-  Class<? extends SimpleSpecification> value() default Equal.class;
+  Class<? extends SimpleSpecification> value() default Equals.class;
 }
