@@ -98,8 +98,8 @@ String firstname; // 最後(預設)使用
 | `@Spec(StartingWith.class) String firstname;` | *String* | `... where x.firstname like %?` (parameter bound wrapped in `%`)|
 | `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname not like ?%` (parameter bound wrapped in `%`)|
 | `@Spec(NotLike.class) String firstname;` | *String* | `... where x.firstname not like %?%` (parameter bound wrapped in `%`)|
-| `@Spec(In.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname in (?, ?, ...)` |
-| `@Spec(NotIn.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname not in (?, ?, ...)` |
+| `@Spec(In.class) Collection<String> firstname;` | *Iterable of Any* | `... where x.firstname in (?, ?, ...)` |
+| `@Spec(NotIn.class) Collection<String> firstname;` | *Iterable of Any* | `... where x.firstname not in (?, ?, ...)` |
 | `@Spec(Between.class) Collection<Integer> age;` | *Iterable of Comparable* (Expected exact **2 elements** in *Iterable*)| `... where x.age between ? and ?` |
 | `@Spec(GreaterThan.class) int age;` | *Comparable* | `... where x.age > ?` |
 | `@Spec(GreaterThanEqual.class) int age;` | *Comparable* | `... where x.age >= ?` |
