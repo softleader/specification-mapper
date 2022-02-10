@@ -136,7 +136,7 @@ public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
 }
 ```
 
-上面完成的 `MaxCustomerCreatedTime` 就可以被應用在 *@Spec* 中了, 接著我們定義 POJO 及進  `Specification` 的轉換:
+上面完成的 `MaxCustomerCreatedTime` 就可以被應用在 *@Spec* 中了, 接著我們定義 POJO 及進行 `Specification` 的轉換:
 
 ```java
 @Data
