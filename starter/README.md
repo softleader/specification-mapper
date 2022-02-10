@@ -27,7 +27,7 @@ spec:
 
 ```java
 @Configuration
-public class InAnyConfig {
+class MyConfig {
 
   @Bean
   SpecMapper specMapper() {
