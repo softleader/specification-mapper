@@ -203,6 +203,7 @@ public class CustomerCriteria {
 @Or
 @Data
 public class CustomerAddress {
+
   @Spec
   String county;
   
