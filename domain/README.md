@@ -30,7 +30,7 @@ public class CustomerCriteria {
 }
 ```
 
-這樣我們就可以做 Specification 的轉換了:
+這樣我們就可以做 `Specification` 的轉換了, 得到 `Specification` 後就可以依照原本的方式去資料庫查詢, 例如透過 Spring Data JPA 的 repository:
 
 ```java
 var criteria = new CustomerCriteria();
@@ -38,15 +38,14 @@ criteria.setFirstname("Hello")
 
 var mapper = SpecMapper.builder().build();
 var specification = mapper.toSpec(criteria);
+
+customerRepository.findAll(specification);
 ```
 
-得到 `Specification` 後, 我們可以依照原本的方式去資料庫查詢, 例如透過 Spring Data JPA 的 repository:
+執行 SQL 將會是: 
 
-```java
-customerRepository.findAll(specification);
-
-// 執行 SQL 將會是: 
-// select ... from Customer c where c.firstname like '%Hello%'
+```
+... where c.firstname like '%Hello%'
 ```
 
 ### Skipping Strategy
@@ -161,14 +160,67 @@ repository.findAll(spec);
 最終執行的 SQL 將會是:
 
 ```
-select ... from customer customer0_ 
-where customer0_.created_time=(
+... where customer0_.created_time=(
   select max(customer1_.created_time) from customer customer1_ 
   where customer0_.firstname=customer1_.firstname
 )
 ```
 
 ### Composition Specification Resolver
+
+透過 `@And` 或 `@Or` 可以組合多個 Specification, 組合的預設是 `@And`, 透過在 POJO 的 class 層級定義可以變更組合邏輯, 例如我想要改成 `@Or` 則:
+
+```java
+@Or // 若沒定義預設就是 and
+@Data
+public class CustomerCriteria {
+
+  @Spec(Like.class)
+  String firstname;
+  
+  @Spec(Like.class)
+  String lastname;
+}
+```
+
+這樣執行的 SQL 將會是:
+
+```
+... where c.firstname like %?% or c.lastname like %?% 
+```
+
+#### Nested Object
+
+透過註記 `@CompositeSpec` 在 Field 上, 就可以提醒 `SpecMapper` 往下一層物件 (Nested Object) 去組合 Specification,  例如:
+
+```java
+@Data
+public class CustomerCriteria {
+
+  @Spec(Like.class)
+  String firstname;
+  
+  @CompositeSpec
+  CustomerAddress address;
+}
+
+@Or
+@Data
+public class CustomerAddress {
+  @Spec
+  String county;
+  
+  @Spec
+  String city;
+}
+```
+
+這樣執行的 SQL 將會是:
+
+```
+... where c.firstname like %?% and ( c.county=? or c.city=? )
+```
+
 
 ### Join Specification Resolver
 
@@ -252,11 +304,12 @@ repository.findAll(spec);
 最終執行的 SQL 將會是:
 
 ```
-select ... from customer customer0_ 
-where customer0_.created_time=(
+... where customer0_.created_time=(
   select max(customer1_.created_time) from customer customer1_ 
   where customer0_.firstname=customer1_.firstname
 )
 ```
 
 ## Limitation
+
+`SpecMapper` 在找 POJO 欄位時, 只會找當前 Class 的 Local Field, 而不去往上找 Hierarchy Classes 的 Field, 如果你共用的欄位想要用在多個 POJO, 請考慮使用 [Nested Object](#nested-object) 方式

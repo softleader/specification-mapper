@@ -15,7 +15,10 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
+import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 
 /**
  * @author Matt Ho
@@ -31,13 +34,18 @@ public class SpecMapper implements SpecCodec {
   }
 
   @Override
-  public Collection<Specification<Object>> collectSpecs(@NonNull Context context,
-      @Nullable Object rootObject) {
-    return ReflectionDatabind.of(rootObject)
+  public Specification<Object> toSpec(@NonNull Context context, @Nullable Object rootObject) {
+    var specs = ReflectionDatabind.of(rootObject)
         .stream()
         .flatMap(databind -> resolveSpec(context, databind))
         .filter(Objects::nonNull)
         .collect(toList());
+    if (specs.isEmpty()) {
+      return null;
+    }
+    return rootObject.getClass().isAnnotationPresent(Or.class)
+        ? new Disjunction<>(specs)
+        : new Conjunction<>(specs);
   }
 
   Stream<Specification<Object>> resolveSpec(@NonNull Context context, @NonNull Databind databind) {

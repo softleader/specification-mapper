@@ -6,6 +6,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
+import tw.com.softleader.data.jpa.spec.annotation.CompositeSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
@@ -33,22 +35,46 @@ class CompositionSpecificationResolverTest {
   SimpleSpecificationResolver simpleResolver;
   CompositionSpecificationResolver compositionResolver;
 
+  Customer matt;
+  Customer bob;
+  Customer mary;
+
   @BeforeEach
   void setup() {
     mapper = SpecMapper.builder()
         .resolver(codec -> compositionResolver = spy(new CompositionSpecificationResolver(codec)))
         .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
+
+    matt = repository.save(Customer.builder()
+        .name("matt")
+        .gold(true)
+        .gender(Gender.MALE)
+        .birthday(LocalDate.now())
+        .build());
+    bob = repository.save(Customer.builder().name("bob")
+        .gold(false)
+        .gender(Gender.MALE)
+        .birthday(LocalDate.now().plusDays(1))
+        .build());
+    mary = repository.save(Customer.builder().name("mary")
+        .gold(true)
+        .gender(Gender.FEMALE)
+        .birthday(LocalDate.now())
+        .build());
+
+    // Data will be:
+    // matt, gold,     male,   today is birthday
+    // bob,  not gold, male,   tomorrow is birthday
+    // mary, gold,     female, today is birthday
   }
 
-  @DisplayName("AND 連接多個條件")
+  @DisplayName("全部都用 AND 組合多個條件")
   @Test
-  void and() {
-    var matt = repository.save(Customer.builder().name("matt").build());
-    repository.save(Customer.builder().name("bob").build());
-
-    var criteria = CriteriaAnd.builder().hello(matt.getName())
-        .nestedAnd(new NestedAnd(matt.getName(), new NestedInNested(matt.getName())))
+  void allAnd() {
+    var criteria = CriteriaAnd.builder()
+        .name(matt.getName())
+        .nestedAnd(new NestedAnd(matt.getName(), new NestedInNestedAnd(matt.getName())))
         .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
@@ -67,27 +93,13 @@ class CompositionSpecificationResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
-  @DisplayName("OR 連接多個條件")
+  @DisplayName("全部都用 OR 組合多個條件")
   @Test
-  void or() {
-    var matt = repository.save(Customer.builder()
-        .name("matt")
-        .gold(true)
-        .gender(Gender.MALE)
-        .build());
-    var bob = repository.save(Customer.builder().name("bob")
-        .gold(false)
-        .gender(Gender.MALE)
-        .build());
-    var mary = repository.save(Customer.builder().name("mary")
-        .gold(true)
-        .gender(Gender.FEMALE)
-        .build());
-
+  void allOr() {
     var criteria = CriteriaOr.builder()
-        .hello(matt.getName())
+        .name(matt.getName())
         .nestedOr(
-            new NestedOr(bob.getGender(), mary.isGold(), new NestedInNested(matt.getName())))
+            new NestedOr(bob.getName(), new NestedInNestedOr(mary.getName())))
         .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
@@ -106,25 +118,69 @@ class CompositionSpecificationResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("混合 AND 或 OR 組合多個條件")
+  @Test
+  void mix() {
+    var criteria = CriteriaMix.builder()
+        .name(matt.getName())
+        .nestedMix(
+            NestedMix.builder()
+                .gender(bob.getGender())
+                .birthday(bob.getBirthday())
+                .nin(
+                    NestedInNestedMix.builder()
+                        .gold(mary.isGold())
+                        .gender(bob.getGender())
+                        .build())
+                .build())
+        .build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(matt);
+
+    var inOrder = inOrder(
+        compositionResolver,
+        simpleResolver);
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(compositionResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
   @Builder
   @Data
   public static class CriteriaAnd {
 
-    @Spec(path = "name")
-    String hello;
+    @Spec
+    String name;
 
-    @And
+    @CompositeSpec
     NestedAnd nestedAnd;
   }
 
+  @And
   @AllArgsConstructor
   @Data
   public static class NestedAnd {
 
-    @Spec(path = "name")
-    String hello;
+    @Spec
+    String name;
 
-    NestedInNested nin;
+    @CompositeSpec
+    NestedInNestedAnd nin;
+  }
+
+  @And
+  @Data
+  @AllArgsConstructor
+  public static class NestedInNestedAnd {
+
+    @CompositeSpec
+    String name;
   }
 
   @Builder
@@ -132,32 +188,70 @@ class CompositionSpecificationResolverTest {
   @Or
   public static class CriteriaOr {
 
-    @Spec(path = "name")
-    String hello;
+    @Spec
+    String name;
 
-    @Or
+    @CompositeSpec
     NestedOr nestedOr;
   }
 
+  @Or
   @AllArgsConstructor
   @Data
   public static class NestedOr {
 
-    @Spec(path = "gender")
-    Gender hello;
+    @Spec
+    String name;
 
-    @Spec(path = "gold")
-    boolean aaa;
-
-    @Or
-    NestedInNested nin;
+    @CompositeSpec
+    NestedInNestedOr nin;
   }
 
+  @Or
   @Data
   @AllArgsConstructor
-  public static class NestedInNested {
+  public static class NestedInNestedOr {
 
     @Spec
     String name;
   }
+
+  @Builder
+  @Data
+  public static class CriteriaMix {
+
+    @Spec
+    String name;
+
+    @CompositeSpec
+    NestedMix nestedMix;
+  }
+
+  @Or
+  @Builder
+  @Data
+  public static class NestedMix {
+
+    @Spec
+    Gender gender;
+
+    @Spec
+    LocalDate birthday;
+
+    @CompositeSpec
+    NestedInNestedMix nin;
+  }
+
+  @And
+  @Builder
+  @Data
+  public static class NestedInNestedMix {
+
+    @Spec
+    boolean gold;
+
+    @Spec
+    Gender gender;
+  }
+
 }

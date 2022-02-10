@@ -3,14 +3,13 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Optional.of;
 import static java.util.function.Predicate.not;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
-import tw.com.softleader.data.jpa.spec.annotation.And;
+import tw.com.softleader.data.jpa.spec.annotation.CompositeSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
@@ -27,8 +26,7 @@ class CompositionSpecificationResolver implements SpecificationResolver {
 
   @Override
   public boolean supports(@NonNull Databind databind) {
-    return databind.getField().isAnnotationPresent(Or.class)
-        || databind.getField().isAnnotationPresent(And.class);
+    return databind.getField().isAnnotationPresent(CompositeSpec.class);
   }
 
   @Override
@@ -40,10 +38,11 @@ class CompositionSpecificationResolver implements SpecificationResolver {
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
               databind.getField().getType());
-          var spec = of(codec.collectSpecs(context, nested))
-              .filter(not(Collection::isEmpty))
-              .map(newDomain(databind.getField())::apply)
-              .orElse(null);
+          var spec = codec.toSpec(context, nested);
+          //          var spec = of(codec.collectSpecs(context, nested))
+          //            .filter(not(Collection::isEmpty))
+          //            .map(newDomain(databind)::apply)
+          //            .orElse(null);
           log.debug(" <- Composed specification from [{}.{}]: {}",
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
@@ -53,7 +52,13 @@ class CompositionSpecificationResolver implements SpecificationResolver {
         .orElse(null);
   }
 
-  <T> Function<Collection<Specification<T>>, Specification<T>> newDomain(Field field) {
-    return field.isAnnotationPresent(Or.class) ? Disjunction::new : Conjunction::new;
+  <T> Function<Collection<Specification<T>>, Specification<T>> newDomain(Databind databind) {
+    log.debug("determine composite logic for field [{}], is annotation @Or on field class [{}]? {}",
+        databind.getField().getName(),
+        databind.getTarget().getClass().getSimpleName(),
+        databind.getTarget().getClass().isAnnotationPresent(Or.class));
+    return databind.getTarget().getClass().isAnnotationPresent(Or.class)
+        ? Disjunction::new
+        : Conjunction::new;
   }
 }

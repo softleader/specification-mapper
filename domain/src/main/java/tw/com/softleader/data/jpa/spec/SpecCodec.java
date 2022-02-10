@@ -1,17 +1,12 @@
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
-import static java.util.function.Predicate.not;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 
 /**
  * @author Matt Ho
@@ -24,12 +19,7 @@ public interface SpecCodec {
   @SuppressWarnings("unchecked")
   @Nullable
   default Specification<Object> toSpec(@Nullable Object rootObject) {
-    return of(collectSpecs(new SpecContext(), rootObject))
-        .filter(not(Collection::isEmpty))
-        .map(specs -> rootObject.getClass().isAnnotationPresent(
-            tw.com.softleader.data.jpa.spec.annotation.Or.class) ? new Disjunction<>(specs)
-                : new Conjunction<>(specs))
-        .orElse(null);
+    return toSpec(new SpecContext(), rootObject);
   }
 
   /**
@@ -59,9 +49,8 @@ public interface SpecCodec {
   }
 
   /**
-   * Collect and mapping every field in object to {@code Specification}
+   * @return null if non any {@code Specification} was mapped
    */
-  @NonNull
-  Collection<Specification<Object>> collectSpecs(@NonNull Context context,
-      @Nullable Object rootObject);
+  @Nullable
+  Specification<Object> toSpec(@NonNull Context context, @Nullable Object rootObject);
 }

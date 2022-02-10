@@ -6,11 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Or compose logic
+ * Composite specs with Nested object
  *
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-public @interface Or {
+@Target({ ElementType.FIELD })
+public @interface CompositeSpec {
+
 }
