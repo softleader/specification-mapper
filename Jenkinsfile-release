@@ -152,13 +152,6 @@ spec:
   }
 
   post {
-    success {
-      slackSend(
-        color: 'good',
-        channel: 'gardenia-transglobe',
-        message: "TransGlobe Framework ${TAG} has been released\nSee what's changed <https://github.com/softleader/transglobe-framework/releases/tag/${TAG}|here> :eyes:"
-      )
-    }
     failure {
       slackSend(
         color: "danger",
