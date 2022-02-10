@@ -312,4 +312,4 @@ repository.findAll(spec);
 
 ## Limitation
 
-`SpecMapper` 在找 POJO 欄位時, 只會找當前 Class 的 Local Field, 而不去往上找 Hierarchy Classes 的 Field, 如果你共用的欄位想要用在多個 POJO, 請考慮使用 [Nested Object](#nested-object) 方式
+`SpecMapper` 在找 POJO 欄位時, 只會找當前 Class 的 Local Field, 而不去往上找 Hierarchy Classes 的 Field, 如果你共用的欄位想要用在多個 POJO, 請考慮使用 [Composite Specification from Nested Object](#composite-specification-from-nested-object) 方式
