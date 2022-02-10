@@ -101,9 +101,9 @@ String firstname; // 最後(預設)使用
 | `@Spec(In.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname in (?1, ?2, ...)` |
 | `@Spec(NotIn.class) Collection<String> firstname;` | *Iterable* | `... where x.firstname not in (?1, ?2, ...)` |
 | `@Spec(GreaterThan.class) int age;` | *Comparable* | `... where x.age > ?` |
-| `@Spec(GreaterThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age >= ?` |
+| `@Spec(GreaterThanEqual.class) int age;` | *Comparable* | `... where x.age >= ?` |
 | `@Spec(LessThan.class) int age;` | *Comparable* | `... where x.age < ?` |
-| `@Spec(LessThanOrEqualTo.class) int age;` | *Comparable* | `... where x.age <= ?` |
+| `@Spec(LessThanEqual.class) int age;` | *Comparable* | `... where x.age <= ?` |
 
 #### Customize @Spec
 

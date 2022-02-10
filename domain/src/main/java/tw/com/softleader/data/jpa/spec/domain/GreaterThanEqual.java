@@ -9,9 +9,9 @@ import lombok.NonNull;
 /**
  * @author Matt Ho
  */
-public class GreaterThanOrEqualTo<T> extends SimpleSpecification<T> {
+public class GreaterThanEqual<T> extends SimpleSpecification<T> {
 
-  public GreaterThanOrEqualTo(@NonNull Context context, @NonNull String path,
+  public GreaterThanEqual(@NonNull Context context, @NonNull String path,
       @NonNull Object value) {
     super(context, path, value);
     if (!(value instanceof Comparable)) {

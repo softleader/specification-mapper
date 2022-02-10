@@ -9,9 +9,9 @@ import lombok.NonNull;
 /**
  * @author Matt Ho
  */
-public class LessThanOrEqualTo<T> extends SimpleSpecification<T> {
+public class LessThanEqual<T> extends SimpleSpecification<T> {
 
-  public LessThanOrEqualTo(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+  public LessThanEqual(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
     if (!(value instanceof Comparable)) {
       throw new TypeMismatchException(value, Comparable.class);

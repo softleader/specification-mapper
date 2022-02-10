@@ -13,7 +13,7 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @Transactional
 @IntegrationTest
-class GreaterThanOrEqualToTest {
+class LessThanEqualTest {
 
   @Autowired
   CustomerRepository repository;
@@ -21,9 +21,9 @@ class GreaterThanOrEqualToTest {
   @Test
   void test() {
     var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
-    repository.save(Customer.builder().name("matt").birthday(LocalDate.now().minusDays(1)).build());
+    repository.save(Customer.builder().name("matt").birthday(LocalDate.now().plusDays(1)).build());
 
-    var spec = new GreaterThanOrEqualTo<Customer>(noopContext(), "birthday", LocalDate.now());
+    var spec = new LessThanEqual<Customer>(noopContext(), "birthday", LocalDate.now());
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
