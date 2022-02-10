@@ -70,7 +70,7 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 ## Simple Specifications
 
-使用 `@Spec` 定義 `Specification` 的實作, 預設是 [`Equal`](#equal): 
+使用 `@Spec` 定義 `Specification` 的實作, 預設是 `Equals`: 
 
 ```java
 @Spec
