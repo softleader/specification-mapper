@@ -21,7 +21,7 @@ public class Between<T> extends SimpleSpecification<T> {
       throw new TypeMismatchException(value, Iterable.class);
     }
     if (stream(((Iterable<?>) value).spliterator(), false).count() != 2) {
-      throw new IllegalArgumentException("@Between expected 2 elements, but was " + value);
+      throw new IllegalArgumentException("@Between expected exact 2 elements, but was " + value);
     }
   }
 
