@@ -164,7 +164,7 @@ repository.findAll(spec);
 
 ## Combining Specs
 
-透過 `@And` 或 `@Or` 可以組合多個 Specification, 組合的預設是 `@And`, 透過在 POJO 的 class 層級定義可以變更組合邏輯, 例如我想要改成 `@Or` 則:
+透過 `@And` 或 `@Or` 可以組合多個 Specification, 透過在 POJO 的 class 層級定義可以變更組合邏輯, 組合的預設是 `@And`, 例如我想要改成 `@Or` 則:
 
 ```java
 @Or // 若沒定義預設就是 and
