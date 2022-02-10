@@ -6,7 +6,7 @@
 
   <groupId>tw.com.softleader.data</groupId>
   <artifactId>specification-mapper-parent</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
 
   <description>Specification binding API for Spring Data JPA</description>
