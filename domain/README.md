@@ -110,7 +110,7 @@ String firstname; // 最後(預設)使用
 - *firstname (String)* - 人名, 可重複
 - *createdTime (LocalDateTime)* - 建立時間, 不可重複
 
-我希望可以找出每個人名中, 建立時間為最新的那本資料! 且我打算透過一個 subquery 來完成這需求, 完整的範例如下:
+我希望可以找出每個人名中, 建立時間為最新的那筆資料! 且我打算透過一個 subquery 來完成這需求, 完整的範例如下:
 
 首先我們實作 `SimpleSpecification<T>`, 並提供規定的 Constructor:
 
