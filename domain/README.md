@@ -393,8 +393,8 @@ class CustomerOrderCriteria {
 
 ```
 select distinct 
-	customer0_.* ...,
-	orders1_.* ...
+  customer0_.* ...,
+  orders1_.* ...
 from customer customer0_ 
 left outer join orders orders1_ on customer0_.id=orders1_.order_id 
 where customer0_.name=?
@@ -453,9 +453,9 @@ class CustomerOrderTagCriteria {
 
 ```
 select distinct 
-	customer0_.* ...,
-	orders1_.* ...,
-	tags3_.* ...
+  customer0_.* ...,
+  orders1_.* ...,
+  tags3_.* ...
 from customer customer0_ 
 left outer join orders orders1_ on customer0_.id=orders1_.order_id 
 inner join orders orders2_ on customer0_.id=orders2_.order_id 
