@@ -65,6 +65,12 @@ public class CustomerCriteria {
   String firstname;
   
   String lastname;
+  
+  @Spec(GreaterThat.class)
+  Optional<Integer> age = Optional.empty();
+  
+  @Spec(In.class)
+  Collection<String> addresses = List.of();
 }
 
 var mapper = SpecMapper.builder().build();
