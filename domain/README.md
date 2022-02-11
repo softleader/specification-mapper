@@ -66,7 +66,7 @@ public class CustomerCriteria {
   @Spec(Like.class)
   String firstname;
   
-  String lastname = "Hi";
+  String lastname = "Hello";
   
   @Spec(GreaterThat.class)
   Optional<Integer> age = Optional.empty();
