@@ -110,7 +110,7 @@ String firstname; // 最後(預設)使用
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
-> 以上名稱都是儘量跟著 [Spring Data JPA - Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣, 方便已經熟悉 Query Methods 的人來使用
+> 為了方便已經熟悉 Spring Data JPA 的人使用, 以上名稱都是儘量跟著 [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣
 
 ### Extending Simple @Spec
 
