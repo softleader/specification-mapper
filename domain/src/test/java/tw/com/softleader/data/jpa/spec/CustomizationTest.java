@@ -23,11 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
-import tw.com.softleader.data.jpa.spec.CustomizationTest.MaxCreatedTimeSpecificationResolver;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
@@ -101,9 +98,9 @@ class CustomizationTest {
     var inOrder = inOrder(
         simpleResolver,
         customizeResolver);
-    inOrder.verify(simpleResolver, times(2))
+    inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    verify(customizeResolver, times(1))
+    inOrder.verify(customizeResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 

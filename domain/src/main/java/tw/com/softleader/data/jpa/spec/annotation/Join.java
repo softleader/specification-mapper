@@ -13,12 +13,12 @@ public @interface Join {
   /**
    * Specifies a collection property to join on, e.g. "addresses"
    */
-  String path() default "";
+  String path();
 
   /**
    * Specifies an alias for the joined part, e.g. "a"
    */
-  String alias() default "";
+  String alias();
 
   /**
    * Whether the query should return distinct results or not
@@ -31,6 +31,6 @@ public @interface Join {
   @Target({ ElementType.FIELD })
   @interface Joins {
 
-    Join[] values();
+    Join[] value();
   }
 }

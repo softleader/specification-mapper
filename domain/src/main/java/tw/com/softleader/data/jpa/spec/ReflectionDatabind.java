@@ -1,6 +1,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.ofNullable;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
@@ -39,6 +40,12 @@ class ReflectionDatabind implements Databind {
   @Override
   public Optional<Object> getFieldValue() {
     makeAccessible(field);
-    return Optional.ofNullable(ReflectionUtils.getField(field, target));
+    return ofNullable(ReflectionUtils.getField(field, target))
+        .flatMap(value -> {
+          if (value instanceof Optional) {
+            return (Optional) value;
+          }
+          return Optional.of(value);
+        });
   }
 }

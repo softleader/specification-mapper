@@ -42,7 +42,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
     if (!obj.getClass().isAnnotationPresent(JoinFetches.class)) {
       return Stream.empty();
     }
-    return stream(obj.getClass().getAnnotation(JoinFetches.class).values())
+    return stream(obj.getClass().getAnnotation(JoinFetches.class).value())
         .map(def -> newJoinFetch(context, def));
   }
 

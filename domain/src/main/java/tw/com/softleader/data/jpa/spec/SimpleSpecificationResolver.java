@@ -3,6 +3,7 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Optional.of;
 import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
+import java.util.stream.StreamSupport;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,17 +34,25 @@ class SimpleSpecificationResolver implements SpecificationResolver {
         def.path(),
         def.value().getSimpleName());
     return databind.getFieldValue()
+        .filter(this::valuePresent)
         .map(value -> {
           var path = of(def.path())
               .filter(StringUtils::hasText)
               .orElseGet(databind.getField()::getName);
           return newSimpleSpecification(context, def.value(), path, value);
         }).orElseGet(() -> {
-          log.debug("Value of [{}.{}] is null, skipping it",
+          log.debug("Value of [{}.{}] is null or empty, skipping it",
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName());
           return null;
         });
+  }
+
+  boolean valuePresent(Object value) {
+    if (value instanceof Iterable) {
+      return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).count() > 0;
+    }
+    return true;
   }
 
   @SneakyThrows

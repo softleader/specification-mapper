@@ -33,23 +33,22 @@ public class Join<T> implements Specification<T> {
   }
 
   private void join(Root<T> root) {
-    if (!pathToJoinOn.contains("\\.")) {
+    if (!pathToJoinOn.contains(".")) {
       context.putLazyJoin(alias, r -> r.join(pathToJoinOn, joinType));
       return;
     }
     var byDot = pathToJoinOn.split("\\.");
 
-    var alias = byDot[0];
-    var join = context.getJoin(alias, root);
-
-    if (join == null) {
+    var extractedAlias = byDot[0];
+    var joined = context.getJoin(extractedAlias, root);
+    if (joined == null) {
       throw new IllegalArgumentException(
-          "Join definition with alias: '" + alias + "' not found! " +
-              "Make sure that join with the alias '" + alias
+          "Join definition with alias: '" + extractedAlias + "' not found! " +
+              "Make sure that join with the alias '" + extractedAlias
               + "' is defined before the join with path: '" + pathToJoinOn + "'");
     }
 
-    var path = byDot[1];
-    context.putLazyJoin(alias, r -> join.join(path, joinType));
+    var extractedPathToJoin = byDot[1];
+    context.putLazyJoin(alias, r -> joined.join(extractedPathToJoin, joinType));
   }
 }

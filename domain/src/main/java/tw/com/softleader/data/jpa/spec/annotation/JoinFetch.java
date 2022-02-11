@@ -20,6 +20,6 @@ public @interface JoinFetch {
   @Target({ ElementType.TYPE })
   @interface JoinFetches {
 
-    JoinFetch[] values();
+    JoinFetch[] value();
   }
 }

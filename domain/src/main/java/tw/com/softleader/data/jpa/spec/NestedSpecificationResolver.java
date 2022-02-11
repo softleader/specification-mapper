@@ -1,16 +1,11 @@
 package tw.com.softleader.data.jpa.spec;
 
-import java.util.Collection;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
-import tw.com.softleader.data.jpa.spec.annotation.Or;
-import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 
 /**
  * @author Matt Ho
@@ -43,15 +38,5 @@ class NestedSpecificationResolver implements SpecificationResolver {
           return spec;
         })
         .orElse(null);
-  }
-
-  <T> Function<Collection<Specification<T>>, Specification<T>> newDomain(Databind databind) {
-    log.debug("determine composite logic for field [{}], is annotation @Or on field class [{}]? {}",
-        databind.getField().getName(),
-        databind.getTarget().getClass().getSimpleName(),
-        databind.getTarget().getClass().isAnnotationPresent(Or.class));
-    return databind.getTarget().getClass().isAnnotationPresent(Or.class)
-        ? Disjunction::new
-        : Conjunction::new;
   }
 }

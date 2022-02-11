@@ -51,7 +51,7 @@ public class JoinFetch<T> implements Specification<T> {
       return;
     }
     var pathToFetch = pathsToFetch.get(0);
-    if (!pathToFetch.contains("\\.")) {
+    if (!pathToFetch.contains(".")) {
       root.fetch(pathToFetch, joinType);
       return;
     }

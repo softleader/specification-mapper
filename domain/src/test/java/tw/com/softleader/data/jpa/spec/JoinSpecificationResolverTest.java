@@ -3,18 +3,23 @@ package tw.com.softleader.data.jpa.spec;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
+import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
+import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.usecase.Badge;
+import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
+import tw.com.softleader.data.jpa.spec.usecase.Tag;
 
 @Transactional
 @IntegrationTest
@@ -35,33 +40,66 @@ class JoinSpecificationResolverTest {
         .build();
   }
 
+  @DisplayName("單一層級的 Join")
   @Test
-  void joinsCollection() {
-    var badgeType = "Ya";
-    var orderType = "Yo";
+  void join() {
     var matt = repository.save(Customer.builder().name("matt")
-        .badge(Badge.builder()
-            .badgeType(badgeType)
-            .build())
         .order(Order.builder()
-            .orderType(orderType)
+            .itemName("Pizza")
             .build())
         .build());
     var mary = repository.save(Customer.builder().name("mary")
-        .badge(Badge.builder()
-            .badgeType(badgeType)
-            .build())
         .order(Order.builder()
-            .orderType(orderType)
+            .itemName("Hamburger")
             .build())
         .build());
     repository.save(Customer.builder().name("bob")
-        .badge(Badge.builder()
-            .badgeType("Oh")
+        .order(Order.builder()
+            .itemName("Coke")
             .build())
         .build());
 
-    var criteria = MyCriteria.builder().hello(badgeType).orders(orderType).build();
+    var criteria = CustomerOrder.builder()
+        .item("Pizza")
+        .item("Hamburger")
+        .build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+  }
+
+  @DisplayName("多層級的 Join")
+  @Test
+  void joins() {
+    var matt = repository.save(Customer.builder().name("matt")
+        .order(Order.builder()
+            .itemName("Pizza").tag(Tag.builder()
+                .name("Food")
+                .build())
+            .build())
+        .build());
+    var mary = repository.save(Customer.builder().name("mary")
+        .order(Order.builder()
+            .itemName("Hamburger")
+            .tag(Tag.builder()
+                .name("Food")
+                .build())
+            .build())
+        .build());
+    repository.save(Customer.builder().name("bob")
+        .order(Order.builder()
+            .itemName("Coke")
+            .tag(Tag.builder()
+                .name("Beverage")
+                .build())
+            .build())
+        .build());
+
+    var criteria = CustomerOrder.builder()
+        .tag("Food")
+        .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
@@ -71,15 +109,20 @@ class JoinSpecificationResolverTest {
 
   @Builder
   @Data
-  public static class MyCriteria {
+  public static class CustomerOrder {
 
-    @Join(path = "badges", alias = "b")
-    @Spec(path = "b.badgeType")
-    String hello;
+    @Singular
+    @Join(path = "orders", alias = "o")
+    @Spec(path = "o.itemName", value = In.class)
+    Collection<String> items;
 
-    @Join
-    @Spec(path = "orders.orderType")
-    String orders;
+    @Singular
+    @Joins({
+        @Join(path = "orders", alias = "o"),
+        @Join(path = "o.tags", alias = "t")
+    })
+    @Spec(path = "t.name", value = In.class)
+    Collection<String> tags;
   }
 
 }

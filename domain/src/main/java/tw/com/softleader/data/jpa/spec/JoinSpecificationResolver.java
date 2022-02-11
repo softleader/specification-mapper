@@ -1,16 +1,15 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Arrays.stream;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
-import org.springframework.util.StringUtils;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
@@ -24,29 +23,41 @@ class JoinSpecificationResolver implements SpecificationResolver {
 
   @Override
   public boolean supports(@NonNull Databind databind) {
-    return databind.getField().isAnnotationPresent(Join.class)
-        || databind.getField().isAnnotationPresent(Joins.class);
+    return (databind.getField().isAnnotationPresent(Join.class)
+        || databind.getField().isAnnotationPresent(Joins.class));
   }
 
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    var specs = Stream.concat(
-        joinDef(context, databind.getField()),
-        joinsDef(context, databind.getField())).filter(Objects::nonNull)
-        .collect(toList());
-    if (specs.size() == 1) {
-      return specs.get(0);
+    return databind.getFieldValue()
+        .filter(this::valuePresent)
+        .map(value -> {
+          var specs = Stream.concat(
+              joinsDef(context, databind.getField()),
+              joinDef(context, databind.getField()))
+              .filter(Objects::nonNull)
+              .collect(toList());
+          if (specs.size() == 1) {
+            return specs.get(0);
+          }
+          return new Conjunction<>(specs);
+        }).orElse(null);
+  }
+
+  boolean valuePresent(Object value) {
+    if (value instanceof Iterable) {
+      return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).count() > 0;
     }
-    return new Conjunction<>(specs);
+    return true;
   }
 
   private Stream<Specification<Object>> joinsDef(Context context, Field field) {
     if (!field.isAnnotationPresent(Joins.class)) {
       return Stream.empty();
     }
-    return stream(field.getAnnotation(Joins.class).values())
-        .map(def -> newJoin(context, def, field));
+    return stream(field.getAnnotation(Joins.class).value())
+        .map(def -> newJoin(context, def));
   }
 
   private Stream<Specification<Object>> joinDef(Context context, Field field) {
@@ -54,18 +65,14 @@ class JoinSpecificationResolver implements SpecificationResolver {
       return Stream.empty();
     }
     return Stream.of(
-        newJoin(context, field.getAnnotation(Join.class), field));
+        newJoin(context, field.getAnnotation(Join.class)));
   }
 
-  Specification<Object> newJoin(@NonNull Context context, @NonNull Join def, @NonNull Field field) {
+  Specification<Object> newJoin(@NonNull Context context, @NonNull Join def) {
     return new tw.com.softleader.data.jpa.spec.domain.Join<>(
         context,
-        of(def.path())
-            .filter(StringUtils::hasText)
-            .orElseGet(field::getName),
-        of(def.alias())
-            .filter(StringUtils::hasText)
-            .orElseGet(field::getName),
+        def.path(),
+        def.alias(),
         def.joinType(),
         def.distinct());
   }

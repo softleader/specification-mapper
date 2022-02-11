@@ -50,7 +50,12 @@ customerRepository.findAll(specification);
 
 ### Skipping Strategy
 
-在 POJO 中沒有掛任何 Spec Annotation 或值為 *null* 的欄位, 在轉換的過程中都將會忽略, 如:
+在 POJO 中b任何符合以下任一條件的欄位, 在轉換的過程中都將會忽略
+
+- 沒有掛任何 Spec Annotation 
+- 若 Type 為 *Iterable* 且值為 *empty*
+- 若 Type 為 *Optional* 且值為 *empty*
+- 值為 *null*
 
 ```java
 @Data
@@ -66,22 +71,24 @@ var mapper = SpecMapper.builder().build();
 customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 ```
 
-以上最後執行的 SQL 將不會有任何過濾條件!
+以上執行的 SQL 將不會有任何過濾條件!
+
+如果你有套用 Builder Pattern, 如 (Lombok 的 *@Builder*), 請特別注意 Default Value 是否會影響 Skipping 的判斷
 
 ## Simple Specifications
 
-使用 `@Spec` 定義 `Specification` 的實作, 預設是 `Equals`: 
+你可以在 Field 使用 `@Spec` 來定義 `Specification` 的實作, 預設是 `Equals`: 
 
 ```java
-@Spec
-@Spec(Equals.class) // are same
+@Spec // 同等於 @Spec(Equals.class)
+String firstname;
 ```
 
-對應的 entity path 預設會使用 field name, 你也可以透過設定 `@Spec#path` 來改變
+對應的 entity path 預設會使用 field name, 你也可以設定 `@Spec#path` 來改變
 
 ```java
-@Spec(path = "...") // 優先使用
-String firstname; // 最後(預設)使用
+@Spec(path = "...") // 有定義則優先使用
+String firstname; // 預設使用欄位名稱
 ```
 
 ### Built-in Simple @Spec
@@ -121,7 +128,7 @@ String firstname; // 最後(預設)使用
 - *firstname (String)* - 人名, 可重複
 - *createdTime (LocalDateTime)* - 建立時間, 不可重複
 
-我希望可以找出每個人名中, 建立時間為最新的那筆資料! 且我打算透過一個 subquery 來完成這需求, 完整的範例如下:
+我希望可以找出每個人名中, 建立時間為最新的那筆資料! 且我打算撰寫一個 subquery 來完成這需求, 完整的範例如下:
 
 首先我們實作 `SimpleSpecification<T>`, 並提供規定的 Constructor:
 
@@ -164,7 +171,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-最終執行的 SQL 將會是:
+執行的 SQL 將會是:
 
 ```
 ... where customer0_.created_time=(
@@ -175,10 +182,12 @@ repository.findAll(spec);
 
 ## Combining Specs
 
-透過 `@And` 或 `@Or` 可以組合多個 Specification, 透過在 POJO 的 class 層級定義可以變更組合邏輯, 組合的預設是 `@And`, 例如我想要改成 `@Or` 則:
+你可以在 class 層級上使用 `@And` 或 `@Or` 來組合多個 Specification, 組合的預設是 `@And`.
+
+例如我想要改成 `@Or`, 程式碼範例如下:
 
 ```java
-@Or // 若沒定義預設就是 and
+@Or // 若沒定義預設就是 @And
 @Data
 public class CustomerCriteria {
 
@@ -190,7 +199,7 @@ public class CustomerCriteria {
 }
 ```
 
-這樣執行的 SQL 將會是:
+執行的 SQL 將會是:
 
 ```
 ... where c.firstname like %?% or c.lastname like %?% 
@@ -198,7 +207,9 @@ public class CustomerCriteria {
 
 ## Nested Specs
 
-透過註記 `@NestedSpec` 在 Field 上, 就可以提醒 `SpecMapper` 往下一層物件 (Nested Object) 去組合 Specification,  例如:
+你可以在 Field 上使用 `@NestedSpec` 來告知 `SpecMapper` 要往下一層物件 (Nested Object) 去組合 Specification,  這是沒有層級限制的, 可以一直往下找!
+
+例如我有一個共用的 `AddressCriteria` POJO, 我就可以將它掛載到其他的 POJO 中, 程式碼範例如下:
 
 ```java
 @Data
@@ -208,12 +219,12 @@ public class CustomerCriteria {
   String firstname;
   
   @NestedSpec
-  CustomerAddress address;
+  AddressCriteria address;
 }
 
 @Or
 @Data
-public class CustomerAddress {
+public class AddressCriteria {
 
   @Spec
   String county;
@@ -223,7 +234,7 @@ public class CustomerAddress {
 }
 ```
 
-這樣執行的 SQL 將會是:
+執行的 SQL 將會是:
 
 ```
 ... where c.firstname like %?% and ( c.county=? or c.city=? )
@@ -232,7 +243,127 @@ public class CustomerAddress {
 
 ## Join
 
+你可以在 Field 上使用 `@Join`  來下控制 entity 的條件, 這些 entity 之間需要都先定義好關係, 例如:
+
+```java
+@Entity
+class Customer {
+
+  @OneToMany(mappedBy = customer)
+  private Collection<Order> orders;
+}
+
+@Entity
+class Order {
+
+  @ManyToOne
+  private Customer customer;
+  
+  private String itemName;
+}
+```
+
+如果你想要查詢買了指定東西的客戶, 則可以定義 POJO 如下:
+
+```java
+@Data
+public class CustomerOrder {
+
+  @Join(path = "orders", alias = "o")
+  @Spec(path = "o.itemName", value = In.class)
+  Collection<String> items;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+select distinc ... from customer customer0_ 
+    inner join orders orders1_ on customer0_.id=orders1_.order_id 
+    where orders1_.item_name in (? , ?)
+```
+
+為了比較符合大部分的使用情境, 預設的 Join type 是 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@Join#joinType` 或 `@Join#distinct` 來改變, 如:
+
+```java
+@Join(joinType = JoinType.RIGHT, distinct = false)
+```
+
+### Multi Level Joins
+
+你可以使用 `@Joins` 來定義多層級的 Join, 例如:
+
+```java
+@Entity
+class Customer {
+
+  @OneToMany(mappedBy = "customer")
+  private Set<Order> orders;
+}
+
+@Entity
+class Order {
+
+  @ManyToOne
+  private Customer customer;
+    
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Set<Tag> tags;
+}
+
+@Entity
+class Tag {
+
+  private String name;
+}
+```
+
+如果你想要查詢買了指定**所屬類別**的東西的客戶, 則可以定義 POJO 如下:
+
+```java
+@Data
+class CustomerOrderTagCriteria {
+
+  @Joins({
+    @Join(path = "orders", alias = "o"),
+    @Join(path = "o.tags", alias = "t")
+  })
+  @Spec(path = "t.name", value = In.class)
+  Collection<String> tags;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+select distinct ... from customer customer0_ 
+    inner join orders orders1_ on customer0_.id=orders1_.order_id 
+    inner join orders_tags tags2_ on orders1_.id=tags2_.order_id 
+    inner join tag tag3_ on tags2_.tags_id=tag3_.id 
+    where 1=1 and (tag3_.name in (?))
+```
+
+**特別注意, Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定義 `@Joins`**
+
+例如依照上面的情境, 下列的定義順序是錯誤的:
+
+```java
+@Data
+class CustomerOrderTagCriteria {
+
+  @Joins({
+    @Join(path = "o.tags", alias = "t"), // "o" alias will be not exist during processing this @Join
+    @Join(path = "orders", alias = "o")
+  })
+  @Spec(path = "t.name", value = In.class)
+  Collection<String> tagNames;
+}
+
+```
+
 ## Join Fetch
+
+你可以在 class 層級上使用 `@JoinFetch` 
 
 ## Customize Spec Annotation
 
@@ -309,7 +440,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-最終執行的 SQL 將會是:
+執行的 SQL 將會是:
 
 ```
 ... where customer0_.created_time=(
