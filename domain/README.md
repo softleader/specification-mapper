@@ -95,8 +95,8 @@ String firstname; // 最後(預設)使用
 | `GreaterThanEqual` | *Comparable* | `@Spec(GreaterThanEqual.class) Integer age;` | `... where x.age >= ?` |
 | `After` | *Comparable* | `@Spec(After.class) LocalDate startDate;` | `... where x.startDate > ?` |
 | `Before` | *Comparable* | `@Spec(Before.class) LocalDate startDate;` | `... where x.startDate < ?` |
-| `Null` | *Boolean* | `@Spec(Null.class) Boolean age;` | `... where x.age is null` (if `true`) <br> or `... where x.age not null` (if `false`) |
-| `NotNull` | *Boolean* | `@Spec(NotNull .class) Boolean age;` | `... where x.age not null` (if `true`) <br> or `... where x.age is null` (if `false`) |
+| `Null` | *Boolean* | `@Spec(Null.class) Boolean age;` | `... where x.age is null` *(if true)* <br> `... where x.age not null` *(if false)* |
+| `NotNull` | *Boolean* | `@Spec(NotNull .class) Boolean age;` | `... where x.age not null` *(if true)* <br> `... where x.age is null` *(if false)* |
 | `Like` | *String* | `@Spec(Like.class) String firstname;` | `... where x.firstname like %?%` |
 | `NotLike` | *String* | `@Spec(NotLike.class) String firstname;` | `... where x.firstname not like %?%` |
 | `StartingWith` | *String* | `@Spec(StartingWith.class) String firstname;` | `... where x.firstname like ?%` |
@@ -104,8 +104,8 @@ String firstname; // 最後(預設)使用
 | `Not` | *Any*| `@Spec(Not.class) String firstname;` | `... where x.firstname <> ?` |
 | `In` | *Iterable of Any* | `@Spec(In.class) Set<String> firstname;` | `... where x.firstname in (?, ?, ...)` |
 | `NotIn` | *Iterable of Any* | `@Spec(NotIn.class) Set<String> firstname;` | `... where x.firstname not in (?, ?, ...)` |
-| `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` (if `true`) <br> or `... where x.active = false` (if `false`) |
-| `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` (if `true`) <br> or `... where x.active = true` (if `false`) |
+| `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
+| `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
 ### Extending Simple @Spec
 
