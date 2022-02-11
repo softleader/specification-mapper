@@ -34,8 +34,8 @@ class JoinSpecificationResolver implements SpecificationResolver {
         .filter(this::valuePresent)
         .map(value -> {
           var specs = Stream.concat(
-              joinsDef(context, databind.getField()),
-              joinDef(context, databind.getField()))
+              joinDef(context, databind.getField()),
+              joinsDef(context, databind.getField()))
               .filter(Objects::nonNull)
               .collect(toList());
           if (specs.size() == 1) {

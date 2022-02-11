@@ -1,7 +1,6 @@
 package tw.com.softleader.data.jpa.spec.usecase;
 
-import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.CascadeType.REMOVE;
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
@@ -54,12 +53,12 @@ public class Customer {
   Boolean goldObj;
 
   @Singular
-  @OneToMany(fetch = LAZY, cascade = { PERSIST, REMOVE })
+  @OneToMany(fetch = LAZY, cascade = ALL)
   @JoinColumn(name = "customer_id")
   Set<Badge> badges;
 
   @Singular
-  @OneToMany(fetch = LAZY, cascade = { PERSIST, REMOVE })
+  @OneToMany(fetch = LAZY, cascade = ALL)
   @JoinColumn(name = "order_id")
   Set<Order> orders;
 }

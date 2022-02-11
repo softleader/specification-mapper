@@ -50,7 +50,7 @@ customerRepository.findAll(specification);
 
 ### Skipping Strategy
 
-在 POJO 中b任何符合以下任一條件的欄位, 在轉換的過程中都將會忽略
+在 POJO 中的欄位, 只要符合以下任一條件, 在轉換的過程中都將會忽略
 
 - 沒有掛任何 Spec Annotation 
 - 若 Type 為 *Iterable* 且值為 *empty*
@@ -73,7 +73,7 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 以上執行的 SQL 將不會有任何過濾條件!
 
-如果你有套用 Builder Pattern, 如 (Lombok 的 *@Builder*), 請特別注意 Default Value 是否會影響 Skipping 的判斷
+> 如果你有使用 Builder Pattern, (e.g. Lombok's *@Builder*), 請特別注意 Default Value 是否會影響 Skipping 的判斷
 
 ## Simple Specifications
 
@@ -249,16 +249,14 @@ public class AddressCriteria {
 @Entity
 class Customer {
 
-  @OneToMany(mappedBy = customer)
+  @OneToMany(cascade = ALL, fetch = LAZY)
+  @JoinColumn(name = "order_id")
   private Collection<Order> orders;
 }
 
 @Entity
 class Order {
 
-  @ManyToOne
-  private Customer customer;
-  
   private String itemName;
 }
 ```
@@ -279,8 +277,8 @@ public class CustomerOrder {
 
 ```
 select distinc ... from customer customer0_ 
-    inner join orders orders1_ on customer0_.id=orders1_.order_id 
-    where orders1_.item_name in (? , ?)
+inner join orders orders1_ on customer0_.id=orders1_.order_id 
+where orders1_.item_name in (? , ?)
 ```
 
 為了比較符合大部分的使用情境, 預設的 Join type 是 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@Join#joinType` 或 `@Join#distinct` 來改變, 如:
@@ -297,17 +295,15 @@ select distinc ... from customer customer0_
 @Entity
 class Customer {
 
-  @OneToMany(mappedBy = "customer")
+  @OneToMany(cascade = ALL, fetch = LAZY)
+  @JoinColumn(name = "order_id")
   private Set<Order> orders;
 }
 
 @Entity
 class Order {
-
-  @ManyToOne
-  private Customer customer;
     
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @ManyToMany(cascade = ALL, fetch = LAZY)
   private Set<Tag> tags;
 }
 
@@ -337,10 +333,10 @@ class CustomerOrderTagCriteria {
 
 ```
 select distinct ... from customer customer0_ 
-    inner join orders orders1_ on customer0_.id=orders1_.order_id 
-    inner join orders_tags tags2_ on orders1_.id=tags2_.order_id 
-    inner join tag tag3_ on tags2_.tags_id=tag3_.id 
-    where 1=1 and (tag3_.name in (?))
+inner join orders orders1_ on customer0_.id=orders1_.order_id 
+inner join orders_tags tags2_ on orders1_.id=tags2_.order_id 
+inner join tag tag3_ on tags2_.tags_id=tag3_.id 
+where 1=1 and (tag3_.name in (?))
 ```
 
 **特別注意, Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定義 `@Joins`**
@@ -363,7 +359,110 @@ class CustomerOrderTagCriteria {
 
 ## Join Fetch
 
-你可以在 class 層級上使用 `@JoinFetch` 
+你可以在 class 層級上使用 `@JoinFetch` 可以一次撈出所有 Lazy 的關聯資料, 例如:
+
+```java
+@Entity
+class Customer {
+
+  @OneToMany(fetch = LAZY, cascade = ALL)
+  @JoinColumn(name = "order_id")
+  private Collection<Order> orders;
+}
+
+@Entity
+class Order {
+  
+  private String itemName;
+}
+```
+
+如果你想在取得 Customer 時就順便 Join 出 Order, 則:
+
+```java
+@JoinFetch(paths = "orders")
+@Data
+class CustomerOrderCriteria {
+
+  @Spec
+  String name;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+select distinct 
+	customer0_.* ...,
+	orders1_.* ...
+from customer customer0_ 
+left outer join orders orders1_ on customer0_.id=orders1_.order_id 
+where customer0_.name=?
+```
+
+為了比較符合大部分的使用情境, 預設的 Join type 是 `LEFT`, 也會將結果排除重複 (*distinct*), 你可以設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 來改變, 如:
+
+```java
+@FetchJoin(joinType = JoinType.RIGHT, distinct = false)
+```
+
+### Multi Level Fetch Joins
+
+你可以使用 `@FetchJoins` 來定義多層級的 Fetch Join, 例如:
+
+```java
+@Entity
+class Customer {
+
+  @OneToMany(cascade = ALL, fetch = LAZY)
+  @JoinColumn(name = "order_id")
+  private Set<Order> orders;
+}
+
+@Entity
+class Order {
+    
+  @ManyToMany(cascade = ALL, fetch = LAZY)
+  private Set<Tag> tags;
+}
+
+@Entity
+class Tag {
+
+  private String name;
+}
+```
+
+如果你想在取得 Customer 時就順便 Join 出 Order 及 Tag, 則:
+
+
+```java
+@JoinFetches({
+  @JoinFetch(paths = "orders"),
+  @JoinFetch(paths = "orders.tags")
+})
+@Data
+class CustomerOrderTagCriteria {
+
+  @Spec
+  String name;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+select distinct 
+	customer0_.* ...,
+	orders1_.* ...,
+	tags3_.* ...
+from customer customer0_ 
+left outer join orders orders1_ on customer0_.id=orders1_.order_id 
+inner join orders orders2_ on customer0_.id=orders2_.order_id 
+left outer join orders_tags tags3_ on orders2_.id=tags3_.order_id 
+left outer join tag tag4_ on tags3_.tags_id=tag4_.id 
+where 1=1 and customer0_.name=?
+```
 
 ## Customize Spec Annotation
 

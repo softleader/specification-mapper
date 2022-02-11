@@ -1,25 +1,22 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
+import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.usecase.Badge;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.usecase.Order;
+import tw.com.softleader.data.jpa.spec.usecase.Tag;
 
 @Transactional
 @IntegrationTest
@@ -40,98 +37,83 @@ class JoinFetchSpecificationResolverTest {
         .build();
   }
 
+  @DisplayName("單一層級的 Join Fetch")
   @Test
-  void fetchesLazyCollection() {
+  void joinFetch() {
     var matt = repository.save(Customer.builder().name("matt")
-        .badge(Badge.builder()
-            .badgeType("Ya")
+        .order(Order.builder()
+            .itemName("Pizza")
             .build())
         .build());
     repository.save(Customer.builder().name("mary")
-        .badge(Badge.builder()
-            .badgeType("Ya")
+        .order(Order.builder()
+            .itemName("Hamburger")
             .build())
         .build());
     repository.save(Customer.builder().name("bob")
-        .badge(Badge.builder()
-            .badgeType("Oh")
+        .order(Order.builder()
+            .itemName("Coke")
             .build())
         .build());
 
-    var criteria = MyCriteriaWithTwoFetches.builder().hello(matt.getName()).build();
-
-    var spec = mapper.toSpec(criteria, Customer.class);
+    var spec = mapper.toSpec(new CustomerOrder(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
-
-    for (Customer customer : actual) {
-      assertTrue(Hibernate.isInitialized(customer.getBadges()));
-    }
-
-    var inOrder = inOrder(
-        joinFetchResolver,
-        simpleResolver);
-    inOrder.verify(joinFetchResolver, times(1))
-        .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("多層級的 Join Fetch")
   @Test
-  public void performsTwoFetchesUsingSingleLeftJoinFetchDefinition() {
+  void joinFetches() {
     var matt = repository.save(Customer.builder().name("matt")
-        .badge(Badge.builder()
-            .badgeType("Ya")
+        .order(Order.builder()
+            .itemName("Pizza").tag(Tag.builder()
+                .name("Food")
+                .build())
             .build())
         .build());
     repository.save(Customer.builder().name("mary")
-        .badge(Badge.builder()
-            .badgeType("Ya")
+        .order(Order.builder()
+            .itemName("Hamburger")
+            .tag(Tag.builder()
+                .name("Food")
+                .build())
             .build())
         .build());
     repository.save(Customer.builder().name("bob")
-        .badge(Badge.builder()
-            .badgeType("Oh")
+        .order(Order.builder()
+            .itemName("Coke")
+            .tag(Tag.builder()
+                .name("Beverage")
+                .build())
             .build())
         .build());
 
-    var criteria = MyCriteriaWithTwoFetches.builder().hello(matt.getName()).build();
-
-    var spec = mapper.toSpec(criteria, Customer.class);
+    var spec = mapper.toSpec(new CustomerOrderTag(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
-
-    for (Customer customer : actual) {
-      assertTrue(Hibernate.isInitialized(customer.getBadges()));
-      assertTrue(Hibernate.isInitialized(customer.getOrders()));
-    }
-
-    var inOrder = inOrder(
-        joinFetchResolver,
-        simpleResolver);
-    inOrder.verify(joinFetchResolver, times(1))
-        .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
-        .buildSpecification(any(Context.class), any(Databind.class));
   }
 
-  @Builder
+  @JoinFetch(paths = "orders")
+  @AllArgsConstructor
   @Data
-  @JoinFetch(paths = "badges")
-  public static class MyCriteria {
+  public static class CustomerOrder {
 
-    @Spec(path = "name")
-    String hello;
+    @Spec
+    String name;
   }
 
-  @Builder
+  @JoinFetches({
+      @JoinFetch(paths = "orders"),
+      @JoinFetch(paths = "orders.tags")
+  })
   @Data
-  @JoinFetch(paths = { "badges", "orders" })
-  public static class MyCriteriaWithTwoFetches {
+  @AllArgsConstructor
+  public static class CustomerOrderTag {
 
-    @Spec(path = "name")
-    String hello;
+    @Spec
+    String name;
   }
+
 }
