@@ -31,8 +31,10 @@ class GreaterThanEqualTest {
 
   @Test
   void typeMismatch() {
+    var context = noopContext();
+    var value = new Object();
     assertThatExceptionOfType(TypeMismatchException.class)
-        .isThrownBy(() -> new GreaterThanEqual<Customer>(noopContext(), "name", new Object()))
+        .isThrownBy(() -> new GreaterThanEqual<Customer>(context, "name", value))
         .withMessage(
             "Failed to convert value of type 'java.lang.Object' to required type 'java.lang.Comparable'");
   }

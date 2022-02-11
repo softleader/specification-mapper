@@ -42,8 +42,9 @@ class TrueTest {
 
   @Test
   void typeMismatch() {
+    var context = noopContext();
     assertThatExceptionOfType(TypeMismatchException.class)
-        .isThrownBy(() -> new True<Customer>(noopContext(), "name", "true"))
+        .isThrownBy(() -> new True<Customer>(context, "name", "true"))
         .withMessage(
             "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Boolean'");
   }

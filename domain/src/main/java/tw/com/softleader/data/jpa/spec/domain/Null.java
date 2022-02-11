@@ -22,8 +22,8 @@ public class Null<T> extends BooleanSpecification<T> {
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
     if (getValue()) {
-      return builder.isNull(path(root));
+      return builder.isNull(getPath(root));
     }
-    return builder.isNotNull(path(root));
+    return builder.isNotNull(getPath(root));
   }
 }

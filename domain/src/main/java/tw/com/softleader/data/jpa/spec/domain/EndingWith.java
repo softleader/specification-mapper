@@ -18,6 +18,6 @@ public class EndingWith<T> extends SimpleSpecification<T> {
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.like(path(root), Objects.toString(value));
+    return builder.like(getPath(root), Objects.toString(value));
   }
 }

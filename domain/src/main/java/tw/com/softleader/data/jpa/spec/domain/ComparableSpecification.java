@@ -9,7 +9,7 @@ import lombok.NonNull;
  */
 abstract class ComparableSpecification<T> extends SimpleSpecification<T> {
 
-  public ComparableSpecification(@NonNull Context context, @NonNull String path,
+  protected ComparableSpecification(@NonNull Context context, @NonNull String path,
       @NonNull Object value) {
     super(context, path, value);
     if (!(value instanceof Comparable)) {
@@ -17,7 +17,8 @@ abstract class ComparableSpecification<T> extends SimpleSpecification<T> {
     }
   }
 
+  @SuppressWarnings({ "rawtypes" })
   protected Comparable getValue() {
-    return ((Comparable) value);
+    return (Comparable) value;
   }
 }

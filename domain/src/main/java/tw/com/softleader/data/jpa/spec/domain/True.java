@@ -22,8 +22,8 @@ public class True<T> extends BooleanSpecification<T> {
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
     if (getValue()) {
-      return builder.isTrue(path(root));
+      return builder.isTrue(getPath(root));
     }
-    return builder.isFalse(path(root));
+    return builder.isFalse(getPath(root));
   }
 }

@@ -29,8 +29,8 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
     var specs = Stream.concat(
-        joinFetchDef(context, databind.getTarget()),
-        joinFetchesDef(context, databind.getTarget())).filter(Objects::nonNull)
+        joinFetchDef(databind.getTarget()),
+        joinFetchesDef(databind.getTarget())).filter(Objects::nonNull)
         .collect(toList());
     if (specs.size() == 1) {
       return specs.get(0);
@@ -38,25 +38,23 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
     return new Conjunction<>(specs);
   }
 
-  private Stream<Specification<Object>> joinFetchesDef(Context context, Object obj) {
+  private Stream<Specification<Object>> joinFetchesDef(Object obj) {
     if (!obj.getClass().isAnnotationPresent(JoinFetches.class)) {
       return Stream.empty();
     }
     return stream(obj.getClass().getAnnotation(JoinFetches.class).value())
-        .map(def -> newJoinFetch(context, def));
+        .map(this::newJoinFetch);
   }
 
-  private Stream<Specification<Object>> joinFetchDef(Context context, Object obj) {
+  private Stream<Specification<Object>> joinFetchDef(Object obj) {
     if (!obj.getClass().isAnnotationPresent(JoinFetch.class)) {
       return Stream.empty();
     }
-    return Stream.of(
-        newJoinFetch(context, obj.getClass().getAnnotation(JoinFetch.class)));
+    return Stream.of(newJoinFetch(obj.getClass().getAnnotation(JoinFetch.class)));
   }
 
-  Specification<Object> newJoinFetch(@NonNull Context context, @NonNull JoinFetch def) {
+  Specification<Object> newJoinFetch(@NonNull JoinFetch def) {
     return new tw.com.softleader.data.jpa.spec.domain.JoinFetch<>(
-        context,
         def.paths(),
         def.joinType(),
         def.distinct());

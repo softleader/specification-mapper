@@ -9,7 +9,7 @@ import lombok.NonNull;
  */
 abstract class BooleanSpecification<T> extends SimpleSpecification<T> {
 
-  public BooleanSpecification(@NonNull Context context, @NonNull String path,
+  protected BooleanSpecification(@NonNull Context context, @NonNull String path,
       @NonNull Object value) {
     super(context, path, value);
     if (!(value instanceof Boolean)) {

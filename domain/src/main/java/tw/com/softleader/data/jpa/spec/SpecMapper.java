@@ -1,5 +1,6 @@
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static lombok.AccessLevel.PACKAGE;
@@ -43,9 +44,12 @@ public class SpecMapper implements SpecCodec {
     if (specs.isEmpty()) {
       return null;
     }
-    return rootObject.getClass().isAnnotationPresent(Or.class)
-        ? new Disjunction<>(specs)
-        : new Conjunction<>(specs);
+    return ofNullable(rootObject)
+        .map(Object::getClass)
+        .filter(clazz -> clazz.isAnnotationPresent(Or.class))
+        .isPresent()
+            ? new Disjunction<>(specs)
+            : new Conjunction<>(specs);
   }
 
   Stream<Specification<Object>> resolveSpec(@NonNull Context context, @NonNull Databind databind) {

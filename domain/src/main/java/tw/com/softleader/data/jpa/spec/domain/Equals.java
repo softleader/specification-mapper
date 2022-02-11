@@ -23,6 +23,6 @@ public class Equals<T> extends SimpleSpecification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    return builder.equal(path(root), value);
+    return builder.equal(getPath(root), value);
   }
 }

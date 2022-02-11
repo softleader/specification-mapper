@@ -19,6 +19,6 @@ public class LessThan<T> extends ComparableSpecification<T> {
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.lessThan(path(root), getValue());
+    return builder.lessThan(getPath(root), getValue());
   }
 }

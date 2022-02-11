@@ -19,6 +19,6 @@ public class GreaterThan<T> extends ComparableSpecification<T> {
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.greaterThan(path(root), getValue());
+    return builder.greaterThan(getPath(root), getValue());
   }
 }

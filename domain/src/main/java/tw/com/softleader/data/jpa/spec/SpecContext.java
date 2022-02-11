@@ -11,8 +11,8 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 
 class SpecContext implements Context {
 
-  private Map<Pair<String, Root>, javax.persistence.criteria.Join<?, ?>> joins = new HashMap<>();
-  private Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = new HashMap<>();
+  private final Map<Pair<String, Root<?>>, javax.persistence.criteria.Join<?, ?>> joins = new HashMap<>();
+  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = new HashMap<>();
 
   @Override
   @Synchronized
@@ -21,10 +21,8 @@ class SpecContext implements Context {
     if (lazyJoin == null) {
       return null;
     }
-    Pair<String, Root> rootKey = Pair.of(key, root);
-    if (!joins.containsKey(rootKey)) {
-      joins.put(rootKey, lazyJoin.apply(root));
-    }
+    Pair<String, Root<?>> rootKey = Pair.of(key, root);
+    joins.computeIfAbsent(rootKey, k -> lazyJoin.apply(root));
     return joins.get(rootKey);
   }
 

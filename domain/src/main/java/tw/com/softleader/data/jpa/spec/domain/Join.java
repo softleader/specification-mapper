@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class Join<T> implements Specification<T> {
 
   @NonNull
-  private final Context context;
+  private final transient Context context;
   @NonNull
   private final String pathToJoinOn;
   @NonNull

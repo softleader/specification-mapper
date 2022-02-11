@@ -32,6 +32,6 @@ public class Between<T> extends SimpleSpecification<T> {
     var args = stream(((Iterable<?>) value).spliterator(), false)
         .map(arg -> (Comparable<?>) arg)
         .toArray(Comparable[]::new);
-    return builder.between(path(root), args[0], args[1]);
+    return builder.between(getPath(root), args[0], args[1]);
   }
 }

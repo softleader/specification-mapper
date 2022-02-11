@@ -20,6 +20,6 @@ public class NotLike<T> extends SimpleSpecification<T> {
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.notLike(path(root), Objects.toString(value));
+    return builder.notLike(getPath(root), Objects.toString(value));
   }
 }

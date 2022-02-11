@@ -61,6 +61,7 @@ public class SpecMapperAutoConfiguration {
     }
 
     @SneakyThrows
+    @SuppressWarnings({ "rawtypes" })
     private Optional<QueryBySpecExecutorImpl> getQueryBySpecExecutorImpl(ProxyFactory factory) {
       return ofNullable(factory.getTargetSource().getTarget())
           .filter(QueryBySpecExecutorImpl.class::isInstance)

@@ -11,7 +11,8 @@ import javax.persistence.criteria.Root;
  */
 public interface Context {
 
-  Join<?, ?> getJoin(String key, Root<?> root);
+  @SuppressWarnings({ "rawtypes" })
+  Join getJoin(String key, Root<?> root);
 
   void putLazyJoin(String key, Function<Root<?>, Join<?, ?>> function);
 }

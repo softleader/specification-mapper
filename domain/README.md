@@ -143,7 +143,7 @@ String firstname; // 預設使用欄位名稱
 ```java
 public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
 
-  // 這是規定必須提供的建構值
+  // 這是規定必須提供的建構值, 且必須是 public
   public MaxCustomerCreatedTime(Context context, String path, Object value) {
     super(context, path, value);
   }

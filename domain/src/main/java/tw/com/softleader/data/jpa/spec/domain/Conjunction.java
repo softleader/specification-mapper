@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 @ToString
 public class Conjunction<T> implements Specification<T> {
 
-  final Collection<Specification<T>> innerSpecs;
+  private final Collection<Specification<T>> innerSpecs;
 
   public Conjunction(@NonNull Collection<Specification<T>> innerSpecs) {
     this.innerSpecs = innerSpecs;

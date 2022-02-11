@@ -31,8 +31,10 @@ class LessThanEqualTest {
 
   @Test
   void typeMismatch() {
+    var context = noopContext();
+    var value = new Object();
     assertThatExceptionOfType(TypeMismatchException.class)
-        .isThrownBy(() -> new LessThanEqual<Customer>(noopContext(), "name", new Object()))
+        .isThrownBy(() -> new LessThanEqual<Customer>(context, "name", value))
         .withMessage(
             "Failed to convert value of type 'java.lang.Object' to required type 'java.lang.Comparable'");
   }

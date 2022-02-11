@@ -22,7 +22,8 @@ class LikeTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var spec = new Like<Customer>(noopContext(), "name", "at");
+    var context = noopContext();
+    var spec = new Like<Customer>(context, "name", "at");
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }

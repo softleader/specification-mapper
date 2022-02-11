@@ -23,6 +23,6 @@ public class Not<T> extends SimpleSpecification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    return builder.notEqual(path(root), value);
+    return builder.notEqual(getPath(root), value);
   }
 }

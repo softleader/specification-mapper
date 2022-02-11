@@ -14,17 +14,14 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public class JoinFetch<T> implements Specification<T> {
 
-  private final Context context;
-
   private final List<String> pathsToFetch;
   private final JoinType joinType;
   private final boolean distinct;
 
-  public JoinFetch(@NonNull Context context,
+  public JoinFetch(
       @NonNull String[] pathsToFetch,
       @NonNull JoinType joinType,
       boolean distinct) {
-    this.context = context;
     this.pathsToFetch = List.of(pathsToFetch);
     this.joinType = joinType;
     this.distinct = distinct;

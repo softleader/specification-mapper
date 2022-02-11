@@ -22,7 +22,8 @@ class NotLikeTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var spec = new NotLike<Customer>(noopContext(), "name", "o");
+    var context = noopContext();
+    var spec = new NotLike<Customer>(context, "name", "o");
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }

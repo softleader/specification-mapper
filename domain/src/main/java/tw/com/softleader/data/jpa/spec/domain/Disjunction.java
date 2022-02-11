@@ -1,5 +1,7 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Collection;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,7 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 @ToString
 public class Disjunction<T> implements Specification<T> {
 
-  final Collection<Specification<T>> innerSpecs;
+  private final Collection<Specification<T>> innerSpecs;
 
   public Disjunction(@NonNull Collection<Specification<T>> innerSpecs) {
     this.innerSpecs = innerSpecs;
@@ -33,6 +35,8 @@ public class Disjunction<T> implements Specification<T> {
       }
       combinedSpecs = combinedSpecs.or(spec);
     }
-    return combinedSpecs.toPredicate(root, query, builder);
+    return ofNullable(combinedSpecs)
+        .map(spec -> spec.toPredicate(root, query, builder))
+        .orElse(null);
   }
 }
