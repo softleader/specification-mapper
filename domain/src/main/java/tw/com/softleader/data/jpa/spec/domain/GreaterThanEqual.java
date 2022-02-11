@@ -11,18 +11,15 @@ import lombok.NonNull;
  *
  * @author Matt Ho
  */
-public class GreaterThanEqual<T> extends SimpleSpecification<T> {
+public class GreaterThanEqual<T> extends ComparableSpecification<T> {
 
   public GreaterThanEqual(@NonNull Context context, @NonNull String path,
       @NonNull Object value) {
     super(context, path, value);
-    if (!(value instanceof Comparable)) {
-      throw new TypeMismatchException(value, Comparable.class);
-    }
   }
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.greaterThanOrEqualTo(path(root), (Comparable) value);
+    return builder.greaterThanOrEqualTo(path(root), getValue());
   }
 }

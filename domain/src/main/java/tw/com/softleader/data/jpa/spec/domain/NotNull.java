@@ -7,18 +7,20 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.age > ?}
+ * {@code ... where x.age not null}
  *
  * @author Matt Ho
  */
-public class GreaterThan<T> extends ComparableSpecification<T> {
+public class NotNull<T> extends Null<T> {
 
-  public GreaterThan(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+  public NotNull(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return builder.greaterThan(path(root), getValue());
+  public Predicate toPredicate(Root<T> root,
+      CriteriaQuery<?> query,
+      CriteriaBuilder builder) {
+    return super.toPredicate(root, query, builder).not();
   }
 }

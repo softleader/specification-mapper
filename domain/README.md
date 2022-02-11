@@ -85,21 +85,27 @@ String firstname; // 最後(預設)使用
 ```
 `@Spec` 中可定義的 class 清單如下:
 
-| Sample | Supported field type | JPQL snippet |
-|---|---|---|
-| `@Spec(Equals.class) String firstname;` | *Any* | `... where x.firstname = ?` |
-| `@Spec(Not.class) String firstname;` | *Any* | `... where x.firstname <> ?` |
-| `@Spec(Like.class) String firstname;` | *String* | `... where x.firstname like %?%` |
-| `@Spec(StartingWith.class) String firstname;` | *String* | `... where x.firstname like ?%` |
-| `@Spec(EndingWith.class) String firstname;` | *String* | `... where x.firstname like %?` |
-| `@Spec(NotLike.class) String firstname;` | *String* | `... where x.firstname not like %?%` |
-| `@Spec(In.class) Set<String> firstname;` | *Iterable of Any* | `... where x.firstname in (?, ?, ...)` |
-| `@Spec(NotIn.class) Set<String> firstname;` | *Iterable of Any* | `... where x.firstname not in (?, ?, ...)` |
-| `@Spec(Between.class) List<Integer> age;` | *Iterable of Comparable* <br> (Expected exact **2 elements** in *Iterable*)| `... where x.age between ? and ?` |
-| `@Spec(GreaterThan.class) Integer age;` | *Comparable* | `... where x.age > ?` |
-| `@Spec(GreaterThanEqual.class) Integer age;` | *Comparable* | `... where x.age >= ?` |
-| `@Spec(LessThan.class) Integer age;` | *Comparable* | `... where x.age < ?` |
-| `@Spec(LessThanEqual.class) Integer age;` | *Comparable* | `... where x.age <= ?` |
+| Spec | Supported field type | Sample | JPQL snippet |
+|---|---|---|---|
+| `Equals` | *Any*  | `@Spec(Equals.class) String firstname;` | `... where x.firstname = ?` |
+| `Between` | *Iterable of Comparable* <br> (Expected exact **2 elements** in *Iterable*) | `@Spec(Between.class) List<Integer> age;` | `... where x.age between ? and ?` |
+| `LessThan` | *Comparable* | `@Spec(LessThan.class) Integer age;` | `... where x.age < ?` |
+| `LessThanEqual` | *Comparable* | `@Spec(LessThanEqual.class) Integer age;` | `... where x.age <= ?` |
+| `GreaterThan` | *Comparable* | `@Spec(GreaterThan.class) Integer age;` | `... where x.age > ?` |
+| `GreaterThanEqual` | *Comparable* | `@Spec(GreaterThanEqual.class) Integer age;` | `... where x.age >= ?` |
+| `After` | *Comparable* | `@Spec(After.class) LocalDate startDate;` | `... where x.startDate > ?` |
+| `Before` | *Comparable* | `@Spec(Before.class) LocalDate startDate;` | `... where x.startDate < ?` |
+| `Null` | *Boolean* | `@Spec(Null.class) Boolean age;` | `... where x.age is null` (if `true`) <br> or `... where x.age not null` (if `false`) |
+| `NotNull` | *Boolean* | `@Spec(NotNull .class) Boolean age;` | `... where x.age not null` (if `true`) <br> or `... where x.age is null` (if `false`) |
+| `Like` | *String* | `@Spec(Like.class) String firstname;` | `... where x.firstname like %?%` |
+| `NotLike` | *String* | `@Spec(NotLike.class) String firstname;` | `... where x.firstname not like %?%` |
+| `StartingWith` | *String* | `@Spec(StartingWith.class) String firstname;` | `... where x.firstname like ?%` |
+| `EndingWith` | *String*| `@Spec(EndingWith.class) String firstname;` | `... where x.firstname like %?` |
+| `Not` | *Any*| `@Spec(Not.class) String firstname;` | `... where x.firstname <> ?` |
+| `In` | *Iterable of Any* | `@Spec(In.class) Set<String> firstname;` | `... where x.firstname in (?, ?, ...)` |
+| `NotIn` | *Iterable of Any* | `@Spec(NotIn.class) Set<String> firstname;` | `... where x.firstname not in (?, ?, ...)` |
+| `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` (if `true`) <br> or `... where x.active = false` (if `false`) |
+| `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` (if `true`) <br> or `... where x.active = true` (if `false`) |
 
 ### Extending Simple @Spec
 

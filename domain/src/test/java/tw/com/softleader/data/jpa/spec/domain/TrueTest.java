@@ -1,0 +1,41 @@
+package tw.com.softleader.data.jpa.spec.domain;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import tw.com.softleader.data.jpa.spec.IntegrationTest;
+import tw.com.softleader.data.jpa.spec.usecase.Customer;
+import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+
+@Transactional
+@IntegrationTest
+class TrueTest {
+
+  @Autowired
+  CustomerRepository repository;
+
+  @Test
+  void isTrue() {
+    var matt = repository.save(Customer.builder().name("matt").goldObj(true).build());
+    repository.save(Customer.builder().name("bob").goldObj(false).build());
+    repository.save(Customer.builder().name("mary").build());
+
+    var spec = new True<Customer>(noopContext(), "goldObj", true);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(matt);
+  }
+
+  @Test
+  void isFalse() {
+    var matt = repository.save(Customer.builder().name("matt").goldObj(false).build());
+    repository.save(Customer.builder().name("bob").goldObj(true).build());
+    repository.save(Customer.builder().name("mary").build());
+
+    var spec = new True<Customer>(noopContext(), "goldObj", false);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(matt);
+  }
+}
