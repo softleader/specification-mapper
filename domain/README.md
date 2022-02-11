@@ -273,7 +273,7 @@ class Order {
 
 ```java
 @Data
-public class CustomerOrder {
+public class CustomerOrderCriteria {
 
   @Join(path = "orders", alias = "o")
   @Spec(path = "o.itemName", value = In.class)
@@ -322,7 +322,7 @@ class Tag {
 }
 ```
 
-如果你想要查詢買了指定**所屬類別**的東西的客戶, 則可以定義 POJO 如下:
+如果你想要查詢買了指定所屬類別的東西的客戶, 則可以定義 POJO 如下:
 
 ```java
 @Data
