@@ -50,12 +50,14 @@ customerRepository.findAll(specification);
 
 ### Skipping Strategy
 
-在 POJO 中的欄位, 只要符合以下任一條件, 在轉換的過程中都將會忽略
+在 POJO 中的欄位, 只要符合以下任一條件, 在轉換的過程中都將會忽略:
 
 - 沒有掛任何 Spec Annotation 
 - 若 Type 為 *Iterable* 且值為 *empty*
 - 若 Type 為 *Optional* 且值為 *empty*
 - 值為 *null*
+
+例如, 將以下 POJO 建構後, 不 set 任何值就直接轉換成 `Specification` 及查詢
 
 ```java
 @Data
@@ -64,7 +66,7 @@ public class CustomerCriteria {
   @Spec(Like.class)
   String firstname;
   
-  String lastname;
+  String lastname = "Hi";
   
   @Spec(GreaterThat.class)
   Optional<Integer> age = Optional.empty();
@@ -79,7 +81,7 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 
 以上執行的 SQL 將不會有任何過濾條件!
 
-> 如果你有使用 Builder Pattern, (e.g. Lombok's *@Builder*), 請特別注意 Default Value 是否會影響 Skipping 的判斷
+> 如果你有使用 Builder Pattern, (e.g. Lombok's *@Builder*), 請特別注意 Builder 的 Default Value!
 
 ## Simple Specifications
 
