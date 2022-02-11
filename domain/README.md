@@ -83,7 +83,10 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 @Spec(path = "...") // 優先使用
 String firstname; // 最後(預設)使用
 ```
-`@Spec` 中可定義的 class 清單如下:
+
+### Built-in Simple @Spec
+
+以下是內建的 `@Spec` 的類型清單:
 
 | Spec | Supported field type | Sample | JPQL snippet |
 |---|---|---|---|
