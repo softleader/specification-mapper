@@ -110,6 +110,8 @@ String firstname; // 最後(預設)使用
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
+> 以上名稱都是儘量跟著 [Spring Data JPA - Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣的, 方便已經熟悉的人來使用
+
 ### Extending Simple @Spec
 
 *@Spec* 是可以很容易擴充的, 只要實作了 `SimpleSpecification<T>` 並提供規定的 Constructor, 這些 class 就可以被定義在 *@Spec* 中
