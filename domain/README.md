@@ -243,7 +243,7 @@ public class AddressCriteria {
 
 ## Join
 
-你可以在 Field 上使用 `@Join`  來下控制 entity 的條件, 這些 entity 之間需要都先定義好關係, 例如:
+你可以在 Field 上使用 `@Join`  來過濾關聯 entity, 這些 entity 之間需要都先定義好關係, 例如:
 
 ```java
 @Entity
