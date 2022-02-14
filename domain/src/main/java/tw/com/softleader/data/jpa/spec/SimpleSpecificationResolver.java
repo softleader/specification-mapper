@@ -1,6 +1,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
+import static org.springframework.data.jpa.domain.Specification.not;
 import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
 import java.util.stream.StreamSupport;
@@ -39,7 +40,11 @@ class SimpleSpecificationResolver implements SpecificationResolver {
           var path = of(def.path())
               .filter(StringUtils::hasText)
               .orElseGet(databind.getField()::getName);
-          return newSimpleSpecification(context, def.value(), path, value);
+          var spec = newSimpleSpecification(context, def.value(), path, value);
+          if (def.not()) {
+            return not(spec);
+          }
+          return spec;
         }).orElseGet(() -> {
           log.debug("Value of [{}.{}] is null or empty, skipping it",
               databind.getTarget().getClass().getSimpleName(),

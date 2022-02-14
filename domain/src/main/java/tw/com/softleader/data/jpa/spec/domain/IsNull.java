@@ -5,17 +5,15 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
-import lombok.ToString;
 
 /**
- * {@code ... where x.firstname <> ?}
+ * {@code ... where x.age is null}
  *
  * @author Matt Ho
  */
-@ToString
-public class Not<T> extends SimpleSpecification<T> {
+public class IsNull<T> extends BooleanSpecification<T> {
 
-  public Not(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+  public IsNull(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 
@@ -23,6 +21,9 @@ public class Not<T> extends SimpleSpecification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    return builder.notEqual(getPath(root), value);
+    if (getValue()) {
+      return builder.isNull(getPath(root));
+    }
+    return builder.isNotNull(getPath(root));
   }
 }

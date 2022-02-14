@@ -11,7 +11,7 @@ import lombok.NonNull;
  *
  * @author Matt Ho
  */
-public class NotNull<T> extends Null<T> {
+public class NotNull<T> extends IsNull<T> {
 
   public NotNull(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);

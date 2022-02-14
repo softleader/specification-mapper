@@ -14,7 +14,7 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @Transactional
 @IntegrationTest
-class NullTest {
+class IsNullTest {
 
   @Autowired
   CustomerRepository repository;
@@ -24,7 +24,7 @@ class NullTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").birthday(LocalDate.now()).build());
 
-    var spec = new Null<Customer>(noopContext(), "birthday", true);
+    var spec = new IsNull<Customer>(noopContext(), "birthday", true);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
@@ -34,7 +34,7 @@ class NullTest {
     var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("bob").build());
 
-    var spec = new Null<Customer>(noopContext(), "birthday", false);
+    var spec = new IsNull<Customer>(noopContext(), "birthday", false);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
@@ -43,7 +43,7 @@ class NullTest {
   void typeMismatch() {
     var context = noopContext();
     assertThatExceptionOfType(TypeMismatchException.class)
-        .isThrownBy(() -> new Null<Customer>(context, "name", "true"))
+        .isThrownBy(() -> new IsNull<Customer>(context, "name", "true"))
         .withMessage(
             "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Boolean'");
   }

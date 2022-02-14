@@ -106,6 +106,7 @@ String firstname; // 預設使用欄位名稱
 | Spec | Supported field type | Sample | JPQL snippet |
 |---|---|---|---|
 | `Equals` | *Any*  | `@Spec(Equals.class) String firstname;` | `... where x.firstname = ?` |
+| `NotEquals` | *Any*| `@Spec(NotEquals.class) String firstname;` | `... where x.firstname <> ?` |
 | `Between` | *Iterable of Comparable* <br> (Expected exact **2 elements** in *Iterable*) | `@Spec(Between.class) List<Integer> age;` | `... where x.age between ? and ?` |
 | `LessThan` | *Comparable* | `@Spec(LessThan.class) Integer age;` | `... where x.age < ?` |
 | `LessThanEqual` | *Comparable* | `@Spec(LessThanEqual.class) Integer age;` | `... where x.age <= ?` |
@@ -113,19 +114,35 @@ String firstname; // 預設使用欄位名稱
 | `GreaterThanEqual` | *Comparable* | `@Spec(GreaterThanEqual.class) Integer age;` | `... where x.age >= ?` |
 | `After` | *Comparable* | `@Spec(After.class) LocalDate startDate;` | `... where x.startDate > ?` |
 | `Before` | *Comparable* | `@Spec(Before.class) LocalDate startDate;` | `... where x.startDate < ?` |
-| `Null` | *Boolean* | `@Spec(Null.class) Boolean age;` | `... where x.age is null` *(if true)* <br> `... where x.age not null` *(if false)* |
+| `IsNull` | *Boolean* | `@Spec(IsNull.class) Boolean age;` | `... where x.age is null` *(if true)* <br> `... where x.age not null` *(if false)* |
 | `NotNull` | *Boolean* | `@Spec(NotNull .class) Boolean age;` | `... where x.age not null` *(if true)* <br> `... where x.age is null` *(if false)* |
 | `Like` | *String* | `@Spec(Like.class) String firstname;` | `... where x.firstname like %?%` |
 | `NotLike` | *String* | `@Spec(NotLike.class) String firstname;` | `... where x.firstname not like %?%` |
 | `StartingWith` | *String* | `@Spec(StartingWith.class) String firstname;` | `... where x.firstname like ?%` |
 | `EndingWith` | *String*| `@Spec(EndingWith.class) String firstname;` | `... where x.firstname like %?` |
-| `Not` | *Any*| `@Spec(Not.class) String firstname;` | `... where x.firstname <> ?` |
 | `In` | *Iterable of Any* | `@Spec(In.class) Set<String> firstname;` | `... where x.firstname in (?, ?, ...)` |
 | `NotIn` | *Iterable of Any* | `@Spec(NotIn.class) Set<String> firstname;` | `... where x.firstname not in (?, ?, ...)` |
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
 > 為了方便已經熟悉 Spring Data JPA 的人使用, 以上名稱都是儘量跟著 [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣
+
+### Negates the @Spec
+
+你可以使用 `@Spec#not` 來判斷反向條件, 預設是 `false`, 設定成 `true` 就會將結果做反向轉換.
+
+例如, 我想要用 `Between` 找**不在**區間內的資料, 則範例如下:
+
+```
+@Spec(value = Between.class, not = true)
+Collection<Integer> age;
+```
+
+執行的 SQL 將會是:
+
+```
+... where x.age not between ? and ?
+```
 
 ### Extending Simple @Spec
 
