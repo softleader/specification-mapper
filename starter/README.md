@@ -114,7 +114,7 @@ class PersonService {
   List<Person> getPersonByCriteria(PersonCriteria criteria) {
     var spec = specMapper.toSpec(criteria);
     
-    // do more to spec goes here
+    // do more to spec
     
     return personRepository.findAll(spec);
   }
