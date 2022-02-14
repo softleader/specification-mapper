@@ -13,25 +13,13 @@ Query by Spec (QBS) 是一個  user-friendly 的查詢方式, 可以動態的建
 
 ## Getting Started
 
-只要在 `pom.xml` 中加入 dependency, Spring Boot 在啟動時就會自動的配置, 包含了 [Query By Spec](#query-by-spec) 的設定及註冊了一個 `SpecMapper` 的成 *@Bean*.
+只要在 `pom.xml` 中加入 dependency, 此 Starter 在 Spring Boot 啟動過程就會自動的配置一切, 讓你可以零配置的就開始使用, 包含了:
 
-如果你需要自定義 `SpecMapper`, 例如你有[客製 Resolver](../domain#customize-specification-resolver), 只需要將你的 `SpecMapper` 註冊成 *@Bean* 就會優先使用:
+- [Query By Spec](#query-by-spec) 的設定
+- 註冊預設的 [`SpecMapper`](#default-specmapper)
 
-```java
-@Configuration
-class MyConfig {
 
-  @Bean
-  SpecMapper specMapper() {
-    return SpecMapper.builder()
-      .defaultResolvers()
-      .resolver(...)
-      .build();
-  }
-}
-```
-
-透過 properties 中的 `spec.mapper.enabled` 可以控制自動配置的開關, 預設是開啟的, 如要關閉則:
+自動配置預設是啟用的, 你可以透過 properties 中的 `spec.mapper.enabled` 控制, 如要關閉則:
 
 ```yaml
 spec:
@@ -64,6 +52,7 @@ public interface PersonRepository
   ...
 }
 
+@Service
 public class PersonService {
 
   @Autowired PersonRepository personRepository;
@@ -74,7 +63,7 @@ public class PersonService {
 }
 ```
 
-## Customize the QBS Base Repository
+### Customize the QBS Base Repository
 
 在配置的過程中, QBS 會自動配置 Spring Data JPA 的 [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository), 預設的實作為 [`QueryBySpecExecutorImpl`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorImpl.java)
 
@@ -107,4 +96,47 @@ class MyRepositoryImpl<T, ID>
 spec:
   mapper:
     repository-base-class: com.acme.example.MyRepositoryImpl
+```
+
+## Default SpecMapper
+
+此 Starter 會自動的配置一個預設的 `SpecMapper` 並註冊到 *Spring @Bean* 中, 你可以透過 *Autowired* 的方式跟 Spring 取得.
+
+例如, 我想要在轉換成 Specification 後, 先做一些加強再去查詢, 則範例如下:
+
+```java
+
+class PersonService {
+
+  @Autowired SpecMapper specMapper;
+  @Autowired PersonRepository personRepository;
+
+  List<Person> getPersonByCriteria(PersonCriteria criteria) {
+    var spec = specMapper.toSpec(criteria);
+    
+    // do more to spec goes here
+    
+    return personRepository.findAll(spec);
+  }
+}
+```
+
+### Customize Default SpecMapper
+
+只要將你客製化的 `SpecMapper` 註冊成 *Spring @Bean*, 此 Starter 在配置的過程中就會優先的採用!
+
+例如, 我想要[增加自定義的 Spec Annotation](../domain#customize-spec-annotation), 配置範例如下:
+
+```java
+@Configuration
+class MyConfig {
+
+  @Bean
+  SpecMapper specMapper() {
+    return SpecMapper.builder()
+      .defaultResolvers()
+      .resolver( ... )
+      .build();
+  }
+}
 ```
