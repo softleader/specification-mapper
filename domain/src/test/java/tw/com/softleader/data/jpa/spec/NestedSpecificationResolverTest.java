@@ -16,10 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
+import tw.com.softleader.data.jpa.spec.annotation.CombineType;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.After;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.StartingWith;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
@@ -72,7 +75,7 @@ class NestedSpecificationResolverTest {
   @DisplayName("全部都用 AND 組合多個條件")
   @Test
   void allAnd() {
-    var criteria = CriteriaAnd.builder()
+    var criteria = AllAnd.builder()
         .name(matt.getName())
         .nestedAnd(new NestedAnd(matt.getName(), new NestedInNestedAnd(matt.getName())))
         .build();
@@ -96,7 +99,7 @@ class NestedSpecificationResolverTest {
   @DisplayName("全部都用 OR 組合多個條件")
   @Test
   void allOr() {
-    var criteria = CriteriaOr.builder()
+    var criteria = AllOr.builder()
         .name(matt.getName())
         .nestedOr(
             new NestedOr(bob.getName(), new NestedInNestedOr(mary.getName())))
@@ -121,7 +124,7 @@ class NestedSpecificationResolverTest {
   @DisplayName("混合 AND 或 OR 組合多個條件")
   @Test
   void mix() {
-    var criteria = CriteriaMix.builder()
+    var criteria = Mix.builder()
         .name(matt.getName())
         .nestedMix(
             NestedMix.builder()
@@ -151,9 +154,119 @@ class NestedSpecificationResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("強制使用 Or 串連")
+  @Test
+  void forceOr() {
+    var criteria = ForceOr.builder()
+        .name("m")
+        .gold(true)
+        .nestedOr(NestedForceOr.builder()
+            .birthday(LocalDate.now())
+            .gender(Gender.MALE)
+            .build())
+        .build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(matt, mary, bob);
+
+    var inOrder = inOrder(
+        compositionResolver,
+        simpleResolver);
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(compositionResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("強制使用 And 串連")
+  @Test
+  void forceAnd() {
+    var criteria = ForceAnd.builder()
+        .name("m")
+        .gold(true)
+        .nestedAnd(NestedForceAnd.builder()
+            .birthday(LocalDate.now())
+            .gender(Gender.MALE)
+            .build())
+        .build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(matt);
+
+    var inOrder = inOrder(
+        compositionResolver,
+        simpleResolver);
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(compositionResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+    inOrder.verify(simpleResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @Or
   @Builder
   @Data
-  public static class CriteriaAnd {
+  public static class ForceAnd {
+
+    @Spec(StartingWith.class)
+    String name;
+
+    @Spec
+    Boolean gold;
+
+    @NestedSpec(combineType = CombineType.AND)
+    NestedForceAnd nestedAnd;
+  }
+
+  @Or
+  @Builder
+  @Data
+  public static class NestedForceAnd {
+
+    @Spec(After.class)
+    LocalDate birthday;
+
+    @Spec
+    Gender gender;
+  }
+
+  @And
+  @Builder
+  @Data
+  public static class ForceOr {
+
+    @Spec(StartingWith.class)
+    String name;
+
+    @Spec
+    Boolean gold;
+
+    @NestedSpec(combineType = CombineType.OR)
+    NestedForceOr nestedOr;
+  }
+
+  @And
+  @Builder
+  @Data
+  public static class NestedForceOr {
+
+    @Spec(After.class)
+    LocalDate birthday;
+
+    @Spec
+    Gender gender;
+  }
+
+  @Builder
+  @Data
+  public static class AllAnd {
 
     @Spec
     String name;
@@ -186,7 +299,7 @@ class NestedSpecificationResolverTest {
   @Builder
   @Data
   @Or
-  public static class CriteriaOr {
+  public static class AllOr {
 
     @Spec
     String name;
@@ -218,7 +331,7 @@ class NestedSpecificationResolverTest {
 
   @Builder
   @Data
-  public static class CriteriaMix {
+  public static class Mix {
 
     @Spec
     String name;

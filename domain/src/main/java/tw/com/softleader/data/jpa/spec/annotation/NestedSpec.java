@@ -14,4 +14,8 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 public @interface NestedSpec {
 
+  /**
+   * Specifies the combine type.
+   */
+  CombineType combineType() default CombineType.RESPECT;
 }

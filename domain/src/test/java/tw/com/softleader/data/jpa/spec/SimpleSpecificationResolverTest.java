@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Nonnull;
 import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +20,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import tw.com.softleader.data.jpa.spec.annotation.CombineType;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.After;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.usecase.Gender;
 
 @Transactional
 @IntegrationTest
@@ -31,7 +36,6 @@ class SimpleSpecificationResolverTest {
 
   @Autowired
   CustomerRepository repository;
-  int numberOfLocalField;
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
@@ -41,8 +45,6 @@ class SimpleSpecificationResolverTest {
     mapper = SpecMapper.builder()
         .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
-
-    doWithLocalFields(MyCriteria.class, f -> numberOfLocalField++);
   }
 
   @DisplayName("空的 @Spec")
@@ -57,7 +59,7 @@ class SimpleSpecificationResolverTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    verify(simpleResolver, times(numberOfLocalField))
+    verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
@@ -93,7 +95,7 @@ class SimpleSpecificationResolverTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    verify(simpleResolver, times(numberOfLocalField))
+    verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
@@ -121,7 +123,7 @@ class SimpleSpecificationResolverTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    verify(simpleResolver, times(numberOfLocalField))
+    verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
@@ -141,8 +143,66 @@ class SimpleSpecificationResolverTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
 
-    verify(simpleResolver, times(numberOfLocalField))
+    verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
         .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("Force Or")
+  @Test
+  void forceOr() {
+    var matt = repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob = repository.save(
+        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+            .build());
+    var mary = repository.save(
+        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var criteria = ForceOr.builder()
+        .name(bob.getName())
+        .gender(bob.getGender())
+        .birthday(LocalDate.now())
+        .build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
+
+    verify(simpleResolver, times(numberOfLocalField(ForceOr.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("Force And")
+  @Test
+  void forceAnd() {
+    var matt = repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    repository.save(
+        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+            .build());
+    var mary = repository.save(
+        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var criteria = ForceAnd.builder()
+        .name(matt.getName())
+        .gender(mary.getGender())
+        .birthday(LocalDate.now())
+        .build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+
+    verify(simpleResolver, times(numberOfLocalField(ForceAnd.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  int numberOfLocalField(@Nonnull Class<?> clazz) {
+    var i = new AtomicInteger();
+    doWithLocalFields(clazz, f -> i.getAndIncrement());
+    return i.intValue();
   }
 
   @Builder
@@ -159,6 +219,35 @@ class SimpleSpecificationResolverTest {
     Collection<String> names;
 
     @Spec(value = After.class, not = true)
+    LocalDate birthday;
+  }
+
+  @Builder
+  @Data
+  public static class ForceOr {
+
+    @Spec
+    String name;
+
+    @Spec
+    Gender gender;
+
+    @Spec(value = After.class, not = true, combineType = CombineType.OR)
+    LocalDate birthday;
+  }
+
+  @Or
+  @Builder
+  @Data
+  public static class ForceAnd {
+
+    @Spec
+    String name;
+
+    @Spec
+    Gender gender;
+
+    @Spec(value = After.class, not = true, combineType = CombineType.AND)
     LocalDate birthday;
   }
 }
