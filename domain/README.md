@@ -4,6 +4,7 @@
 <dependency>
   <groupId>tw.com.softleader.data</groupId>
   <artifactId>specification-mapper</artifactId>
+  <version>last-release-version</version>
 </dependency>
 ```
 
