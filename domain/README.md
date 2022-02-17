@@ -233,7 +233,7 @@ public class CustomerCriteria {
 
 ### Specify Combine Type
 
-你可以透過 `@Spec#combineType` 來控制單獨一個欄位要怎麼跟其他欄位組合, *CombineType* 有以下選項:
+你可以使用 `@Spec#combineType` 來控制單獨一個欄位要怎麼跟其他欄位組合, *CombineType* 有以下選項:
 
 - **RESPECT:** 尊重原本的邏輯, 也就是不特別設定 (預設值)
 - **AND:** 強制使用 *and* 組合
@@ -297,7 +297,7 @@ public class AddressCriteria {
 
 ### Specify Nested Combine Type
 
-你可以透過 `@NestedSpec#combineType` 來控制 Nested Object 的組合結果要怎麼跟其他的 Spec 組合, *CombineType* 的選項說明請參考 [Specify Combine Type](#specify-combine-type)
+你可以使用 `@NestedSpec#combineType` 來控制 Nested Object 的組合結果要怎麼跟其他的 Spec 組合, *CombineType* 的選項說明請參考 [Specify Combine Type](#specify-combine-type)
 
 
 ```java
