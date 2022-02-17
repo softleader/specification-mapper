@@ -4,6 +4,7 @@
 <dependency>
   <groupId>tw.com.softleader.data</groupId>
   <artifactId>specification-mapper</artifactId>
+  <version>last-release-version</version>
 </dependency>
 ```
 
@@ -133,7 +134,7 @@ String firstname; // 預設使用欄位名稱
 
 例如, 我想要用 `Between` 找**不在**區間內的資料, 則範例如下:
 
-```
+```java
 @Spec(value = Between.class, not = true)
 Collection<Integer> age;
 ```
