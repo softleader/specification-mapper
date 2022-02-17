@@ -243,10 +243,10 @@ public class CustomerCriteria {
 @Data
 public class CustomerCriteria {
 
-  @Spec
+  @Spec(Like.class)
   String firstname;
-
-  @Spec
+  
+  @Spec(Like.class)
   String lastname;
 
   @Spec(value = After.class, not = true, combineType = CombineType.OR)
@@ -257,7 +257,7 @@ public class CustomerCriteria {
 執行的 SQL 將會是:
 
 ```
-... where c_.firstname=? and c_.lastname=? or c_.birthday<=?
+... where (x.firstname like ?) and (x.lastname like ?) or x.birthday<=?
 ```
 
 ## Nested Specs
