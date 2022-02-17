@@ -297,7 +297,7 @@ public class AddressCriteria {
 
 ### Specify Nested Combine Type
 
-你可以使用 `@NestedSpec#combineType` 來控制 Nested Object 的組合結果要怎麼跟其他的 Spec 組合, *CombineType* 的選項說明請參考 [Specify Combine Type](#specify-combine-type)
+你可以使用 `@NestedSpec#combineType` 來控制 Nested Object 的組合結果要怎麼跟其他的欄位組合, *CombineType* 的選項說明請參考 [Specify Combine Type](#specify-combine-type)
 
 
 ```java
