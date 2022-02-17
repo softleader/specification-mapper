@@ -325,7 +325,7 @@ public class AddressCriteria {
 執行的 SQL 將會是:
 
 ```
-... where (x.firstname like ?) or county.=? and x.city=?
+... where (x.firstname like ?) or x.county=? and x.city=?
 ```
 
 ## Join
