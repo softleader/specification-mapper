@@ -1,12 +1,6 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
-import static java.util.Optional.ofNullable;
-
 import java.util.Collection;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import lombok.NonNull;
 import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,28 +9,18 @@ import org.springframework.data.jpa.domain.Specification;
  * @author Matt Ho
  */
 @ToString
-public class Disjunction<T> implements Specification<T> {
+public class Disjunction<T> extends CompoundSpecification<T> {
 
-  private final Collection<Specification<T>> innerSpecs;
-
-  public Disjunction(@NonNull Collection<Specification<T>> innerSpecs) {
-    this.innerSpecs = innerSpecs;
+  public Disjunction(@NonNull Collection<Specification<T>> specs) {
+    super(specs);
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
-    Specification<T> combinedSpecs = null;
-    for (Specification<T> spec : innerSpecs) {
-      if (combinedSpecs == null) {
-        combinedSpecs = Specification.where(spec);
-        continue;
-      }
-      combinedSpecs = combinedSpecs.or(spec);
+  protected Specification<T> combine(Specification<T> result,
+      Specification<T> element) {
+    if (element instanceof AndSpecification) {
+      return result.and(element);
     }
-    return ofNullable(combinedSpecs)
-        .map(spec -> spec.toPredicate(root, query, builder))
-        .orElse(null);
+    return result.or(element);
   }
 }

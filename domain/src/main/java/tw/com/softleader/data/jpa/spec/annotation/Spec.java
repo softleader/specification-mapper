@@ -34,4 +34,9 @@ public @interface Spec {
    * @see Specification#not(Specification)
    */
   boolean not() default false;
+
+  /**
+   * Specifies the combine type.
+   */
+  CombineType combineType() default CombineType.RESPECT;
 }

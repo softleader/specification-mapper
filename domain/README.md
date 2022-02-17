@@ -46,7 +46,7 @@ customerRepository.findAll(specification);
 執行 SQL 將會是: 
 
 ```
-... where c.firstname like '%Hello%'
+... where x.firstname like '%Hello%'
 ```
 
 ### Skipping Strategy
@@ -228,7 +228,36 @@ public class CustomerCriteria {
 執行的 SQL 將會是:
 
 ```
-... where c.firstname like %?% or c.lastname like %?% 
+... where x.firstname like %?% or x.lastname like %?% 
+```
+
+### Specify Combine Type
+
+你可以透過 `@Spec#combineType` 來控制單獨一個欄位要怎麼跟其他欄位組合, *CombineType* 有以下選項:
+
+- **RESPECT:** 尊重原本的邏輯, 也就是不特別設定 (預設值)
+- **AND:** 強制使用 *and* 組合
+- **OR:** 強制使用 *or* 組合
+
+```java
+@Data
+public class CustomerCriteria {
+
+  @Spec(Like.class)
+  String firstname;
+  
+  @Spec(Like.class)
+  String lastname;
+
+  @Spec(value = After.class, not = true, combineType = CombineType.OR)
+  LocalDate birthday;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+... where (x.firstname like ?) and (x.lastname like ?) or x.birthday<=?
 ```
 
 ## Nested Specs
@@ -263,9 +292,41 @@ public class AddressCriteria {
 執行的 SQL 將會是:
 
 ```
-... where c.firstname like %?% and ( c.county=? or c.city=? )
+... where x.firstname like %?% and ( x.county=? or x.city=? )
 ```
 
+### Specify Nested Combine Type
+
+你可以透過 `@NestedSpec#combineType` 來控制 Nested Object 的組合結果要怎麼跟其他的 Spec 組合, *CombineType* 的選項說明請參考 [Specify Combine Type](#specify-combine-type)
+
+
+```java
+@Data
+public class CustomerCriteria {
+
+  @Spec(Like.class)
+  String firstname;
+  
+  @NestedSpec(combineType = CombineType.OR)
+  AddressCriteria address;
+}
+
+@Data
+public class AddressCriteria {
+
+  @Spec
+  String county;
+  
+  @Spec
+  String city;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+... where (x.firstname like ?) or x.county=? and x.city=?
+```
 
 ## Join
 

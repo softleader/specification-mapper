@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
+import tw.com.softleader.data.jpa.spec.domain.AndSpecification;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.OrSpecification;
 
 /**
  * @author Matt Ho
@@ -35,7 +37,16 @@ class NestedSpecificationResolver implements SpecificationResolver {
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
               spec);
-          return spec;
+          var def = databind.getField().getAnnotation(NestedSpec.class);
+          switch (def.combineType()) {
+            case AND:
+              return new AndSpecification<>(spec);
+            case OR:
+              return new OrSpecification<>(spec);
+            case RESPECT:
+            default:
+              return spec;
+          }
         })
         .orElse(null);
   }

@@ -11,7 +11,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.AndSpecification;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.OrSpecification;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
@@ -42,9 +44,17 @@ class SimpleSpecificationResolver implements SpecificationResolver {
               .orElseGet(databind.getField()::getName);
           var spec = newSimpleSpecification(context, def.value(), path, value);
           if (def.not()) {
-            return not(spec);
+            spec = not(spec);
           }
-          return spec;
+          switch (def.combineType()) {
+            case AND:
+              return new AndSpecification<>(spec);
+            case OR:
+              return new OrSpecification<>(spec);
+            case RESPECT:
+            default:
+              return spec;
+          }
         }).orElseGet(() -> {
           log.debug("Value of [{}.{}] is null or empty, skipping it",
               databind.getTarget().getClass().getSimpleName(),
