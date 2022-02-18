@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
-import tw.com.softleader.data.jpa.spec.annotation.CombineType;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -221,7 +220,8 @@ class NestedSpecificationResolverTest {
     @Spec
     Boolean gold;
 
-    @NestedSpec(combineType = CombineType.AND)
+    @And
+    @NestedSpec
     NestedForceAnd nestedAnd;
   }
 
@@ -248,7 +248,8 @@ class NestedSpecificationResolverTest {
     @Spec
     Boolean gold;
 
-    @NestedSpec(combineType = CombineType.OR)
+    @Or
+    @NestedSpec
     NestedForceOr nestedOr;
   }
 

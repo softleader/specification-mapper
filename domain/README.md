@@ -208,7 +208,7 @@ repository.findAll(spec);
 
 ## Combining Specs
 
-你可以在 class 層級上使用 `@And` 或 `@Or` 來組合多個 Specification, 組合的預設是 `@And`.
+你可以在 class 層級上使用 `@And` 或 `@Or` 來組合一個物件中的多個 Specification, 組合的預設是 `@And`.
 
 例如我想要改成 `@Or`, 程式碼範例如下:
 
@@ -231,13 +231,9 @@ public class CustomerCriteria {
 ... where x.firstname like %?% or x.lastname like %?% 
 ```
 
-### Specify Combine Type
+### Specify Combining Type on Field
 
-你可以使用 `@Spec#combineType` 來控制單獨一個欄位要怎麼跟其他欄位組合, *CombineType* 有以下選項:
-
-- **RESPECT:** 尊重原本的邏輯, 也就是不特別設定 (預設值)
-- **AND:** 強制使用 *and* 組合
-- **OR:** 強制使用 *or* 組合
+你可以將 `@And` 或 `@Or` 註記在欄位上來控制單獨一個欄位要怎麼跟其他欄位組合. 舉個例子如下:
 
 ```java
 @Data
@@ -249,7 +245,8 @@ public class CustomerCriteria {
   @Spec(Like.class)
   String lastname;
 
-  @Spec(value = After.class, not = true, combineType = CombineType.OR)
+  @Or
+  @Spec(value = After.class, not = true)
   LocalDate birthday;
 }
 ```
@@ -258,6 +255,32 @@ public class CustomerCriteria {
 
 ```
 ... where (x.firstname like ?) and (x.lastname like ?) or x.birthday<=?
+```
+
+**特別注意, 欄位是依照宣告的順序組合的, 而 SQL 也是有[運算子優先順序](https://docs.microsoft.com/zh-tw/sql/t-sql/language-elements/operator-precedence-transact-sql?view=sql-server-ver15)的, 需注意兩者的配合的結果是否符合你的期望**
+
+例如, 將上面的例子調整欄位順序:
+
+```java
+@Data
+public class CustomerCriteria {
+
+  @Spec(Like.class)
+  String firstname;
+  
+  @Or
+  @Spec(value = After.class, not = true)
+  LocalDate birthday;
+  
+  @Spec(Like.class)
+  String lastname;
+}
+```
+
+執行的 SQL 將會是:
+
+```
+... where (x.firstname like ? or x.birthday<=?) and (x.lastname like ?)
 ```
 
 ## Nested Specs
@@ -295,10 +318,11 @@ public class AddressCriteria {
 ... where x.firstname like %?% and ( x.county=? or x.city=? )
 ```
 
-### Specify Nested Combine Type
+### Specify Nested Combining Type
 
-你可以使用 `@NestedSpec#combineType` 來控制 Nested Object 的組合結果要怎麼跟其他的欄位組合, *CombineType* 的選項說明請參考 [Specify Combine Type](#specify-combine-type)
+你也可以在 Nested Object 的欄位上宣告 `@And` 或 `@Or` 來控制結果要怎麼跟其他的欄位組合, 請參考 [Specify Combining Type on Field](#specify-combining-type-on-field).
 
+舉個例子如下:
 
 ```java
 @Data
@@ -307,7 +331,8 @@ public class CustomerCriteria {
   @Spec(Like.class)
   String firstname;
   
-  @NestedSpec(combineType = CombineType.OR)
+  @Or
+  @NestedSpec
   AddressCriteria address;
 }
 
@@ -423,7 +448,7 @@ select distinct ... from customer customer0_
 inner join orders orders1_ on customer0_.id=orders1_.order_id 
 inner join orders_tags tags2_ on orders1_.id=tags2_.order_id 
 inner join tag tag3_ on tags2_.tags_id=tag3_.id 
-where 1=1 and (tag3_.name in (?))
+where tag3_.name in (?)
 ```
 
 **特別注意, Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定義 `@Joins`**
@@ -548,7 +573,7 @@ left outer join orders orders1_ on customer0_.id=orders1_.order_id
 inner join orders orders2_ on customer0_.id=orders2_.order_id 
 left outer join orders_tags tags3_ on orders2_.id=tags3_.order_id 
 left outer join tag tag4_ on tags3_.tags_id=tag4_.id 
-where 1=1 and customer0_.name=?
+where customer0_.name=?
 ```
 
 ## Customize Spec Annotation
