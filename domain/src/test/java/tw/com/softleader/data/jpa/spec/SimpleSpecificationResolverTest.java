@@ -20,7 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import tw.com.softleader.data.jpa.spec.annotation.CombineType;
+import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.After;
@@ -173,6 +173,32 @@ class SimpleSpecificationResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("Force Or 2")
+  @Test
+  void forceOr2() {
+    var matt = repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob = repository.save(
+        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+            .build());
+    repository.save(
+        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var criteria = ForceOr2.builder()
+        .name(bob.getName())
+        .gender(bob.getGender())
+        .birthday(LocalDate.now())
+        .build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, bob);
+
+    verify(simpleResolver, times(numberOfLocalField(ForceOr2.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
   @DisplayName("Force And")
   @Test
   void forceAnd() {
@@ -232,8 +258,24 @@ class SimpleSpecificationResolverTest {
     @Spec
     Gender gender;
 
-    @Spec(value = After.class, not = true, combineType = CombineType.OR)
+    @Or
+    @Spec(value = After.class, not = true)
     LocalDate birthday;
+  }
+
+  @Builder
+  @Data
+  public static class ForceOr2 {
+
+    @Spec
+    String name;
+
+    @Or
+    @Spec(value = After.class, not = true)
+    LocalDate birthday;
+
+    @Spec
+    Gender gender;
   }
 
   @Or
@@ -247,7 +289,8 @@ class SimpleSpecificationResolverTest {
     @Spec
     Gender gender;
 
-    @Spec(value = After.class, not = true, combineType = CombineType.AND)
+    @And
+    @Spec(value = After.class, not = true)
     LocalDate birthday;
   }
 }

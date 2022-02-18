@@ -10,8 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
+import tw.com.softleader.data.jpa.spec.annotation.And;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.AndSpecification;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.OrSpecification;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
@@ -44,7 +48,13 @@ class SimpleSpecificationResolver implements SpecificationResolver {
           if (def.not()) {
             spec = not(spec);
           }
-          return def.combineType().apply(spec);
+          if (databind.getField().isAnnotationPresent(And.class)) {
+            return new AndSpecification<>(spec);
+          }
+          if (databind.getField().isAnnotationPresent(Or.class)) {
+            return new OrSpecification<>(spec);
+          }
+          return spec;
         }).orElseGet(() -> {
           log.debug("Value of [{}.{}] is null or empty, skipping it",
               databind.getTarget().getClass().getSimpleName(),
