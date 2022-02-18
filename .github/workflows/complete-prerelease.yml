@@ -15,9 +15,6 @@ jobs:
   release-artifact:
     runs-on: ubuntu-latest
     steps:
-      - env:
-          RELEASE_NAME: ${{ github.event.client_payload.release_name || github.event.inputs.release_name }}
-        run: echo $RELEASE_NAME
       - id: update_release
         uses: tubone24/update_release@v1.3.1
         env:
