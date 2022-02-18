@@ -8,6 +8,7 @@
   <artifactId>specification-mapper-parent</artifactId>
   <version>0.0.5</version>
   <packaging>pom</packaging>
+  <inceptionYear>2022</inceptionYear>
 
   <description>Specification binding API for Spring Data JPA</description>
 
@@ -17,7 +18,7 @@
   </modules>
 
   <organization>
-    <name>Softleader</name>
+    <name>SoftLeader</name>
     <url>http://www.softleader.com.tw</url>
   </organization>
 
@@ -26,7 +27,6 @@
     <connection>scm:git:git@github.com:softleader/specification-mapper.git</connection>
     <developerConnection>scm:git:git@github.com:softleader/specification-mapper.git
     </developerConnection>
-    <tag>framework</tag>
   </scm>
 
   <pluginRepositories>
@@ -163,21 +163,30 @@
           <artifactId>license-maven-plugin</artifactId>
           <version>${license-maven-plugin.version}</version>
           <configuration>
-            <properties>
-              <owner>Mycila</owner>
-              <email>mathieu.carbou@gmail.com</email>
-            </properties>
             <licenseSets>
               <licenseSet>
-                <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+                <header>copyright-license-header-template.txt</header>
                 <excludes>
                   <exclude>**/README</exclude>
+                  <exclude>.editorconfig</exclude>
+                  <exclude>Makefile</exclude>
+                  <exclude>Jenkinsfile*</exclude>
+                  <exclude>ide-config/**</exclude>
+                  <exclude>**/*.xml</exclude>
                   <exclude>src/test/resources/**</exclude>
                   <exclude>src/main/resources/**</exclude>
                 </excludes>
               </licenseSet>
             </licenseSets>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>format</goal>
+              </goals>
+              <phase>process-sources</phase>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

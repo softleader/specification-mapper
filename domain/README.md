@@ -233,7 +233,7 @@ public class CustomerCriteria {
 
 ### Specify Combining Type on Field
 
-你可以將 `@And` 或 `@Or` 註記在欄位上來控制單獨一個欄位要怎麼跟其他欄位組合. 舉個例子如下:
+你也可以將 `@And` 或 `@Or` 註記在欄位上來控制單獨一個欄位要怎麼跟其他欄位組合. 舉個例子如下:
 
 ```java
 @Data
