@@ -1,3 +1,5 @@
+[![version](https://img.shields.io/github/v/release/softleader/specification-mapper?color=green&sort=semver)](https://github.com/softleader/specification-mapper/releases)
+
 # specification-mapper
 
 > An alternative Specification API for Spring Data JPA, It'is heavily influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver).
