@@ -9,7 +9,7 @@ help: ## Display this help.
 ##@ Develop
 
 format: ## Format the source code.
-	mvn process-sources license:format -e
+	mvn process-sources -e
 
 clean: ## Remove files generated at build-time.
 	mvn clean -e

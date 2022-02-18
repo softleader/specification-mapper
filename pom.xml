@@ -8,6 +8,7 @@
   <artifactId>specification-mapper-parent</artifactId>
   <version>0.0.5</version>
   <packaging>pom</packaging>
+  <inceptionYear>2022</inceptionYear>
 
   <description>Specification binding API for Spring Data JPA</description>
 
@@ -162,13 +163,9 @@
           <artifactId>license-maven-plugin</artifactId>
           <version>${license-maven-plugin.version}</version>
           <configuration>
-            <properties>
-              <year>2022</year>
-              <email>support@softleader.com.tw</email>
-            </properties>
             <licenseSets>
               <licenseSet>
-                <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+                <header>copyright-license-header-template.txt</header>
                 <excludes>
                   <exclude>**/README</exclude>
                   <exclude>.editorconfig</exclude>
@@ -182,6 +179,14 @@
               </licenseSet>
             </licenseSets>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>format</goal>
+              </goals>
+              <phase>process-sources</phase>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
