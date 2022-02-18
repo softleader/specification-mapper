@@ -1,4 +1,4 @@
-[![version](https://img.shields.io/github/v/release/softleader/specification-mapper?color=green&sort=semver)](https://github.com/softleader/specification-mapper/releases)
+[![version](https://img.shields.io/github/v/release/softleader/specification-mapper?color=brightgreen&sort=semver)](https://github.com/softleader/specification-mapper/releases)
 
 # specification-mapper
 
