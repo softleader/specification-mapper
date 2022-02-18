@@ -12,7 +12,7 @@ on:
     types: [complete-prerelease]
 
 jobs:
-  release-artifact:
+  update-release:
     runs-on: ubuntu-latest
     steps:
       - id: update_release
