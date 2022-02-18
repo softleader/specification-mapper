@@ -27,11 +27,13 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
+import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
  */
+@ToString
 public class JoinFetch<T> implements Specification<T> {
 
   private final List<String> pathsToFetch;
