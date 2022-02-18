@@ -163,10 +163,6 @@
           <artifactId>license-maven-plugin</artifactId>
           <version>${license-maven-plugin.version}</version>
           <configuration>
-            <properties>
-              <owner>Mycila</owner>
-              <email>mathieu.carbou@gmail.com</email>
-            </properties>
             <licenseSets>
               <licenseSet>
                 <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
