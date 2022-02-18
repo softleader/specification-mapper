@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec.domain;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.StringJoiner;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
@@ -61,5 +62,13 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
       expr = expr.get(field);
     }
     return (Path<F>) expr;
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
+        .add("path='" + path + "'")
+        .add("value=" + value)
+        .toString();
   }
 }

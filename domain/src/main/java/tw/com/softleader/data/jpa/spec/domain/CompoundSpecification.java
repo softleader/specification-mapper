@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
 import java.util.Collection;
+import java.util.StringJoiner;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -54,4 +55,11 @@ abstract class CompoundSpecification<T> implements Specification<T> {
   protected abstract Specification<T> combine(
       Specification<T> result,
       Specification<T> element);
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
+        .add("specs=" + specs)
+        .toString();
+  }
 }

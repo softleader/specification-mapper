@@ -53,11 +53,10 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
     var def = databind.getField().getAnnotation(Spec.class);
-    log.debug("Building specification of [{}.{}] for @Spec(path=\"{}\", spec={}.class)",
+    log.debug("Building specification of [{}.{}] for {}",
         databind.getTarget().getClass().getSimpleName(),
         databind.getField().getName(),
-        def.path(),
-        def.value().getSimpleName());
+        def);
     return databind.getFieldValue()
         .filter(this::valuePresent)
         .map(value -> {

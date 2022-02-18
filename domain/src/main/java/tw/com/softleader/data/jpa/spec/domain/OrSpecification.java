@@ -22,12 +22,14 @@ package tw.com.softleader.data.jpa.spec.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.experimental.Delegate;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
  */
+@ToString(includeFieldNames = false)
 @AllArgsConstructor
 public class OrSpecification<T> implements Specification<T> {
 

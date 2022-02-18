@@ -27,11 +27,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
  */
+@ToString
 @RequiredArgsConstructor
 public class Join<T> implements Specification<T> {
 

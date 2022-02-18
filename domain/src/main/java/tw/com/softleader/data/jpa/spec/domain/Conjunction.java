@@ -22,13 +22,11 @@ package tw.com.softleader.data.jpa.spec.domain;
 
 import java.util.Collection;
 import lombok.NonNull;
-import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
  */
-@ToString
 public class Conjunction<T> extends CompoundSpecification<T> {
 
   public Conjunction(@NonNull Collection<Specification<T>> specs) {
@@ -43,5 +41,4 @@ public class Conjunction<T> extends CompoundSpecification<T> {
     }
     return result.and(element);
   }
-
 }
