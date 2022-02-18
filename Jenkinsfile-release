@@ -55,6 +55,8 @@ spec:
     // ref: https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/injecting-secrets
     CREDENTIAL = credentials("a84db61d-b4a4-4e05-a368-c1b283860090")
     MAVEN_OPTS="-Xmx2048m -XX:MaxMetaspaceSize=128m"
+    GITHUB_OWNER = "softleader"
+    GITHUB_REPO = "specification-mapper"
   }
 
   stages {
@@ -75,7 +77,7 @@ spec:
         container('git') {
           script {
             sh """
-            git remote set-url origin https://$CREDENTIAL_USR:"$CREDENTIAL_PSW"@github.com/softleader/specification-mapper.git
+            git remote set-url origin https://$CREDENTIAL_USR:"$CREDENTIAL_PSW"@github.com/$GITHUB_OWNER/$GITHUB_REPO.git
             git config --global user.email "jenkins-bot@softleader.com.tw"
             git config --global user.name "jenkins-bot"
             echo $CREDENTIAL_PSW | gh auth login --with-token
@@ -147,6 +149,18 @@ spec:
           gh pr merge ${PR_BRANCH} --admin --merge --delete-branch
           """
         }
+      }
+    }
+
+    stage ('Complete Prerelease') {
+      steps {
+        sh """
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: Bearer $CREDENTIAL_PSW" \
+          https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/dispatches \
+          -d '{"event_type":"complete-prerelease","client_payload":{"tag_name":"$TAG"}}'
+        """
       }
     }
   }

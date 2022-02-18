@@ -6,6 +6,11 @@ on:
     types: [prereleased]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      release_name:
+        description: The prerelease name
+        type: string
+        required: true
 
 jobs:
   release-artifact:
@@ -20,9 +25,4 @@ jobs:
           insecure: "true"
           job: "${{ github.action }}"
           params: "ref=${{ github.ref }}"
-      - id: update_release
-        uses: tubone24/update_release@v1.0
-        env:
-          GITHUB_TOKEN: "${{ secrets.PAT }}"
-        with:
-          prerelease: false
+          wait: false
