@@ -320,7 +320,7 @@ public class AddressCriteria {
 
 ### Specify Combining Type on Nested Object
 
-你也可以在 Nested Object 的欄位上宣告 `@And` 或 `@Or` 來控制結果要怎麼跟其他的欄位組合, 請參考 [Specify Combining Type on Field](#specify-combining-type-on-field).
+你也可以在 Nested Object 的欄位上宣告 `@And` 或 `@Or` 來控制結果要怎麼跟其他的欄位組合, 詳細的說明請參考 [Specify Combining Type on Field](#specify-combining-type-on-field).
 
 舉個例子如下:
 
