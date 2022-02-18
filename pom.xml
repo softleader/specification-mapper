@@ -17,7 +17,7 @@
   </modules>
 
   <organization>
-    <name>Softleader</name>
+    <name>SoftLeader</name>
     <url>http://www.softleader.com.tw</url>
   </organization>
 
@@ -26,7 +26,6 @@
     <connection>scm:git:git@github.com:softleader/specification-mapper.git</connection>
     <developerConnection>scm:git:git@github.com:softleader/specification-mapper.git
     </developerConnection>
-    <tag>framework</tag>
   </scm>
 
   <pluginRepositories>
@@ -163,11 +162,20 @@
           <artifactId>license-maven-plugin</artifactId>
           <version>${license-maven-plugin.version}</version>
           <configuration>
+            <properties>
+              <year>2022</year>
+              <email>support@softleader.com.tw</email>
+            </properties>
             <licenseSets>
               <licenseSet>
                 <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
                 <excludes>
                   <exclude>**/README</exclude>
+                  <exclude>.editorconfig</exclude>
+                  <exclude>Makefile</exclude>
+                  <exclude>Jenkinsfile*</exclude>
+                  <exclude>ide-config/**</exclude>
+                  <exclude>**/*.xml</exclude>
                   <exclude>src/test/resources/**</exclude>
                   <exclude>src/main/resources/**</exclude>
                 </excludes>
