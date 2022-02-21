@@ -56,7 +56,7 @@ class ReflectionDatabind implements Databind {
   private final Field field;
 
   private final AtomicBoolean loaded = new AtomicBoolean();
-  private final CountDownLatch loading = new CountDownLatch(1);
+  private final CountDownLatch latch = new CountDownLatch(1);
   private Object value;
 
   static List<Databind> of(@Nullable Object target) {
@@ -79,9 +79,9 @@ class ReflectionDatabind implements Databind {
   public Optional<Object> getFieldValue() {
     if (loaded.compareAndSet(false, true)) {
       value = getFieldValue(target, field);
-      loading.countDown();
+      latch.countDown();
     } else {
-      loading.await();
+      latch.await();
     }
     return ofNullable(value);
   }
