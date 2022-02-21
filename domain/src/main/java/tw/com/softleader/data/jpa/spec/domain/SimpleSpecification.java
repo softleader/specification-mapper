@@ -67,7 +67,7 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
   @Override
   public String toString() {
     return new StringJoiner(", ", getClass().getSimpleName() + "[", "]")
-        .add("path='" + path + "'")
+        .add("path=" + path)
         .add("value=" + value)
         .toString();
   }

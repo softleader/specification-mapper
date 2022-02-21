@@ -20,25 +20,34 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Collection;
-import lombok.NonNull;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 
 /**
+ * This is just for implement toString() for debugging
+ *
  * @author Matt Ho
  */
-public class Disjunction<T> extends CompoundSpecification<T> {
+@ToString(includeFieldNames = false)
+@AllArgsConstructor
+public class Not<T> implements Specification<T> {
 
-  public Disjunction(@NonNull Collection<Specification<T>> specs) {
-    super(specs);
-  }
+  @Nullable
+  final Specification<T> spec;
 
   @Override
-  protected Specification<T> combine(Specification<T> result,
-      Specification<T> element) {
-    if (element instanceof And) {
-      return result.and(element);
+  public Predicate toPredicate(Root<T> root,
+      CriteriaQuery<?> query,
+      CriteriaBuilder builder) {
+    if (spec == null) {
+      return null;
     }
-    return result.or(element);
+    return builder.not(spec.toPredicate(root, query, builder));
   }
 }

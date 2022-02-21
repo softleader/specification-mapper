@@ -21,7 +21,6 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
-import static org.springframework.data.jpa.domain.Specification.not;
 import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
 import java.util.stream.StreamSupport;
@@ -30,12 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
-import tw.com.softleader.data.jpa.spec.annotation.And;
-import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.AndSpecification;
+import tw.com.softleader.data.jpa.spec.domain.And;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.OrSpecification;
+import tw.com.softleader.data.jpa.spec.domain.Not;
+import tw.com.softleader.data.jpa.spec.domain.Or;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
@@ -65,13 +63,14 @@ class SimpleSpecificationResolver implements SpecificationResolver {
               .orElseGet(databind.getField()::getName);
           var spec = newSimpleSpecification(context, def.value(), path, value);
           if (def.not()) {
-            spec = not(spec);
+            spec = new Not<>(spec);
           }
-          if (databind.getField().isAnnotationPresent(And.class)) {
-            return new AndSpecification<>(spec);
+          if (databind.getField().isAnnotationPresent(
+              tw.com.softleader.data.jpa.spec.annotation.And.class)) {
+            return new And<>(spec);
           }
-          if (databind.getField().isAnnotationPresent(Or.class)) {
-            return new OrSpecification<>(spec);
+          if (databind.getField().isAnnotationPresent(tw.com.softleader.data.jpa.spec.annotation.Or.class)) {
+            return new Or<>(spec);
           }
           return spec;
         }).orElseGet(() -> {
