@@ -28,6 +28,7 @@ import javax.persistence.criteria.Root;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -37,6 +38,7 @@ import org.springframework.data.jpa.domain.Specification;
 @RequiredArgsConstructor
 public class Join<T> implements Specification<T> {
 
+  @Exclude
   @NonNull
   private final transient Context context;
   @NonNull

@@ -158,6 +158,7 @@ class NestedSpecificationResolverTest {
         .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
+    System.out.println(spec);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);

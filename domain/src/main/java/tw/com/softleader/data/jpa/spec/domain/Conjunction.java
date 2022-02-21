@@ -36,7 +36,7 @@ public class Conjunction<T> extends CompoundSpecification<T> {
   @Override
   protected Specification<T> combine(Specification<T> result,
       Specification<T> element) {
-    if (element instanceof OrSpecification) {
+    if (element instanceof Or) {
       return result.or(element);
     }
     return result.and(element);

@@ -31,7 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
  */
 @ToString(includeFieldNames = false)
 @AllArgsConstructor
-public class OrSpecification<T> implements Specification<T> {
+public class And<T> implements Specification<T> {
 
   @NonNull
   @Delegate

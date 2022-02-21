@@ -29,8 +29,13 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.Value;
-import org.springframework.lang.NonNull;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
@@ -39,33 +44,55 @@ import org.springframework.util.ReflectionUtils;
  *
  * @see ReflectionUtils
  */
-@Value
+@RequiredArgsConstructor
 class ReflectionDatabind implements Databind {
 
+  @Getter
   @NonNull
-  Object target;
+  private final Object target;
+
+  @Getter
   @NonNull
-  Field field;
+  private final Field field;
+
+  private final AtomicBoolean loaded = new AtomicBoolean();
+  private final CountDownLatch loading = new CountDownLatch(1);
+  private Object value;
 
   static List<Databind> of(@Nullable Object target) {
+    return of(target, ReflectionDatabind::new);
+  }
+
+  static List<Databind> of(@Nullable Object target,
+      @NonNull BiFunction<Object, Field, Databind> factory) {
     if (target == null) {
       return List.of();
     }
     var lookup = new ArrayList<Databind>();
     doWithLocalFields(target.getClass(),
-        field -> lookup.add(new ReflectionDatabind(target, field)));
+        field -> lookup.add(factory.apply(target, field)));
     return unmodifiableList(lookup);
   }
 
   @Override
+  @SneakyThrows
   public Optional<Object> getFieldValue() {
+    if (loaded.compareAndSet(false, true)) {
+      value = getFieldValue(target, field);
+      loading.countDown();
+    } else {
+      loading.await();
+    }
+    return ofNullable(value);
+  }
+
+  // Visible for testing
+  Object getFieldValue(Object target, Field field) {
     makeAccessible(field);
-    return ofNullable(ReflectionUtils.getField(field, target))
-        .flatMap(value -> {
-          if (value instanceof Optional) {
-            return (Optional) value;
-          }
-          return Optional.of(value);
-        });
+    var val = ReflectionUtils.getField(field, target);
+    if (val instanceof Optional) {
+      return ((Optional<?>) val).orElse(null);
+    }
+    return val;
   }
 }
