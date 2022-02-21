@@ -88,7 +88,7 @@ spec:
 
     stage('Matrix Unit Testing') {
       steps {
-        sh "make test-matrix"
+        sh "make matrix-test"
       }
       post {
         always {
