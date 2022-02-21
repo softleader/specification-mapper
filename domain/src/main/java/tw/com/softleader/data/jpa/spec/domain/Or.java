@@ -35,5 +35,5 @@ public class Or<T> implements Specification<T> {
 
   @NonNull
   @Delegate
-  Specification<T> delegate;
+  Specification<T> spec;
 }

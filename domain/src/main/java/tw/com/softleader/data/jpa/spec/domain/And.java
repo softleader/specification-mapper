@@ -35,5 +35,5 @@ public class And<T> implements Specification<T> {
 
   @NonNull
   @Delegate
-  Specification<T> delegate;
+  Specification<T> spec;
 }
