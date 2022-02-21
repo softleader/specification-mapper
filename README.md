@@ -10,7 +10,7 @@
 - **Spec Mapper API:** See documentation for [specification-mapper](./domain).
 - **Spring Starter:** See documentation for [specification-mapper-starter](./starter).
 
-## Compatibility table
+## Compatibility Spring Boot Versions
 
 [Here](./Makefile#L4) shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
 
