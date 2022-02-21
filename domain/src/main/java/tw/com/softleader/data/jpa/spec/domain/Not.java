@@ -33,6 +33,7 @@ import org.springframework.lang.Nullable;
  * This is just for implement toString() for debugging
  *
  * @author Matt Ho
+ * @see Specification#not(Specification)
  */
 @ToString(includeFieldNames = false)
 @AllArgsConstructor
