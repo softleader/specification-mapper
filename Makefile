@@ -43,4 +43,4 @@ endif
 	mvn versions:commit
 
 release: ## Pack w/o unit testing, and deploy to remote repository.
-	mvn deploy -e -DskipTests -Prelease
+	mvn clean deploy -e -Prelease -DskipTests
