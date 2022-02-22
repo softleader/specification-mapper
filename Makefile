@@ -2,6 +2,7 @@
 VERSION ?=
 # See https://spring.io/projects/spring-boot#support
 SPRING_BOOTS := 2.4.13 2.5.9 2.6.3
+JDK := 11
 
 ##@ General
 
@@ -24,7 +25,7 @@ test: clean ## Clean and test the compiled code.
 
 matrix-test: $(SPRING_BOOTS) ## Clean and test the compiled code w/ multiple Spring Boot version.
 $(SPRING_BOOTS):
-	mvn clean test -e -D'spring-boot.version=$@'
+	mvn clean test -e -D'spring-boot.version=$@' -D'java.version=$(JDK)'
 
 install: clean ## Install project to local repository w/o unit testing.
 	mvn install -e -DskipTests -Prelease
