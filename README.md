@@ -8,7 +8,7 @@ An alternative Specification API for Spring Data JPA.
 
 ## Getting Started
 
-- **Spec Mapper API:** See documentation for [specification-mapper](./domain).
+- **Spec Mapper API:** See documentation for [specification-mapper](./mapper).
 - **Spring Starter:** See documentation for [specification-mapper-starter](./starter).
 
 ## Spring Compatibility

@@ -13,7 +13,7 @@
   <description>Specification binding API for Spring Data JPA</description>
 
   <modules>
-    <module>domain</module>
+    <module>mapper</module>
     <module>starter</module>
   </modules>
 
