@@ -5,7 +5,7 @@ pipeline {
     kubernetes {
       cloud 'SLKE'
       workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace-claim', readOnly: false)
-      defaultContainer 'maven-jdk11'
+      defaultContainer 'maven-java11'
       yaml """
 kind: Pod
 spec:
@@ -13,7 +13,7 @@ spec:
   securityContext:
     runAsUser: 0
   containers:
-  - name: maven-jdk11
+  - name: maven-java11
     image: harbor.softleader.com.tw/library/maven:3-azulzulu-11
     imagePullPolicy: Always
     command: ['cat']
@@ -27,7 +27,7 @@ spec:
       mountPath: /root/.m2
     - name: dockersock
       mountPath: /var/run/docker.sock
-  - name: maven-jdk17
+  - name: maven-java17
     image: harbor.softleader.com.tw/library/maven:3-azulzulu-17
     imagePullPolicy: Always
     command: ['cat']
@@ -102,10 +102,10 @@ spec:
 
     stage('Matrix Unit Testing') {
       steps {
-        container('maven-jdk11') {
+        container('maven-java11') {
           sh "make matrix-test JAVA_VERSION=11"
         }
-        container('maven-jdk17') {
+        container('maven-java17') {
           sh "make matrix-test JAVA_VERSION=17"
         }
       }
