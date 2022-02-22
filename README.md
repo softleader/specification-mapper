@@ -2,8 +2,9 @@
 
 # specification-mapper
 
-> An alternative Specification API for Spring Data JPA, It'is heavily influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver).
+An alternative Specification API for Spring Data JPA.
 
+> It'is heavily influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver).
 
 ## Getting Started
 
