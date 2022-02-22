@@ -103,10 +103,10 @@ spec:
     stage('Matrix Unit Testing') {
       steps {
         container('maven-jdk11') {
-          sh "make matrix-test JDK=11"
+          sh "make matrix-test JAVA_VERSION=11"
         }
         container('maven-jdk17') {
-          sh "make matrix-test JDK=17"
+          sh "make matrix-test JAVA_VERSION=17"
         }
       }
       post {
