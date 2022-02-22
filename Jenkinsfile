@@ -13,20 +13,6 @@ spec:
   securityContext:
     runAsUser: 0
   containers:
-  - name: maven-jdk8
-    image: harbor.softleader.com.tw/library/maven:3-azulzulu-8
-    imagePullPolicy: Always
-    command: ['cat']
-    tty: true
-    resources:
-      limits:
-        memory: "1Gi"
-        cpu: "2"
-    volumeMounts:
-    - name: m2
-      mountPath: /root/.m2
-    - name: dockersock
-      mountPath: /var/run/docker.sock
   - name: maven-jdk11
     image: harbor.softleader.com.tw/library/maven:3-azulzulu-11
     imagePullPolicy: Always
@@ -116,9 +102,6 @@ spec:
 
     stage('Matrix Unit Testing') {
       steps {
-        container('maven-jdk8') {
-          sh "make matrix-test JDK=1.8"
-        }
         container('maven-jdk11') {
           sh "make matrix-test JDK=11"
         }

@@ -25,7 +25,7 @@ test: clean ## Clean and test the compiled code.
 
 matrix-test: $(SPRING_BOOTS) ## Clean and test the compiled code w/ multiple Spring Boot version.
 $(SPRING_BOOTS):
-	mvn clean test -e -D'spring-boot.version=$@' -D'java.version=$(JDK)'
+	mvn clean test -e -D'format.skip=true' -D'spring-boot.version=$@' -D'java.version=$(JDK)'
 
 install: clean ## Install project to local repository w/o unit testing.
 	mvn install -e -DskipTests -Prelease
