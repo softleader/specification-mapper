@@ -138,7 +138,7 @@ spec:
     stage('Release') {
       steps {
         sh """
-        echo /var/gpg/softleader.passphrase | gpg --batch --yes --import /var/gpg/softleader.gpg
+        echo /var/gpg/softleader.passphrase | gpg --batch --yes --import /var/gpg/softleader.key
         make release
         """
       }
