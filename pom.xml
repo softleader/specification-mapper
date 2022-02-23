@@ -30,9 +30,9 @@
     <url>http://www.softleader.com.tw</url>
   </organization>
   <scm>
-    <connection>scm:git:git@github.com:softleader/specification-mapper.git</connection>
-    <developerConnection>scm:git:git@github.com:softleader/specification-mapper.git</developerConnection>
     <url>https://github.com/softleader/specification-mapper</url>
+		<connection>scm:git:git://github.com/softleader/specification-mapper.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/oftleader/specification-mapper.git</developerConnection>
   </scm>
 
   <properties>
@@ -52,7 +52,6 @@
     <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-    <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 
     <spring-boot.version>2.6.3</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
