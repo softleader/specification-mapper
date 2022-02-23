@@ -10,6 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>specification-mapper</artifactId>
+  <name>specification-mapper</name>
 
   <dependencies>
     <dependency>

@@ -8,36 +8,69 @@
   <artifactId>specification-mapper-parent</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
-  <inceptionYear>2022</inceptionYear>
 
+  <name>specification-mapper-parent</name>
   <description>Specification binding API for Spring Data JPA</description>
+  <url>https://github.com/softleader/specification-mapper</url>
+  <inceptionYear>2022</inceptionYear>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Matt Ho</name>
+      <email>matt.ho@softleader.com.tw</email>
+    </developer>
+  </developers>
+  <organization>
+    <name>SoftLeader</name>
+    <url>http://www.softleader.com.tw</url>
+  </organization>
+  <scm>
+    <connection>scm:git:git@github.com:softleader/specification-mapper.git</connection>
+    <developerConnection>scm:git:git@github.com:softleader/specification-mapper.git</developerConnection>
+    <url>https://github.com/softleader/specification-mapper</url>
+  </scm>
+
+  <properties>
+    <!-- Basics -->
+    <java.version>11</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- Plugins -->
+    <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+    <formatter-maven-plugin.version>2.17.1</formatter-maven-plugin.version>
+    <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+    <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
+    <license-maven-plugin.version>4.1</license-maven-plugin.version>
+    <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+    <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+
+    <spring-boot.version>2.6.3</spring-boot.version>
+    <findbugs.version>3.0.1</findbugs.version>
+    <format.skip>false</format.skip>
+  </properties>
 
   <modules>
     <module>mapper</module>
     <module>starter</module>
   </modules>
 
-  <organization>
-    <name>SoftLeader</name>
-    <url>http://www.softleader.com.tw</url>
-  </organization>
-
-  <scm>
-    <url>https://github.com/softleader/specification-mapper</url>
-    <connection>scm:git:git@github.com:softleader/specification-mapper.git</connection>
-    <developerConnection>scm:git:git@github.com:softleader/specification-mapper.git
-    </developerConnection>
-  </scm>
-
   <pluginRepositories>
     <pluginRepository>
       <id>jcenter-snapshots</id>
-      <name>jcenter</name>
       <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
     </pluginRepository>
     <pluginRepository>
       <id>jcenter-releases</id>
-      <name>jcenter</name>
       <url>http://jcenter.bintray.com</url>
       <snapshots>
         <enabled>false</enabled>
@@ -46,14 +79,14 @@
   </pluginRepositories>
 
   <distributionManagement>
-    <repository>
-      <id>releases</id>
-      <url>${softleader.releases.repository}</url>
-    </repository>
     <snapshotRepository>
-      <id>snapshots</id>
-      <url>${softleader.snapshots.repository}</url>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
 
   <dependencyManagement>
@@ -68,67 +101,17 @@
     </dependencies>
   </dependencyManagement>
 
-  <properties>
-    <java.version>11</java.version>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-    <formatter-maven-plugin.version>2.17.1</formatter-maven-plugin.version>
-    <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
-    <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
-    <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
-    <license-maven-plugin.version>4.1</license-maven-plugin.version>
-
-    <spring-boot.version>2.6.3</spring-boot.version>
-    <findbugs.version>3.0.1</findbugs.version>
-
-    <softleader.releases.repository>http://svn.softleader.com.tw:8084/repository/maven-releases/
-    </softleader.releases.repository>
-    <softleader.snapshots.repository>http://svn.softleader.com.tw:8084/repository/maven-snapshots/
-    </softleader.snapshots.repository>
-    <softleader.thirdparty.repository>http://svn.softleader.com.tw:8084/repository/thirdparty/
-    </softleader.thirdparty.repository>
-    <softleader.jboss-public.repository>http://svn.softleader.com.tw:8084/repository/jboss-public/
-    </softleader.jboss-public.repository>
-    <spring-milestones.repository>https://repo.spring.io/milestone</spring-milestones.repository>
-    <spring-release.repository>https://repo.spring.io/release</spring-release.repository>
-
-    <format.skip>false</format.skip>
-  </properties>
-
   <repositories>
     <repository>
-      <id>releases</id>
-      <url>${softleader.releases.repository}</url>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <url>${softleader.snapshots.repository}</url>
-    </repository>
-    <repository>
-      <id>thirdparty</id>
-      <url>${softleader.thirdparty.repository}</url>
-    </repository>
-    <repository>
-      <id>jboss-ga-repository</id>
-      <url>${softleader.jboss-public.repository}</url>
-    </repository>
-    <repository>
       <id>spring-milestones</id>
-      <name>Spring Milestones</name>
-      <url>${spring-milestones.repository}</url>
+      <url>https://repo.spring.io/milestone</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
     </repository>
     <repository>
       <id>spring-release</id>
-      <name>Spring Release</name>
-      <url>${spring-release.repository}</url>
+      <url>https://repo.spring.io/release</url>
     </repository>
   </repositories>
 
@@ -251,6 +234,35 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
             <version>${maven-site-plugin.version}</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven-gpg-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <keyname>${gpg.keyname}</keyname>
+                  <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.11</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>false</autoReleaseAfterClose>
+            </configuration>
           </plugin>
         </plugins>
       </build>
