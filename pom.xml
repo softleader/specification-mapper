@@ -57,7 +57,6 @@
     <spring-boot.version>2.6.3</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
     <format.skip>false</format.skip>
-    <gpg.keyname>gpg.softleader</gpg.keyname>
   </properties>
 
   <modules>
@@ -255,15 +254,15 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-release-plugin</artifactId>
-            <version>${maven-release-plugin.version}</version>
-<!--            <configuration>-->
-<!--              <autoVersionSubmodules>true</autoVersionSubmodules>-->
-<!--              <useReleaseProfile>false</useReleaseProfile>-->
-<!--              <releaseProfiles>release</releaseProfiles>-->
-<!--              <goals>deploy</goals>-->
-<!--            </configuration>-->
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.11</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>false</autoReleaseAfterClose>
+            </configuration>
           </plugin>
         </plugins>
       </build>

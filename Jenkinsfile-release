@@ -31,6 +31,8 @@ spec:
       mountPath: /root/.m2
     - name: dockersock
       mountPath: /var/run/docker.sock
+    - name: gpg
+      mountPath: /var/gpg
   - name: git
     image: harbor.softleader.com.tw/library/git:2
     command: ['cat']
@@ -46,6 +48,9 @@ spec:
   - name: dockersock
     hostPath:
       path: /var/run/docker.sock
+  - name: gpg
+    persistentVolumeClaim:
+      claimName: gpg-claim
 """
     }
   }
@@ -132,7 +137,10 @@ spec:
 
     stage('Release') {
       steps {
-        sh "make release"
+        sh """
+        gpg --import softleader.gpg
+        make release
+        """
       }
     }
 
