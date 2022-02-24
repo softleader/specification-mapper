@@ -102,7 +102,7 @@ class CustomizeResolverTest {
 
     // SQL will be:
     // select customer0_.id as id1_0_, customer0_.age as age2_0_, customer0_.name as name3_0_ from customer customer0_
-    //  where customer0_.age>=18
+    // where customer0_.age>=18
     //    and (exists (select customer1_.id from customer customer1_ where customer0_.id=customer1_.id and (customer1_.name like ?)))
   }
 
