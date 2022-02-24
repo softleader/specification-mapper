@@ -21,7 +21,7 @@ compile: clean  ## Clean and compile the source code.
 	mvn compile -e
 
 test: clean ## Clean and test the compiled code.
-	mvn test -e
+	mvn test -e -D'java.version=$(JAVA_VERSION)'
 
 matrix-test: $(SPRING_BOOT_VERSIONS) ## Clean and test the compiled code w/ multiple Spring Boot version.
 $(SPRING_BOOT_VERSIONS):

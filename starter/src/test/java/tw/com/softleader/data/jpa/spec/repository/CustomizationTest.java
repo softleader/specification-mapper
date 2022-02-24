@@ -60,7 +60,7 @@ class CustomizationTest {
         .isInstanceOfAny(Conjunction.class, Disjunction.class)
         .hasFieldOrProperty("specs")
         .extracting("specs")
-        .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
+        .asInstanceOf(InstanceOfAssertFactories.LIST)
         .hasSize(1)
         .hasOnlyElementsOfType(MySpecification.class);
   }
