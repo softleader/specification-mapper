@@ -140,7 +140,7 @@ class MyConfig {
 
 ### Customize Default SpecMapper
 
-當然, 你也可以完全的客製化 `SpecMapper`, 只要將你的 `SpecMapper` 註冊成 *Spring @Bean*,  App 啟動的過程中就會跳過 *Default SpecMapper* 的配置而優先採用的你所註冊的那個! 
+當然, 你也可以完全的客製化 `SpecMapper`, 只要將你的 `SpecMapper` 註冊成 *Spring @Bean*,  App 啟動的過程中就會**略過 *Default SpecMapper* 的配置**而優先採用的你所註冊的那個! 
 
 配置範例如下:
 
