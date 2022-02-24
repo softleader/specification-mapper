@@ -26,6 +26,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -120,7 +121,7 @@ class CustomizeResolverTest {
 
     @Bean
     SpecificationResolver profileExistResolver(ObjectFactory<SpecMapper> mapper) {
-      return new ProfileExistsSpecificationResolver(mapper);
+      return new ProfileExistsSpecificationResolver(mapper::getObject);
     }
   }
 
@@ -146,7 +147,7 @@ class CustomizeResolverTest {
   @AllArgsConstructor
   public static class ProfileExistsSpecificationResolver implements SpecificationResolver {
 
-    final ObjectFactory<SpecMapper> mapper;
+    final Supplier<SpecMapper> mapper;
 
     @Override
     public boolean supports(@NonNull Databind databind) {
@@ -159,7 +160,7 @@ class CustomizeResolverTest {
       return databind.getFieldValue()
           .filter(Profile.class::isInstance)
           .map(Profile.class::cast)
-          .map(mapper.getObject()::toSpec)
+          .map(mapper.get()::toSpec)
           .map(spec -> buildExistsSubquery(def.entity(), def.on(), spec))
           .orElse(null);
     }
