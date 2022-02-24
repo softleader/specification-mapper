@@ -156,15 +156,14 @@ class CustomizeResolverTest {
 
     @Override
     public boolean supports(@NonNull Databind databind) {
-      return databind.getField().isAnnotationPresent(ProfileExists.class);
+      return databind.getField().isAnnotationPresent(ProfileExists.class)
+          && databind.getField().getType().isAssignableFrom(Profile.class);
     }
 
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
       var def = databind.getField().getAnnotation(ProfileExists.class);
       return databind.getFieldValue()
-          .filter(Profile.class::isInstance)
-          .map(Profile.class::cast)
           .map(mapper.get()::toSpec)
           .map(spec -> buildExistsSubquery(def.entity(), def.on(), spec))
           .orElse(null);
