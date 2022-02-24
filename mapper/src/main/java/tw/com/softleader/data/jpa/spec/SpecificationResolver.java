@@ -20,6 +20,12 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.Objects.requireNonNull;
+import static lombok.AccessLevel.PACKAGE;
+
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -34,4 +40,45 @@ public interface SpecificationResolver {
 
   @Nullable
   Specification<Object> buildSpecification(@NonNull Context context, @NonNull Databind databind);
+
+  static SpecificationResolverBuilder builder() {
+    return new SpecificationResolverBuilder();
+  }
+
+  @NoArgsConstructor(access = PACKAGE)
+  class SpecificationResolverBuilder {
+
+    Predicate<Databind> supports;
+    BiFunction<Context, Databind, Specification<Object>> buildSpecification;
+
+    public SpecificationResolverBuilder supports(@NonNull Predicate<Databind> supports) {
+      this.supports = supports;
+      return this;
+    }
+
+    public SpecificationResolverBuilder buildSpecification(
+        @NonNull BiFunction<Context, Databind, Specification<Object>> buildSpecification) {
+      this.buildSpecification = buildSpecification;
+      return this;
+    }
+
+    public SpecificationResolver build() {
+      requireNonNull(supports, "'supports' must not be null");
+      requireNonNull(buildSpecification, "'buildSpecification' must not be null");
+      return new SpecificationResolver() {
+
+        @Override
+        public boolean supports(@lombok.NonNull Databind databind) {
+          return supports.test(databind);
+        }
+
+        @Override
+        public Specification<Object> buildSpecification(
+            @NonNull Context context, @NonNull Databind databind) {
+          return buildSpecification.apply(context, databind);
+        }
+      };
+    }
+  }
+
 }

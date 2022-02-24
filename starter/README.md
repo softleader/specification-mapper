@@ -101,12 +101,11 @@ spec:
 
 ## Default SpecMapper
 
-此 Starter 會自動的配置一個預設的 `SpecMapper` 並註冊到 *Spring @Bean* 中, 你可以透過 *Autowired* 的方式跟 Spring 取得.
+此 Starter 會在 App 啟動的過程中自動的配置一個 *Default  SpecMapper* 並註冊到 *Spring @Bean* 中, 你可以透過 *Autowired* 的方式跟 Spring 取得.
 
 例如, 我想要在轉換成 Specification 後, 先做一些加強再去查詢, 則範例如下:
 
 ```java
-
 class PersonService {
 
   @Autowired SpecMapper specMapper;
@@ -122,9 +121,9 @@ class PersonService {
 }
 ```
 
-### Customize Default SpecMapper
+### Customize SpecificationResolver
 
-只要將你客製化的 `SpecMapper` 註冊成 *Spring @Bean*, 此 Starter 在配置的過程中就會優先的採用!
+只要將你自定義的 `SpecificationResolver` 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
 
 例如, 我想要[增加自定義的 Spec Annotation](../mapper#customize-spec-annotation), 配置範例如下:
 
@@ -133,11 +132,28 @@ class PersonService {
 class MyConfig {
 
   @Bean
+  SpecificationResolver myResolver() {
+    return ...
+  }
+}
+```
+
+### Customize Default SpecMapper
+
+當然, 你也可以完全的客製化 `SpecMapper`, 只要將你的 `SpecMapper` 註冊成 *Spring @Bean*,  App 啟動的過程中就會跳過 *Default SpecMapper* 的配置而優先採用的你所註冊的那個! 
+
+配置範例如下:
+
+```java
+@Configuration
+class MyConfig {
+
+  @Bean
   SpecMapper specMapper() {
     return SpecMapper.builder()
-      .defaultResolvers()
-      .resolver( ... )
+      . ...
       .build();
   }
 }
 ```
+

@@ -27,12 +27,10 @@ import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.no
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
-@Transactional
 @IntegrationTest
 class GreaterThanTest {
 
