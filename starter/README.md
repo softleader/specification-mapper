@@ -149,7 +149,7 @@ class MyConfig {
 class MyConfig {
 
   @Bean
-  SpecMapper specMapper() {
+  SpecMapper mySpecMapper() {
     return SpecMapper.builder()
       . ...
       .build();
