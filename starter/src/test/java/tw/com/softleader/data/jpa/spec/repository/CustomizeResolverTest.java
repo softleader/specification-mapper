@@ -102,16 +102,25 @@ class CustomizeResolverTest {
 
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ ElementType.FIELD })
-  public @interface ProfileExist {
+  public @interface ProfileExists {
 
+    /**
+     * @return entity class
+     */
+    Class<?> entity();
+
+    /**
+     * @return subquery 要 join 自己的 key
+     */
+    String on() default "id";
   }
 
   @Configuration
   static class MySpecConfig {
 
     @Bean
-    SpecificationResolver mySpecResolver(ObjectFactory<SpecMapper> mapper) {
-      return new ProfileExistSpecificationResolver(mapper);
+    SpecificationResolver profileExistResolver(ObjectFactory<SpecMapper> mapper) {
+      return new ProfileExistsSpecificationResolver(mapper);
     }
   }
 
@@ -122,7 +131,7 @@ class CustomizeResolverTest {
     @Spec(GreaterThanEqual.class)
     Integer age;
 
-    @ProfileExist
+    @ProfileExists(entity = Customer.class)
     Profile profile;
   }
 
@@ -135,34 +144,36 @@ class CustomizeResolverTest {
   }
 
   @AllArgsConstructor
-  public static class ProfileExistSpecificationResolver implements SpecificationResolver {
+  public static class ProfileExistsSpecificationResolver implements SpecificationResolver {
 
     final ObjectFactory<SpecMapper> mapper;
 
     @Override
     public boolean supports(@NonNull Databind databind) {
-      return databind.getField().isAnnotationPresent(ProfileExist.class);
+      return databind.getField().isAnnotationPresent(ProfileExists.class);
     }
 
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
+      var def = databind.getField().getAnnotation(ProfileExists.class);
       return databind.getFieldValue()
           .filter(Profile.class::isInstance)
           .map(Profile.class::cast)
           .map(mapper.getObject()::toSpec)
-          .map(this::buildSubquery)
+          .map(spec -> buildExistsSubquery(def.entity(), def.on(), spec))
           .orElse(null);
     }
 
-    private Specification<Object> buildSubquery(Specification spec) {
+    private Specification<Object> buildExistsSubquery(Class entityClass, String on,
+        Specification spec) {
       return (root, query, builder) -> {
-        var subquery = query.subquery(Customer.class);
-        var subroot = subquery.from(Customer.class);
+        var subquery = query.subquery(entityClass);
+        var subroot = subquery.from(entityClass);
         subquery
             .select(subroot)
             .where(
                 builder.and(
-                    builder.equal(root, subroot.get("id")),
+                    builder.equal(root, subroot.get(on)),
                     spec.toPredicate(subroot, query, builder)));
         return builder.exists(subquery);
       };
