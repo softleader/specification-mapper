@@ -156,8 +156,7 @@ class CustomizeResolverTest {
 
     @Override
     public boolean supports(@NonNull Databind databind) {
-      return databind.getField().isAnnotationPresent(ProfileExists.class)
-          && databind.getField().getType().isAssignableFrom(Profile.class);
+      return databind.getField().isAnnotationPresent(ProfileExists.class);
     }
 
     @Override
