@@ -62,8 +62,7 @@ class CustomizationTest {
         .extracting("specs")
         .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
         .hasSize(1)
-        .first()
-        .isInstanceOf(MySpecification.class);
+        .hasOnlyElementsOfType(MySpecification.class);
   }
 
   @Data
