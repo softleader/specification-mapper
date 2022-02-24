@@ -27,12 +27,10 @@ import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
-@Transactional
 @IntegrationTest
 class BetweenTest {
 

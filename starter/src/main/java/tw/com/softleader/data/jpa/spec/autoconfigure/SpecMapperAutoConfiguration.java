@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.SpecificationResolver;
 import tw.com.softleader.data.jpa.spec.repository.support.JpaRepositoryFactoryBeanPostProcessor;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
 
@@ -52,8 +53,17 @@ public class SpecMapperAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  SpecMapper specMapper() {
-    return SpecMapper.builder().build();
+  SpecMapper specMapper(List<SpecificationResolver> resolvers) {
+    if (log.isTraceEnabled() && resolvers.isEmpty()) {
+      log.trace("No SpecificationResolver declared");
+    }
+    if (log.isDebugEnabled()) {
+      resolvers.forEach(resolver -> log.debug("Detected {}", resolver.getClass().getName()));
+    }
+    return SpecMapper.builder()
+        .defaultResolvers()
+        .resolvers(resolvers)
+        .build();
   }
 
   @ConditionalOnBean(JpaRepositoryFactoryBean.class)
@@ -68,7 +78,7 @@ public class SpecMapperAutoConfiguration {
 
     @Bean
     RepositoryFactoryCustomizer repositoryBaseClassCustomizer(SpecMapperProperties properties) {
-      log.debug("Configuring repository-base-class to: {}",
+      log.debug("Configuring repository-base-class with '{}'",
           properties.getRepositoryBaseClass().getName());
       return factory -> factory.setRepositoryBaseClass(properties.getRepositoryBaseClass());
     }

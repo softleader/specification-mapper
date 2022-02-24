@@ -39,7 +39,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -50,7 +49,6 @@ import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
 
-@Transactional
 @IntegrationTest
 class SimpleSpecificationResolverTest {
 

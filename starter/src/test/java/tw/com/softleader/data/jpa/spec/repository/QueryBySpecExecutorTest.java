@@ -26,20 +26,21 @@ import lombok.Builder;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.repository.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
 
 @Transactional
+@EnableAutoConfiguration
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest
-@AutoConfigureDataJpa
-@SpringBootApplication
 class QueryBySpecExecutorTest {
 
   @Autowired
@@ -108,7 +109,7 @@ class QueryBySpecExecutorTest {
 
   @Builder
   @Data
-  public static class MyCriteria {
+  static class MyCriteria {
 
     @Spec(path = "name")
     String hello;

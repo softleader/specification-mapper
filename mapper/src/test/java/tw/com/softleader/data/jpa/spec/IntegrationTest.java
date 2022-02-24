@@ -31,14 +31,11 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
- * 會啟動 Spring Boot Data JPA 以及 H2 的整合測試
+ * Integration test with Spring Boot Data JPA
  *
  * @author Matt Ho
  */
@@ -46,16 +43,14 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@SpringBootTest(classes = TestApplication.class)
-@AutoConfigureDataJpa
+@DataJpaTest
 public @interface IntegrationTest {
 
   /**
-   * Main entrypoint for run Spring-boot in test
+   * Main entrypoint for running test Spring Boot
    *
    * @author Matt Ho
    */
-  @EnableJpaRepositories
   @SpringBootApplication
   class TestApplication {
 

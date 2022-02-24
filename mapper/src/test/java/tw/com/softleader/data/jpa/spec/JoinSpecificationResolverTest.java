@@ -31,7 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -41,7 +40,6 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
 import tw.com.softleader.data.jpa.spec.usecase.Tag;
 
-@Transactional
 @IntegrationTest
 class JoinSpecificationResolverTest {
 
