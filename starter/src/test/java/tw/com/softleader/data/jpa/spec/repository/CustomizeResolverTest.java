@@ -165,8 +165,10 @@ class CustomizeResolverTest {
           .orElse(null);
     }
 
-    private Specification<Object> buildExistsSubquery(Class entityClass, String on,
-        Specification spec) {
+    private Specification<Object> buildExistsSubquery(
+        Class entityClass,
+        String on,
+        Specification<?> subquerySpec) {
       return (root, query, builder) -> {
         var subquery = query.subquery(entityClass);
         var subroot = subquery.from(entityClass);
@@ -175,7 +177,7 @@ class CustomizeResolverTest {
             .where(
                 builder.and(
                     builder.equal(root, subroot.get(on)),
-                    spec.toPredicate(subroot, query, builder)));
+                    subquerySpec.toPredicate(subroot, query, builder)));
         return builder.exists(subquery);
       };
     }
