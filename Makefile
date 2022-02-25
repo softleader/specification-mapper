@@ -1,7 +1,6 @@
 # RELEASE defines the release-version of the bundle.
 VERSION ?=
-# See https://spring.io/projects/spring-boot#support
-SPRING_BOOT_VERSIONS := 2.4.13 2.5.9 2.6.3
+SPRING_BOOT_VERSION := 2.6.3
 JAVA_VERSION := 11
 
 ##@ General
@@ -21,11 +20,7 @@ compile: clean  ## Clean and compile the source code.
 	mvn compile -e
 
 test: clean ## Clean and test the compiled code.
-	mvn test -e -D'java.version=$(JAVA_VERSION)'
-
-matrix-test: $(SPRING_BOOT_VERSIONS) ## Clean and test the compiled code w/ multiple Spring Boot version.
-$(SPRING_BOOT_VERSIONS):
-	mvn clean test -e -D'format.skip=true' -D'spring-boot.version=$@' -D'java.version=$(JAVA_VERSION)'
+	mvn test -e -D'spring-boot.version=$@' -D'java.version=$(JAVA_VERSION)'
 
 install: clean ## Install project to local repository w/o unit testing.
 	mvn install -e -DskipTests -Prelease

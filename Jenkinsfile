@@ -100,26 +100,38 @@ spec:
       }
     }
 
-    stage('Unit Testing - Java 11') {
-      steps {
-        sh "make matrix-test JAVA_VERSION=11"
+    stage('Matrix Unit Testing') {
+      failFast true
+      matrix {
+        axes {
+          axis {
+            name 'SPRING_BOOT_VERSION'
+            values '2.4.13', '2.5.9', '2.6.3'
+          }
+        }
+        stages {
+          stage('Java 11 Unit Testing') {
+            steps {
+              sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=11"
+            }
+          }
+          stage('Java 17 Unit Testing') {
+            steps {
+              container('maven-java17') {
+                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=17"
+              }
+            }
+            post {
+              always {
+                junit "**/target/surefire-reports/**/*.xml"
+              }
+            }
+          }
+        }
       }
     }
 
-    stage('Unit Testing - Java 17') {
-      steps {
-        container('maven-java17') {
-          sh "make matrix-test JAVA_VERSION=17"
-        }
-      }
-      post {
-        always {
-          junit "**/target/surefire-reports/**/*.xml"
-        }
-      }
-    }
   }
-
   post {
     failure {
       script {
