@@ -108,17 +108,16 @@ spec:
             name 'SPRING_BOOT_VERSION'
             values '2.4.13', '2.5.9', '2.6.3'
           }
+          axis {
+            name 'JAVA_VERSION'
+            values '11', '17'
+          }
         }
         stages {
-          stage('Unit Testing - Java 11') {
+          stage('Unit Testing') {
             steps {
-              sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=11"
-            }
-          }
-          stage('Unit Testing - Java 17') {
-            steps {
-              container('maven-java17') {
-                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=17"
+              container("maven-java${JAVA_VERSION}") {
+                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=${JAVA_VERSION}"
               }
             }
             post {
