@@ -110,11 +110,9 @@ spec:
             for (int s = 0; s < springBootVersions.size(); s++) {
               def java = javaVersions[j]
               def springboot = springBootVersions[s]
-              stage("Testing - JAVA=${java}, SPRING_BOOT=${springboot}"){
-                steps {
-                  container("maven-java${java}") {
-                    sh "make test JAVA_VERSION=${java} SPRING_BOOT_VERSION=${springboot}"
-                  }
+              stage("Matrix - JAVA = '${java}', SPRING_BOOT = '${springboot}'"){
+                container("maven-java${java}") {
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
               }
             }
