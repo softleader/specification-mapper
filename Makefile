@@ -19,7 +19,7 @@ clean: ## Remove files generated at build-time.
 compile: clean  ## Clean and compile the source code.
 	mvn compile -e
 
-test: clean ## Clean and test the compiled code.
+test: ## Test the compiled code.
 	mvn test -e -D'spring-boot.version=$(SPRING_BOOT_VERSION)' -D'java.version=$(JAVA_VERSION)'
 
 install: clean ## Install project to local repository w/o unit testing.

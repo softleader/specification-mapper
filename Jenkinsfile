@@ -110,12 +110,12 @@ spec:
           }
         }
         stages {
-          stage('Java 11 Unit Testing') {
+          stage('Unit Testing - Java 11') {
             steps {
               sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=11"
             }
           }
-          stage('Java 17 Unit Testing') {
+          stage('Unit Testing - Java 17 ') {
             steps {
               container('maven-java17') {
                 sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=17"
