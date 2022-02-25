@@ -128,32 +128,6 @@ spec:
       }
     }
 
-    stage('Matrix Unit Testing') {
-      failFast true
-      matrix {
-        axes {
-          axis {
-            name 'SPRING_BOOT'
-            values '2.4.13', '2.5.9', '2.6.3'
-          }
-        }
-        stages {
-          stage('Unit Testing') {
-            steps {
-              container("maven-java17") {
-                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT} JAVA_VERSION=17"
-              }
-            }
-            post {
-              always {
-                junit "**/target/surefire-reports/**/*.xml"
-              }
-            }
-          }
-        }
-      }
-    }
-
   }
   post {
     failure {
