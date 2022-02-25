@@ -1,5 +1,8 @@
 #!/usr/bin/env groovy
 
+def java_versions = ['11', '17']
+def springboot_versions = ['2.4.13', '2.5.9', '2.6.3']
+
 pipeline {
   agent {
     kubernetes {
@@ -101,23 +104,44 @@ spec:
     }
 
     stage('Matrix Unit Testing') {
+      steps {
+        script {
+          def jobs = [:]
+          for (int j = 0; j < java_versions.size(); j++) {
+            for (int s = 0; s < springboot_versions.size(); s++) {
+              def java = java_versions[j]
+              def springboot = springboot_versions[s]
+
+              jobs["jobs-${java}-${springboot}"] = {
+                stage("Unit Testing - JAVA = ${java}, SPRING_BOOT = ${springboot}") {
+                  steps {
+                    container("maven-java${java}") {
+                      sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT} JAVA_VERSION=${java}"
+                    }
+                  }
+                }
+              }
+            }
+          }
+          jobs
+        }
+      }
+    }
+
+    stage('Matrix Unit Testing') {
       failFast true
       matrix {
         axes {
           axis {
-            name 'SPRING_BOOT_VERSION'
+            name 'SPRING_BOOT'
             values '2.4.13', '2.5.9', '2.6.3'
-          }
-          axis {
-            name 'JAVA_VERSION'
-            values '11', '17'
           }
         }
         stages {
           stage('Unit Testing') {
             steps {
-              container("maven-java${JAVA_VERSION}") {
-                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=${JAVA_VERSION}"
+              container("maven-java17") {
+                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT} JAVA_VERSION=17"
               }
             }
             post {
