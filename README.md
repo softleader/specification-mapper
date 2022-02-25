@@ -1,4 +1,4 @@
-[![version](https://img.shields.io/github/v/release/softleader/specification-mapper?color=brightgreen&sort=semver)](https://github.com/softleader/specification-mapper/releases)
+[![version](https://img.shields.io/github/v/release/softleader/specification-mapper?color=brightgreen&sort=semver)](https://github.com/softleader/specification-mapper/releases/latest)
 [![Maven Central](https://img.shields.io/maven-central/v/tw.com.softleader.data/specification-mapper-parent?color=orange)](https://search.maven.org/search?q=g:tw.com.softleader.data%20AND%20a:specification-mapper*)
 
 # specification-mapper
