@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
-def java_versions = ['11', '17']
-def springboot_versions = ['2.4.13', '2.5.9', '2.6.3']
+def javaVersions = ['11', '17']
+def springBootVersions = ['2.4.13', '2.5.9', '2.6.3']
 
 pipeline {
   agent {
@@ -103,27 +103,22 @@ spec:
       }
     }
 
-    stage('Matrix Unit Testing') {
+    stage('Matrix Testing') {
       steps {
         script {
-          def jobs = [:]
-          for (int j = 0; j < java_versions.size(); j++) {
-            for (int s = 0; s < springboot_versions.size(); s++) {
-              def java = java_versions[j]
-              def springboot = springboot_versions[s]
-
-              jobs["jobs-${java}-${springboot}"] = {
-                stage("Unit Testing - JAVA = ${java}, SPRING_BOOT = ${springboot}") {
-                  steps {
-                    container("maven-java${java}") {
-                      sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT} JAVA_VERSION=${java}"
-                    }
+          for (int j = 0; j < javaVersions.size(); j++) {
+            for (int s = 0; s < springBootVersions.size(); s++) {
+              def java = javaVersions[j]
+              def springboot = springBootVersions[s]
+              stage("Testing - JAVA=${java}, SPRING_BOOT=${springboot}"){
+                steps {
+                  container("maven-java${java}") {
+                    sh "make test JAVA_VERSION=${java} SPRING_BOOT_VERSION=${springboot}"
                   }
                 }
               }
             }
           }
-          jobs
         }
       }
     }
