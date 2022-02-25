@@ -110,7 +110,7 @@ spec:
             for (int s = 0; s < springBootVersions.size(); s++) {
               def java = javaVersions[j]
               def springboot = springBootVersions[s]
-              stage("Matrix - JAVA = '${java}', SPRING_BOOT = '${springboot}'"){
+              stage("Matrix - JAVA = ${java}, SPRING_BOOT = ${springboot}"){
                 container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
@@ -119,9 +119,14 @@ spec:
           }
         }
       }
+      post {
+        always {
+          junit "**/target/surefire-reports/**/*.xml"
+        }
+      }
     }
-
   }
+
   post {
     failure {
       script {
