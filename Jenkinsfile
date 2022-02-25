@@ -1,5 +1,8 @@
 #!/usr/bin/env groovy
 
+def javaVersions = ['11', '17']
+def springBootVersions = ['2.4.13', '2.5.9', '2.6.3']
+
 pipeline {
   agent {
     kubernetes {
@@ -100,38 +103,30 @@ spec:
       }
     }
 
-    stage('Matrix Unit Testing') {
-      failFast true
-      matrix {
-        axes {
-          axis {
-            name 'SPRING_BOOT_VERSION'
-            values '2.4.13', '2.5.9', '2.6.3'
-          }
-        }
-        stages {
-          stage('Java 11 Unit Testing') {
-            steps {
-              sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=11"
-            }
-          }
-          stage('Java 17 Unit Testing') {
-            steps {
-              container('maven-java17') {
-                sh "make test SPRING_BOOT_VERSION=${SPRING_BOOT_VERSION} JAVA_VERSION=17"
-              }
-            }
-            post {
-              always {
-                junit "**/target/surefire-reports/**/*.xml"
+    stage('Matrix Testing') {
+      steps {
+        script {
+          for (int j = 0; j < javaVersions.size(); j++) {
+            for (int s = 0; s < springBootVersions.size(); s++) {
+              def java = javaVersions[j]
+              def springboot = springBootVersions[s]
+              stage("Matrix - JAVA = ${java}, SPRING_BOOT = ${springboot}"){
+                container("maven-java${java}") {
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                }
               }
             }
           }
         }
       }
+      post {
+        always {
+          junit "**/target/surefire-reports/**/*.xml"
+        }
+      }
     }
-
   }
+
   post {
     failure {
       script {
