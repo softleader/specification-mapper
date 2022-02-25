@@ -100,11 +100,14 @@ spec:
       }
     }
 
-    stage('Matrix Unit Testing') {
+    stage('Unit Testing - Java 11') {
       steps {
-        container('maven-java11') {
-          sh "make matrix-test JAVA_VERSION=11"
-        }
+        sh "make matrix-test JAVA_VERSION=11"
+      }
+    }
+
+    stage('Unit Testing - Java 17') {
+      steps {
         container('maven-java17') {
           sh "make matrix-test JAVA_VERSION=17"
         }
@@ -126,7 +129,7 @@ spec:
             && env.LAST_COMMIT_AUTHOR_NAME && env.LAST_COMMIT_AUTHOR_EMAIL && env.LAST_COMMIT_TIME) {
           slackSend(
             color: "danger",
-            channel: "dept-rd",
+            channel: "@matt",
             message: "Attention @here, The pipeline <$BUILD_URL|*${env.JOB_NAME} #${env.BUILD_NUMBER}*> has failed! :omg:\n>Last commit by ${env.LAST_COMMIT_AUTHOR_NAME} (${env.LAST_COMMIT_AUTHOR_EMAIL}) @ ${env.LAST_COMMIT_TIME}"
           )
         }
