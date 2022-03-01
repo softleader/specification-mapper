@@ -53,6 +53,9 @@ public class Not<T> implements Specification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
+    if (spec == null) {
+      return null;
+    }
     return not(spec).toPredicate(root, query, builder);
   }
 }
