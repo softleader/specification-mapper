@@ -20,6 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static org.springframework.data.jpa.domain.Specification.not;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -37,7 +39,7 @@ import org.springframework.lang.Nullable;
  * underlying spec for debugging
  *
  * @author Matt Ho
- * 
+ *
  * @see Specification#not(Specification)
  */
 @ToString(includeFieldNames = false)
@@ -51,9 +53,6 @@ public class Not<T> implements Specification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    if (spec == null) {
-      return null;
-    }
-    return builder.not(spec.toPredicate(root, query, builder));
+    return not(spec).toPredicate(root, query, builder);
   }
 }
