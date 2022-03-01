@@ -161,8 +161,8 @@ Collection<Integer> age;
 ```java
 public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
 
-  // 這是規定必須提供的建構值, 且必須是 public
-  public MaxCustomerCreatedTime(Context context, String path, Object value) {
+  // 這是規定必須提供的建構值, 修飾詞不限定: public, protected, default, private 都支援
+  protected MaxCustomerCreatedTime(Context context, String path, Object value) {
     super(context, path, value);
   }
 

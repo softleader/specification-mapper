@@ -21,11 +21,14 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
 import static java.util.Optional.ofNullable;
+import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
 import java.util.StringJoiner;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
+import lombok.Builder;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -44,6 +47,17 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
     this.context = context;
     this.path = path;
     this.value = value;
+  }
+
+  @Builder
+  @SneakyThrows
+  private static <T> Specification<T> newSpec(
+      @NonNull Context context,
+      @NonNull Class<? extends SimpleSpecification> domainClass,
+      @NonNull String path,
+      @NonNull Object value) {
+    return accessibleConstructor(domainClass, Context.class, String.class, Object.class)
+        .newInstance(context, path, value);
   }
 
   protected <F> Path<F> getPath(Root<T> root) {
