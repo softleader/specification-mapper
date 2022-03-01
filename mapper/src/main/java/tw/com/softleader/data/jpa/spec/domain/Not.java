@@ -30,9 +30,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * This is just for implement toString() for debugging
+ * Negates the given Specification.
+ *
+ * <p>
+ * This is exactly the same as {@code Specification#not(Specification)) but implement toString() for
+ * underlying spec for debugging
  *
  * @author Matt Ho
+ * 
  * @see Specification#not(Specification)
  */
 @ToString(includeFieldNames = false)
