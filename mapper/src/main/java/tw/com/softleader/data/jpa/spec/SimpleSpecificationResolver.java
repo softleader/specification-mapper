@@ -21,10 +21,8 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
-import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
 import java.util.stream.StreamSupport;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
@@ -61,7 +59,12 @@ class SimpleSpecificationResolver implements SpecificationResolver {
           var path = of(def.path())
               .filter(StringUtils::hasText)
               .orElseGet(databind.getField()::getName);
-          var spec = newSimpleSpecification(context, def.value(), path, value);
+          var spec = SimpleSpecification.builder()
+              .context(context)
+              .domainClass(def.value())
+              .path(path)
+              .value(value)
+              .build();
           if (def.not()) {
             spec = new Not<>(spec);
           }
@@ -69,7 +72,8 @@ class SimpleSpecificationResolver implements SpecificationResolver {
               tw.com.softleader.data.jpa.spec.annotation.And.class)) {
             return new And<>(spec);
           }
-          if (databind.getField().isAnnotationPresent(tw.com.softleader.data.jpa.spec.annotation.Or.class)) {
+          if (databind.getField()
+              .isAnnotationPresent(tw.com.softleader.data.jpa.spec.annotation.Or.class)) {
             return new Or<>(spec);
           }
           return spec;
@@ -86,15 +90,5 @@ class SimpleSpecificationResolver implements SpecificationResolver {
       return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).count() > 0;
     }
     return true;
-  }
-
-  @SneakyThrows
-  private Specification<Object> newSimpleSpecification(
-      @NonNull Context context,
-      @NonNull Class<? extends SimpleSpecification> domainClass,
-      @NonNull String path,
-      @NonNull Object value) {
-    return accessibleConstructor(domainClass, Context.class, String.class, Object.class)
-        .newInstance(context, path, value);
   }
 }
