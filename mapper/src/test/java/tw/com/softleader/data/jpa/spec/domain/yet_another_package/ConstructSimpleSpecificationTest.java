@@ -54,7 +54,6 @@ class ConstructSimpleSpecificationTest {
             .path("")
             .value(new Object())
             .build());
-    ;
   }
 
   @Test
