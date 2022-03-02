@@ -138,6 +138,29 @@ class MyConfig {
 }
 ```
 
+如果你的 `SpecificationResolver` 需要用到 `SpecMapper` 本身, 則你可以包裝成 `SpecificationResolverCodecBuilder`, 例如:
+
+```java
+@Configuration
+class MyConfig {
+
+  @Bean
+  SpecificationResolverCodecBuilder mySpecificationResolver() {
+    return MySpecificationResolver::new;
+  }
+}
+
+class MySpecificationResolver implements SpecificationResolver {
+  
+  private final SpecCodec codec;
+  
+  MySpecificationResolver(SpecCodec codec) {
+    // Keep the SpecCodec around to used.
+    this.codec = codec;
+  }
+}
+```
+
 ### Customize Default SpecMapper
 
 當然, 你也可以完全的客製化 `SpecMapper`, 只要將你的 `SpecMapper` 註冊成 *Spring @Bean*,  App 啟動的過程中就會**略過 *Default SpecMapper* 的配置**而優先採用的你所註冊的那個! 

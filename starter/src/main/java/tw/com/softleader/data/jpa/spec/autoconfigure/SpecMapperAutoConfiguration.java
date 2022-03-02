@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec.autoconfigure;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Stream.concat;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver;
+import tw.com.softleader.data.jpa.spec.SpecificationResolverCodecBuilder;
 import tw.com.softleader.data.jpa.spec.repository.support.JpaRepositoryFactoryBeanPostProcessor;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
 
@@ -53,17 +55,27 @@ public class SpecMapperAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  SpecMapper specMapper(List<SpecificationResolver> resolvers) {
-    if (log.isTraceEnabled() && resolvers.isEmpty()) {
-      log.trace("No SpecificationResolver declared");
+  SpecMapper specMapper(
+      List<SpecificationResolver> resolvers,
+      List<SpecificationResolverCodecBuilder> codecBuilders) {
+    if (log.isTraceEnabled()) {
+      if (resolvers.isEmpty()) {
+        log.trace("No SpecificationResolver declared");
+      }
+      if (codecBuilders.isEmpty()) {
+        log.trace("No SpecificationResolverCodecBuilder declared");
+      }
     }
     if (log.isDebugEnabled()) {
-      resolvers.forEach(resolver -> log.debug("Detected {}", resolver.getClass().getName()));
+      concat(
+          resolvers.stream(),
+          codecBuilders.stream()).forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
-    return SpecMapper.builder()
+    var builder = SpecMapper.builder()
         .defaultResolvers()
-        .resolvers(resolvers)
-        .build();
+        .resolvers(resolvers);
+    codecBuilders.forEach(builder::resolver);
+    return builder.build();
   }
 
   @ConditionalOnBean(JpaRepositoryFactoryBean.class)
