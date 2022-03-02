@@ -1,14 +1,14 @@
 #!/usr/bin/env groovy
 
 def javaVersions = ['11', '17']
-def springBootVersions = ['2.4.13', '2.5.9', '2.6.3']
+def springBootVersions = ['2.4.13', '2.5.10', '2.6.4']
 
 pipeline {
   agent {
     kubernetes {
       cloud 'SLKE'
       workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace-claim', readOnly: false)
-      defaultContainer 'maven-java11'
+      defaultContainer 'maven-java17'
       yaml """
 kind: Pod
 spec:
@@ -64,7 +64,7 @@ spec:
   }
 
   environment {
-    MAVEN_OPTS="-Xmx2048m -XX:MaxMetaspaceSize=128m"
+    MAVEN_OPTS="-Xmx768m -XX:MaxMetaspaceSize=128m"
   }
 
   stages {

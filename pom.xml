@@ -37,7 +37,7 @@
 
   <properties>
     <!-- Basics -->
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,7 +53,7 @@
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 
-    <spring-boot.version>2.6.3</spring-boot.version>
+    <spring-boot.version>2.6.4</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
     <format.skip>false</format.skip>
   </properties>
