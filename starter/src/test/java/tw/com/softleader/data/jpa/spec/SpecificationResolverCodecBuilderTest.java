@@ -34,10 +34,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
-@Transactional
 @EnableAutoConfiguration
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest
