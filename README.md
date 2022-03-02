@@ -14,7 +14,7 @@ An alternative Specification API for Spring Data JPA.
 
 ## Compatibility
 
-### JDK
+### Java
 
 - 11
 - 17
