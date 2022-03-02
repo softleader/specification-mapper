@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
-import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 
 /**
@@ -42,9 +41,9 @@ public class JpaRepositoryFactoryBeanPostProcessor implements BeanPostProcessor 
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
-    if (bean instanceof RepositoryFactoryBeanSupport) {
-      var support = (RepositoryFactoryBeanSupport) bean;
-      customizers.forEach(support::addRepositoryFactoryCustomizer);
+    if (bean instanceof JpaRepositoryFactoryBean) {
+      var factoryBean = (JpaRepositoryFactoryBean) bean;
+      customizers.forEach(factoryBean::addRepositoryFactoryCustomizer);
     }
     return bean;
   }
