@@ -12,7 +12,14 @@ An alternative Specification API for Spring Data JPA.
 - **Spec Mapper API:** See documentation for [specification-mapper](./mapper).
 - **Spring Starter:** See documentation for [specification-mapper-starter](./starter).
 
-## Spring Compatibility
+## Compatibility
+
+### JDK
+
+- 11
+- 17
+
+### Spring
 
 The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
 

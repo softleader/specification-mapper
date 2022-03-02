@@ -37,7 +37,7 @@
 
   <properties>
     <!-- Basics -->
-    <java.version>17</java.version>
+    <java.version>11</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +46,7 @@
     <!-- Plugins -->
     <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-    <formatter-maven-plugin.version>2.17.1</formatter-maven-plugin.version>
+    <formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
     <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
     <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
