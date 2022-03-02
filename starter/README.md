@@ -138,7 +138,7 @@ class MyConfig {
 }
 ```
 
-如果你的 `SpecificationResolver` 需要用到 `SpecMapper` 本身, 則你可以包裝成 `SpecificationResolverCodecBuilder`, 例如:
+如果你的 `SpecificationResolver` 需要用到 `SpecMapper` 本身, 則你可以包裝成 `SpecificationResolverCodecBuilder`, 在建構 resolver 時就會把 `SpecCodec`, 即 `SpecMapper` 的 interface, 傳進去, 例如:
 
 ```java
 @Configuration
