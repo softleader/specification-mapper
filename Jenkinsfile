@@ -8,7 +8,7 @@ pipeline {
     kubernetes {
       cloud 'SLKE'
       workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace-claim', readOnly: false)
-      defaultContainer 'maven-java11'
+      defaultContainer 'maven-java17'
       yaml """
 kind: Pod
 spec:

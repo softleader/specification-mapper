@@ -17,7 +17,7 @@ spec:
     runAsUser: 0
   containers:
   - name: maven
-    image: harbor.softleader.com.tw/library/maven:3-azulzulu-11
+    image: harbor.softleader.com.tw/library/maven:3-azulzulu-17
     imagePullPolicy: Always
     command: ['cat']
     tty: true
