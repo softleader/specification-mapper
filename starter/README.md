@@ -145,7 +145,7 @@ class MyConfig {
 class MyConfig {
 
   @Bean
-  SpecificationResolverCodecBuilder mySpecificationResolver() {
+  SpecificationResolverCodecBuilder myResolver() {
     return MySpecificationResolver::new;
   }
 }
