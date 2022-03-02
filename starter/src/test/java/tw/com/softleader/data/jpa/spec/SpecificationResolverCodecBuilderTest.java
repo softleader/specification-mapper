@@ -21,7 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -47,7 +47,7 @@ class SpecificationResolverCodecBuilderTest {
   @Test
   void customizeCodecBuilder() {
     assertThat(mapper)
-        .extracting("resolvers", COLLECTION)
+        .extracting("resolvers", LIST)
         .hasAtLeastOneElementOfType(MySpecificationResolver.class);
   }
 
