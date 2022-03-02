@@ -64,7 +64,7 @@ spec:
   }
 
   environment {
-    MAVEN_OPTS="-Xmx2048m -XX:MaxMetaspaceSize=128m"
+    MAVEN_OPTS="-Xmx768m -XX:MaxMetaspaceSize=128m"
   }
 
   stages {
