@@ -20,11 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -46,7 +46,7 @@ class SpecificationResolverCodecBuilderTest {
 
   @Test
   void customizeCodecBuilder() {
-    Assertions.assertThat(mapper)
+    assertThat(mapper)
         .extracting("resolvers", COLLECTION)
         .hasAtLeastOneElementOfType(MySpecificationResolver.class);
   }
