@@ -158,6 +158,8 @@ class MySpecificationResolver implements SpecificationResolver {
     // Keep the SpecCodec around to used.
     this.codec = codec;
   }
+  
+  // implementation goes here
 }
 ```
 
