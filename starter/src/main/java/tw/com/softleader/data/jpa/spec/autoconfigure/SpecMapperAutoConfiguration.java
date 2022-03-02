@@ -69,7 +69,8 @@ public class SpecMapperAutoConfiguration {
     if (log.isDebugEnabled()) {
       concat(
           resolvers.stream(),
-          codecBuilders.stream()).forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
+          codecBuilders.stream())
+              .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
     var builder = SpecMapper.builder()
         .defaultResolvers()
