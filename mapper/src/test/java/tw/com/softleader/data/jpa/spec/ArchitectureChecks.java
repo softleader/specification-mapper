@@ -36,13 +36,17 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 })
 class ArchitectureChecks {
 
+  private static final String DOMAIN = "Domain";
+  private static final String INFRA = "Infra";
+  private static final String ANNOTATION = "Annotation";
+
   @ArchTest
   static final ArchRule layerChecks = layeredArchitecture()
-      .layer("Domain").definedBy(SimpleSpecification.class.getPackage().getName())
-      .layer("Infra").definedBy(SpecCodec.class.getPackage().getName())
-      .layer("Annotation").definedBy(Spec.class.getPackage().getName())
+      .layer(DOMAIN).definedBy(SimpleSpecification.class.getPackage().getName())
+      .layer(INFRA).definedBy(SpecCodec.class.getPackage().getName())
+      .layer(ANNOTATION).definedBy(Spec.class.getPackage().getName())
 
-      .whereLayer("Annotation").mayOnlyBeAccessedByLayers("Infra")
-      .whereLayer("Domain").mayOnlyBeAccessedByLayers("Infra", "Annotation")
-      .whereLayer("Infra").mayNotBeAccessedByAnyLayer();
+      .whereLayer(ANNOTATION).mayOnlyBeAccessedByLayers(INFRA)
+      .whereLayer(DOMAIN).mayOnlyBeAccessedByLayers(INFRA, ANNOTATION)
+      .whereLayer(INFRA).mayNotBeAccessedByAnyLayer();
 }
