@@ -25,7 +25,7 @@ import tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration
 
 /**
  * Represents a builder that accepts {@code SpecCodec} and produces a {@code SpecificationResolver},
- * for autoconfigure scan.
+ * for autoconfigure to scan.
  *
  * @author Matt Ho
  * @see SpecCodec

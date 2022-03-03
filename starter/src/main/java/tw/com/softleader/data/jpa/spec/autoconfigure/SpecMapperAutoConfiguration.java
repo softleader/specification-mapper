@@ -40,6 +40,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver;
+import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
 import tw.com.softleader.data.jpa.spec.SpecificationResolverCodecBuilder;
 import tw.com.softleader.data.jpa.spec.repository.support.JpaRepositoryFactoryBeanPostProcessor;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
@@ -58,10 +59,14 @@ public class SpecMapperAutoConfiguration {
   @ConditionalOnMissingBean
   SpecMapper specMapper(
       List<SpecificationResolver> resolvers,
+      List<SpecificationResolverBuilder> builders,
       List<SpecificationResolverCodecBuilder> codecBuilders) {
     if (log.isTraceEnabled()) {
       if (resolvers.isEmpty()) {
         log.trace("No SpecificationResolver declared");
+      }
+      if (builders.isEmpty()) {
+        log.trace("No SpecificationResolverBuilder declared");
       }
       if (codecBuilders.isEmpty()) {
         log.trace("No SpecificationResolverCodecBuilder declared");
@@ -70,14 +75,17 @@ public class SpecMapperAutoConfiguration {
     if (log.isDebugEnabled()) {
       concat(
           resolvers.stream(),
-          codecBuilders.stream())
-              .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
+          concat(
+              builders.stream(),
+              codecBuilders.stream()))
+                  .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
-    val builder = SpecMapper.builder()
+    val mapper = SpecMapper.builder()
         .defaultResolvers()
         .resolvers(resolvers);
-    codecBuilders.forEach(builder::resolver);
-    return builder.build();
+    builders.forEach(builder -> mapper.resolver(builder::build));
+    codecBuilders.forEach(mapper::resolver);
+    return mapper.build();
   }
 
   @ConditionalOnBean(JpaRepositoryFactoryBean.class)
