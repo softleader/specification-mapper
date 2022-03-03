@@ -22,7 +22,8 @@ package tw.com.softleader.data.jpa.spec;
 
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
-import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeJars;
+import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -30,8 +31,8 @@ import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 @AnalyzeClasses(packagesOf = SpecCodec.class, importOptions = {
-    ImportOption.DoNotIncludeTests.class,
-    ImportOption.DoNotIncludeJars.class
+    DoNotIncludeTests.class,
+    DoNotIncludeJars.class
 })
 class ArchitectureChecks {
 
