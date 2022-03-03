@@ -24,7 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
@@ -39,12 +41,12 @@ class BetweenTest {
 
   @Test
   void test() {
-    var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
+    val matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("matt").birthday(LocalDate.now().minusDays(2)).build());
 
-    var spec = new Between<Customer>(noopContext(), "birthday",
-        List.of(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1)));
-    var actual = repository.findAll(spec);
+    val spec = new Between<Customer>(noopContext(), "birthday",
+        Arrays.asList(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1)));
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 }

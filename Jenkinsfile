@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def javaVersions = ['11', '17']
+def javaVersions = ['8', '11', '17']
 def springBootVersions = ['2.4.13', '2.5.10', '2.6.4']
 
 pipeline {
@@ -8,7 +8,7 @@ pipeline {
     kubernetes {
       cloud 'SLKE'
       workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace-claim', readOnly: false)
-      defaultContainer 'maven-java11'
+      defaultContainer 'maven-java8'
       yaml """
 kind: Pod
 spec:
@@ -16,6 +16,20 @@ spec:
   securityContext:
     runAsUser: 0
   containers:
+  - name: maven-java8
+    image: harbor.softleader.com.tw/library/maven:3-eclipse-temurin-8
+    imagePullPolicy: Always
+    command: ['cat']
+    tty: true
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "2"
+    volumeMounts:
+    - name: m2
+      mountPath: /root/.m2
+    - name: dockersock
+      mountPath: /var/run/docker.sock
   - name: maven-java11
     image: harbor.softleader.com.tw/library/maven:3-azulzulu-11
     imagePullPolicy: Always

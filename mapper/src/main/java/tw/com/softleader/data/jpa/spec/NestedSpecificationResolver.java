@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
@@ -52,7 +53,7 @@ class NestedSpecificationResolver implements SpecificationResolver {
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
               databind.getField().getType());
-          var spec = codec.toSpec(context, nested);
+          val spec = codec.toSpec(context, nested);
           log.debug(" <- Composed specification from [{}.{}]: {}",
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),

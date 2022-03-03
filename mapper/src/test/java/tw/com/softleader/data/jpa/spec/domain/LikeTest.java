@@ -23,6 +23,7 @@ package tw.com.softleader.data.jpa.spec.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
@@ -37,12 +38,12 @@ class LikeTest {
 
   @Test
   void test() {
-    var matt = repository.save(Customer.builder().name("matt").build());
+    val matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var context = noopContext();
-    var spec = new Like<Customer>(context, "name", "at");
-    var actual = repository.findAll(spec);
+    val context = noopContext();
+    val spec = new Like<Customer>(context, "name", "at");
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 }

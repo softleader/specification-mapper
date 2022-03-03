@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
@@ -53,7 +54,7 @@ class JoinSpecificationResolver implements SpecificationResolver {
     return databind.getFieldValue()
         .filter(this::valuePresent)
         .map(value -> {
-          var specs = Stream.concat(
+          val specs = Stream.concat(
               joinDef(context, databind.getField()),
               joinsDef(context, databind.getField()))
               .filter(Objects::nonNull)

@@ -30,6 +30,7 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -92,17 +93,17 @@ class NestedSpecificationResolverTest {
   @DisplayName("全部都用 AND 組合多個條件")
   @Test
   void allAnd() {
-    var criteria = AllAnd.builder()
+    val criteria = AllAnd.builder()
         .name(matt.getName())
         .nestedAnd(new NestedAnd(matt.getName(), new NestedInNestedAnd(matt.getName())))
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = inOrder(
+    val inOrder = inOrder(
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
@@ -116,18 +117,18 @@ class NestedSpecificationResolverTest {
   @DisplayName("全部都用 OR 組合多個條件")
   @Test
   void allOr() {
-    var criteria = AllOr.builder()
+    val criteria = AllOr.builder()
         .name(matt.getName())
         .nestedOr(
             new NestedOr(bob.getName(), new NestedInNestedOr(mary.getName())))
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
-    var inOrder = inOrder(
+    val inOrder = inOrder(
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
@@ -141,7 +142,7 @@ class NestedSpecificationResolverTest {
   @DisplayName("混合 AND 或 OR 組合多個條件")
   @Test
   void mix() {
-    var criteria = Mix.builder()
+    val criteria = Mix.builder()
         .name(matt.getName())
         .nestedMix(
             NestedMix.builder()
@@ -155,13 +156,13 @@ class NestedSpecificationResolverTest {
                 .build())
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     System.out.println(spec);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = inOrder(
+    val inOrder = inOrder(
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
@@ -175,7 +176,7 @@ class NestedSpecificationResolverTest {
   @DisplayName("強制使用 Or 串連")
   @Test
   void forceOr() {
-    var criteria = ForceOr.builder()
+    val criteria = ForceOr.builder()
         .name("m")
         .gold(true)
         .nestedOr(NestedForceOr.builder()
@@ -184,12 +185,12 @@ class NestedSpecificationResolverTest {
             .build())
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, mary, bob);
 
-    var inOrder = inOrder(
+    val inOrder = inOrder(
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
@@ -203,7 +204,7 @@ class NestedSpecificationResolverTest {
   @DisplayName("強制使用 And 串連")
   @Test
   void forceAnd() {
-    var criteria = ForceAnd.builder()
+    val criteria = ForceAnd.builder()
         .name("m")
         .gold(true)
         .nestedAnd(NestedForceAnd.builder()
@@ -212,12 +213,12 @@ class NestedSpecificationResolverTest {
             .build())
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = inOrder(
+    val inOrder = inOrder(
         compositionResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))

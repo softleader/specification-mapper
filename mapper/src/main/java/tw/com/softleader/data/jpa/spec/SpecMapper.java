@@ -22,19 +22,21 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static lombok.AccessLevel.PACKAGE;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
@@ -57,7 +59,7 @@ public class SpecMapper implements SpecCodec {
 
   @Override
   public Specification<Object> toSpec(@NonNull Context context, @Nullable Object rootObject) {
-    var specs = ReflectionDatabind.of(rootObject)
+    val specs = ReflectionDatabind.of(rootObject)
         .stream()
         .flatMap(databind -> resolveSpec(context, databind))
         .filter(Objects::nonNull)
@@ -114,10 +116,12 @@ public class SpecMapper implements SpecCodec {
       if (this.resolvers.isEmpty()) {
         defaultResolvers();
       }
-      var mapper = new SpecMapper();
+      val mapper = new SpecMapper();
       mapper.resolvers = this.resolvers.stream()
           .map(resolver -> resolver.apply(mapper))
-          .collect(toUnmodifiableList());
+          .collect(Collectors.collectingAndThen(
+              Collectors.toList(),
+              Collections::unmodifiableList));
       return mapper;
     }
   }

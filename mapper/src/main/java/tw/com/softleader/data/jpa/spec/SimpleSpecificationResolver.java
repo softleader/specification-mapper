@@ -24,6 +24,7 @@ import static java.util.Optional.of;
 
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
@@ -48,7 +49,7 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    var def = databind.getField().getAnnotation(Spec.class);
+    val def = databind.getField().getAnnotation(Spec.class);
     log.debug("Building specification of [{}.{}] for {}",
         databind.getTarget().getClass().getSimpleName(),
         databind.getField().getName(),
@@ -56,10 +57,10 @@ class SimpleSpecificationResolver implements SpecificationResolver {
     return databind.getFieldValue()
         .filter(this::valuePresent)
         .map(value -> {
-          var path = of(def.path())
+          val path = of(def.path())
               .filter(StringUtils::hasText)
               .orElseGet(databind.getField()::getName);
-          var spec = SimpleSpecification.builder()
+          Specification<Object> spec = SimpleSpecification.builder()
               .context(context)
               .domainClass(def.value())
               .path(path)

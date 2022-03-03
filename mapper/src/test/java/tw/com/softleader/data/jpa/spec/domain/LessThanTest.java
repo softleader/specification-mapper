@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 import java.time.LocalDate;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
@@ -39,18 +40,18 @@ class LessThanTest {
 
   @Test
   void test() {
-    var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
+    val matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("matt").birthday(LocalDate.now().plusDays(1)).build());
 
-    var spec = new LessThan<Customer>(noopContext(), "birthday", LocalDate.now().plusDays(1));
-    var actual = repository.findAll(spec);
+    val spec = new LessThan<Customer>(noopContext(), "birthday", LocalDate.now().plusDays(1));
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @Test
   void typeMismatch() {
-    var context = noopContext();
-    var value = new Object();
+    val context = noopContext();
+    val value = new Object();
     assertThatExceptionOfType(TypeMismatchException.class)
         .isThrownBy(() -> new LessThan<Customer>(context, "name", value))
         .withMessage(

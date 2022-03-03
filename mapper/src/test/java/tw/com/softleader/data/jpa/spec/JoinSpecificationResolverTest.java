@@ -27,6 +27,7 @@ import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,12 +62,12 @@ class JoinSpecificationResolverTest {
   @DisplayName("單一層級的 Join")
   @Test
   void join() {
-    var matt = repository.save(Customer.builder().name("matt")
+    val matt = repository.save(Customer.builder().name("matt")
         .order(Order.builder()
             .itemName("Pizza")
             .build())
         .build());
-    var mary = repository.save(Customer.builder().name("mary")
+    val mary = repository.save(Customer.builder().name("mary")
         .order(Order.builder()
             .itemName("Hamburger")
             .build())
@@ -77,28 +78,28 @@ class JoinSpecificationResolverTest {
             .build())
         .build());
 
-    var criteria = CustomerOrder.builder()
+    val criteria = CustomerOrder.builder()
         .item("Pizza")
         .item("Hamburger")
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
   @DisplayName("多層級的 Join")
   @Test
   void joins() {
-    var matt = repository.save(Customer.builder().name("matt")
+    val matt = repository.save(Customer.builder().name("matt")
         .order(Order.builder()
             .itemName("Pizza").tag(Tag.builder()
                 .name("Food")
                 .build())
             .build())
         .build());
-    var mary = repository.save(Customer.builder().name("mary")
+    val mary = repository.save(Customer.builder().name("mary")
         .order(Order.builder()
             .itemName("Hamburger")
             .tag(Tag.builder()
@@ -115,13 +116,13 @@ class JoinSpecificationResolverTest {
             .build())
         .build());
 
-    var criteria = CustomerOrder.builder()
+    val criteria = CustomerOrder.builder()
         .tag("Food")
         .build();
 
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 

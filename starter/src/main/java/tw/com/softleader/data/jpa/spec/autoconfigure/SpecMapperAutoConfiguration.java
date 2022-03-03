@@ -28,6 +28,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -72,7 +73,7 @@ public class SpecMapperAutoConfiguration {
           codecBuilders.stream())
               .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
-    var builder = SpecMapper.builder()
+    val builder = SpecMapper.builder()
         .defaultResolvers()
         .resolvers(resolvers);
     codecBuilders.forEach(builder::resolver);

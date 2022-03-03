@@ -29,6 +29,7 @@ import javax.persistence.criteria.Root;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -61,7 +62,7 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
   }
 
   protected <F> Path<F> getPath(Root<T> root) {
-    var split = path.split("\\.");
+    val split = path.split("\\.");
     if (split.length == 1) {
       return root.get(split[0]);
     }

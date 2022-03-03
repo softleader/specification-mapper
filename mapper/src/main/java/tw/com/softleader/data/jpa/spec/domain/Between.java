@@ -27,6 +27,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.NonNull;
+import lombok.val;
 
 /**
  * {@code ... where x.age between ? and ?}
@@ -49,7 +50,7 @@ public class Between<T> extends SimpleSpecification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    var args = stream(((Iterable<?>) value).spliterator(), false)
+    val args = stream(((Iterable<?>) value).spliterator(), false)
         .map(arg -> (Comparable<?>) arg)
         .toArray(Comparable[]::new);
     return builder.between(getPath(root), args[0], args[1]);

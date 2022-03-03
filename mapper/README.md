@@ -17,7 +17,7 @@ specification-mapper 是一套 [Specifications](https://docs.spring.io/spring-da
 我們需要的是建立 `SpecMapper` 實例, 這是最重要的 Class 也是所有 Spec 操作的 API 入口:
 
 ```java
-var mapepr = SpecMapper.builder().build();
+val mapepr = SpecMapper.builder().build();
 ```
 
 接著我們定義封裝查詢條件的物件, 這是一個 POJO 即可, 如:
@@ -34,11 +34,11 @@ public class CustomerCriteria {
 這樣我們就可以做 `Specification` 的轉換了, 得到 `Specification` 後就可以依照原本的方式去資料庫查詢, 例如透過 Spring Data JPA 的 repository:
 
 ```java
-var criteria = new CustomerCriteria();
+val criteria = new CustomerCriteria();
 criteria.setFirstname("Hello")
 
-var mapper = SpecMapper.builder().build();
-var specification = mapper.toSpec(criteria);
+val mapper = SpecMapper.builder().build();
+val specification = mapper.toSpec(criteria);
 
 customerRepository.findAll(specification);
 ```
@@ -73,10 +73,10 @@ public class CustomerCriteria {
   Optional<Integer> age = Optional.empty();
   
   @Spec(In.class)
-  Collection<String> addresses = List.of();
+  Collection<String> addresses = Arrays.asList();
 }
 
-var mapper = SpecMapper.builder().build();
+val mapper = SpecMapper.builder().build();
 customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 ```
 
@@ -171,8 +171,8 @@ public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
     CriteriaQuery<?> query,
     CriteriaBuilder builder) {
     // 以下提供 subquery 的實作, 僅供參考
-    var subquery = query.subquery(Long.class);
-    var subroot = subquery.from(Customer.class);
+    val subquery = query.subquery(Long.class);
+    val subroot = subquery.from(Customer.class);
     subquery.select(builder.max(subroot.get("createdTime")))
       .where(builder.equal(root.get((String) value), subroot.get((String) value)));
     return builder.equal(root.get("createdTime"), subquery);
@@ -190,10 +190,10 @@ public class CustomerCriteria {
   String maxBy;
 }
 
-var criteria = new CustomerCriteria();
+val criteria = new CustomerCriteria();
 criteria.setMaxBy("firstname");
 
-var spec = mapper.toSpec(criteria, Customer.class);
+val spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
@@ -606,7 +606,7 @@ public class MaxCreatedTimeSpecificationResolver implements SpecificationResolve
 
   @Override
   public Specification<Object> buildSpecification(Context context, Databind databind) {
-    var def = databind.getField().getAnnotation(MaxCreatedTime.class);
+    val def = databind.getField().getAnnotation(MaxCreatedTime.class);
     return databind.getFieldValue()
         .map(value -> subquery(def.from(), value.toString()))
         .orElse(null);
@@ -615,8 +615,8 @@ public class MaxCreatedTimeSpecificationResolver implements SpecificationResolve
   Specification<Object> subquery(Class<?> entityClass, String by) {
     // 以下提供 subquery 的實作, 僅供參考
     return (root, query, builder) -> {
-      var subquery = query.subquery(Long.class);
-      var subroot = subquery.from(entityClass);
+      val subquery = query.subquery(Long.class);
+      val subroot = subquery.from(entityClass);
       subquery.select(builder.max(subroot.get("createdTime")))
           .where(builder.equal(root.get(by), subroot.get(by)));
       return builder.equal(root.get("createdTime"), subquery);
@@ -628,7 +628,7 @@ public class MaxCreatedTimeSpecificationResolver implements SpecificationResolve
 接著我們在 `SpecMapper` 建構時加入此 resolver:
 
 ```java
-var mapper = SpecMapper.builder()
+val mapper = SpecMapper.builder()
       .defaultResolvers()
       .resolver(new MaxCreatedTimeSpecificationResolver())
       .build();
@@ -644,10 +644,10 @@ public class CustomerCriteria {
   String maxBy;
 }
 
-var criteria = new CustomerCriteria();
+val criteria = new CustomerCriteria();
 criteria.setMaxBy("firstname");
 
-var spec = mapper.toSpec(criteria, Customer.class);
+val spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 

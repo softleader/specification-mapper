@@ -24,7 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
+import java.util.Arrays;
 import java.util.List;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
@@ -39,19 +41,19 @@ class InTest {
 
   @Test
   void test() {
-    var matt = repository.save(Customer.builder().name("matt").build());
-    var bob = repository.save(Customer.builder().name("bob").build());
+    val matt = repository.save(Customer.builder().name("matt").build());
+    val bob = repository.save(Customer.builder().name("bob").build());
     repository.save(Customer.builder().name("mary").build());
 
-    var spec = new In<Customer>(noopContext(), "name", List.of("matt", "bob"));
-    var actual = repository.findAll(spec);
+    val spec = new In<Customer>(noopContext(), "name", Arrays.asList("matt", "bob"));
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
   }
 
   @Test
   void typeMismatch() {
-    var context = noopContext();
-    var value = new Object();
+    val context = noopContext();
+    val value = new Object();
     assertThatExceptionOfType(TypeMismatchException.class)
         .isThrownBy(() -> new In<Customer>(context, "name", value))
         .withMessage(

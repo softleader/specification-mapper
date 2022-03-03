@@ -26,6 +26,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.Objects;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
@@ -48,7 +49,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    var specs = Stream.concat(
+    val specs = Stream.concat(
         joinFetchDef(databind.getTarget()),
         joinFetchesDef(databind.getTarget())).filter(Objects::nonNull)
         .collect(toList());
