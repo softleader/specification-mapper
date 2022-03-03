@@ -83,9 +83,7 @@ public class SpecMapperAutoConfiguration {
     val mapper = SpecMapper.builder()
         .defaultResolvers()
         .resolvers(resolvers);
-    builders.stream()
-        .map(SpecificationResolverBuilder::build)
-        .forEach(mapper::resolver);
+    builders.forEach(builder -> mapper.resolver(builder::build));
     codecBuilders.forEach(mapper::resolver);
     return mapper.build();
   }
