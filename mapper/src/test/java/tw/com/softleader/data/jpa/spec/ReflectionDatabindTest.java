@@ -29,12 +29,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 
 class ReflectionDatabindTest {
@@ -43,16 +45,16 @@ class ReflectionDatabindTest {
   @Test
   void fireOnlyOnce() {
 
-    var object = new MyObject("hello", null, Optional.empty(), List.of());
-    var databind = ReflectionDatabind.of(object,
+    val object = new MyObject("hello", null, Optional.empty(), Arrays.asList());
+    val databind = ReflectionDatabind.of(object,
         (obj, field) -> spy(new ReflectionDatabind(obj, field)));
 
     assertThat(databind)
         .hasSize(4);
 
-    var numberOfThreads = 100;
-    var service = newFixedThreadPool(numberOfThreads);
-    var latch = new CountDownLatch(numberOfThreads);
+    val numberOfThreads = 100;
+    val service = newFixedThreadPool(numberOfThreads);
+    val latch = new CountDownLatch(numberOfThreads);
     for (int i = 0; i < numberOfThreads; i++) {
       service.submit(() -> {
         databind.forEach(Databind::getFieldValue);

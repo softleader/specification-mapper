@@ -20,6 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
@@ -36,6 +37,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
@@ -66,9 +68,9 @@ class ReflectionDatabind implements Databind {
   static List<Databind> of(@Nullable Object target,
       @NonNull BiFunction<Object, Field, Databind> factory) {
     if (target == null) {
-      return List.of();
+      return emptyList();
     }
-    var lookup = new ArrayList<Databind>();
+    val lookup = new ArrayList<Databind>();
     doWithLocalFields(target.getClass(),
         field -> lookup.add(factory.apply(target, field)));
     return unmodifiableList(lookup);
@@ -89,7 +91,7 @@ class ReflectionDatabind implements Databind {
   // Visible for testing
   Object getFieldValue(Object target, Field field) {
     makeAccessible(field);
-    var val = ReflectionUtils.getField(field, target);
+    val val = ReflectionUtils.getField(field, target);
     if (val instanceof Optional) {
       return ((Optional<?>) val).orElse(null);
     }

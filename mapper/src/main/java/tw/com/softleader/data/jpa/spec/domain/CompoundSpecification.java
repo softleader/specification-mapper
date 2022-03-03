@@ -43,7 +43,9 @@ abstract class CompoundSpecification<T> implements Specification<T> {
   public Predicate toPredicate(Root root,
       CriteriaQuery query,
       CriteriaBuilder builder) {
-    return specs.stream().reduce(this::combine)
+    // remove casting to Predicate will cause 'incompatible types' in jdk 1.8, maybe a jdk 1.8 bug
+    return (Predicate) specs.stream()
+        .reduce(this::combine)
         .map(spec -> spec.toPredicate(root, query, builder))
         .orElse(null);
   }

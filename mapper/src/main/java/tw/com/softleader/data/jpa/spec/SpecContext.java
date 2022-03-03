@@ -26,6 +26,7 @@ import java.util.function.Function;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import lombok.Synchronized;
+import lombok.val;
 import org.springframework.data.util.Pair;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
@@ -37,7 +38,7 @@ class SpecContext implements Context {
   @Override
   @Synchronized
   public Join<?, ?> getJoin(String key, Root<?> root) {
-    var lazyJoin = lazyJoins.get(key);
+    val lazyJoin = lazyJoins.get(key);
     if (lazyJoin == null) {
       return null;
     }

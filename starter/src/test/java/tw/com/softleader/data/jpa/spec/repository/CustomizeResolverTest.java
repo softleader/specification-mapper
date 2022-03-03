@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.val;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectFactory;
@@ -69,7 +70,7 @@ class CustomizeResolverTest {
 
   @Test
   void customizeResolver() {
-    var matt = repository.save(Customer.builder()
+    val matt = repository.save(Customer.builder()
         .name("matt")
         .age(20)
         .build());
@@ -82,13 +83,13 @@ class CustomizeResolverTest {
         .age(10)
         .build());
 
-    var criteria = MyCriteria.builder()
+    val criteria = MyCriteria.builder()
         .age(18)
         .profile(Profile.builder()
             .name("m")
             .build())
         .build();
-    var spec = mapper.toSpec(criteria);
+    val spec = mapper.toSpec(criteria);
     assertThat(spec)
         .isNotNull()
         .isInstanceOfAny(Conjunction.class, Disjunction.class)
@@ -97,7 +98,7 @@ class CustomizeResolverTest {
         .asInstanceOf(InstanceOfAssertFactories.LIST)
         .hasSize(2);
 
-    var actual = repository.findBySpec(criteria);
+    val actual = repository.findBySpec(criteria);
     assertThat(actual).hasSize(1).contains(matt);
 
     // SQL will be:
@@ -161,7 +162,7 @@ class CustomizeResolverTest {
 
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
-      var def = databind.getField().getAnnotation(ProfileExists.class);
+      val def = databind.getField().getAnnotation(ProfileExists.class);
       return databind.getFieldValue()
           .map(mapper.get()::toSpec)
           .map(spec -> buildExistsSubquery(def.entity(), def.on(), spec))
@@ -173,8 +174,8 @@ class CustomizeResolverTest {
         String on,
         Specification<?> subquerySpec) {
       return (root, query, builder) -> {
-        var subquery = query.subquery(entityClass);
-        var subroot = subquery.from(entityClass);
+        val subquery = query.subquery(entityClass);
+        val subroot = subquery.from(entityClass);
         subquery
             .select(subroot)
             .where(

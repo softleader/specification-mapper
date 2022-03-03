@@ -20,6 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
@@ -27,12 +28,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,30 +67,34 @@ class CustomizeSimpleSpecTest {
         .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
 
-    repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now())
-            .build());
-    matt = repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    bob = repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now())
-            .build());
-    repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
-            .build());
+    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now())
+        .build());
+    matt = save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    bob = save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now())
+        .build());
+    save(Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
+        .build());
+  }
+
+  @SneakyThrows
+  private Customer save(@NonNull Customer customer) {
+    try {
+      return repository.save(customer);
+    } finally {
+      // 本 test 的邏輯會需要每次 CreateTime 都唯一, 避免發生 CreateTime 一樣造成測試失敗, 每次新增完固定等一下
+      MICROSECONDS.sleep(1);
+    }
   }
 
   @DisplayName("客製 Simple Spec")
   @Test
   void customizeSimpleSpec() {
-    var criteria = MyCriteria.builder().gender(Gender.MALE).simpleMaxBy("name").build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val criteria = MyCriteria.builder().gender(Gender.MALE).simpleMaxBy("name").build();
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
     verify(simpleResolver, times(2))
@@ -102,8 +111,8 @@ class CustomizeSimpleSpecTest {
     public Predicate toPredicate(Root<Customer> root,
         CriteriaQuery<?> query,
         CriteriaBuilder builder) {
-      var subquery = query.subquery(Long.class);
-      var subroot = subquery.from(Customer.class);
+      val subquery = query.subquery(Long.class);
+      val subroot = subquery.from(Customer.class);
       subquery.select(builder.max(subroot.get("createdTime")))
           .where(builder.equal(root.get((String) value), subroot.get((String) value)));
       return builder.equal(root.get("createdTime"), subquery);

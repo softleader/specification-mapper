@@ -20,6 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -32,9 +33,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,36 +70,40 @@ class CustomizeResolverTest {
         .resolver(maxCreatedTimeResolver = spy(MaxCreatedTimeSpecificationResolver.class))
         .build();
 
-    repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now())
-            .build());
-    matt = repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE)
-            .createdTime(LocalDateTime.now())
-            .birthday(LocalDate.now())
-            .build());
-    repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    bob = repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now())
-            .build());
-    repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
-            .build());
+    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now())
+        .build());
+    matt = save(Customer.builder().name("matt").gender(Gender.MALE)
+        .createdTime(LocalDateTime.now())
+        .birthday(LocalDate.now())
+        .build());
+    save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    bob = save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now())
+        .build());
+    save(Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
+        .build());
+  }
+
+  @SneakyThrows
+  private Customer save(@NonNull Customer customer) {
+    try {
+      return repository.save(customer);
+    } finally {
+      // 本 test 的邏輯會需要每次 CreateTime 都唯一, 避免發生 CreateTime 一樣造成測試失敗, 每次新增完固定等一下
+      MICROSECONDS.sleep(1);
+    }
   }
 
   @DisplayName("客製 Resolver")
   @Test
   void customizeResolver() {
-    var criteria = MyCriteria.builder().gender(Gender.MALE).maxBy("name").build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val criteria = MyCriteria.builder().gender(Gender.MALE).maxBy("name").build();
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
-    var inOrder = inOrder(
+    val inOrder = inOrder(
         simpleResolver,
         maxCreatedTimeResolver);
     inOrder.verify(simpleResolver, times(1))
@@ -131,7 +139,7 @@ class CustomizeResolverTest {
 
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
-      var def = databind.getField().getAnnotation(MaxCreatedTime.class);
+      val def = databind.getField().getAnnotation(MaxCreatedTime.class);
       return databind.getFieldValue()
           .map(value -> subquery(def.from(), value.toString()))
           .orElse(null);
@@ -139,8 +147,8 @@ class CustomizeResolverTest {
 
     Specification<Object> subquery(Class<?> entityClass, String by) {
       return (root, query, builder) -> {
-        var subquery = query.subquery(Long.class);
-        var subroot = subquery.from(entityClass);
+        val subquery = query.subquery(Long.class);
+        val subroot = subquery.from(entityClass);
         subquery.select(builder.max(subroot.get("createdTime")))
             .where(builder.equal(root.get(by), subroot.get(by)));
         return builder.equal(root.get("createdTime"), subquery);

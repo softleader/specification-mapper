@@ -29,6 +29,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -61,10 +62,10 @@ public class Join<T> implements Specification<T> {
       context.putLazyJoin(alias, r -> r.join(pathToJoinOn, joinType));
       return;
     }
-    var byDot = pathToJoinOn.split("\\.");
+    val byDot = pathToJoinOn.split("\\.");
 
-    var extractedAlias = byDot[0];
-    var joined = context.getJoin(extractedAlias, root);
+    val extractedAlias = byDot[0];
+    val joined = context.getJoin(extractedAlias, root);
     if (joined == null) {
       throw new IllegalArgumentException(
           "Join definition with alias: '" + extractedAlias + "' not found! " +
@@ -72,7 +73,7 @@ public class Join<T> implements Specification<T> {
               + "' is defined before the join with path: '" + pathToJoinOn + "'");
     }
 
-    var extractedPathToJoin = byDot[1];
+    val extractedPathToJoin = byDot[1];
     context.putLazyJoin(alias, r -> joined.join(extractedPathToJoin, joinType));
   }
 }

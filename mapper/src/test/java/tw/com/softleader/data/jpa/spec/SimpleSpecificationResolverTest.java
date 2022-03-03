@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,13 +70,13 @@ class SimpleSpecificationResolverTest {
   @DisplayName("空的 @Spec")
   @Test
   void emptySpec() {
-    var matt = repository.save(Customer.builder().name("matt").build());
+    val matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder().name(matt.getName()).build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val criteria = MyCriteria.builder().name(matt.getName()).build();
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
     verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
@@ -84,33 +86,33 @@ class SimpleSpecificationResolverTest {
   @DisplayName("空的 Criteria")
   @Test
   void emptyCriteria() {
-    var criteria = MyCriteria.builder().build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val criteria = MyCriteria.builder().build();
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNull();
   }
 
   @DisplayName("Optional Empty")
   @Test
   void optionalEmpty() {
-    var criteria = MyCriteria.builder()
+    val criteria = MyCriteria.builder()
         .opt(Optional.empty())
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNull();
   }
 
   @DisplayName("Optional Present")
   @Test
   void optionalPresent() {
-    var matt = repository.save(Customer.builder().name("matt").build());
+    val matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder()
+    val criteria = MyCriteria.builder()
         .opt(Optional.of("matt"))
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
     verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
@@ -120,25 +122,25 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Iterable Empty")
   @Test
   void iterableEmpty() {
-    var criteria = MyCriteria.builder()
-        .names(List.of())
+    val criteria = MyCriteria.builder()
+        .names(Arrays.asList())
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNull();
   }
 
   @DisplayName("Iterable Present")
   @Test
   void iterablePresent() {
-    var matt = repository.save(Customer.builder().name("matt").build());
+    val matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder()
-        .names(List.of("matt"))
+    val criteria = MyCriteria.builder()
+        .names(Arrays.asList("matt"))
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
     verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
@@ -148,17 +150,17 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Negation of spec")
   @Test
   void notSpec() {
-    var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
+    val matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("bob").birthday(LocalDate.now().plusDays(1)).build());
-    var mary = repository.save(
+    val mary = repository.save(
         Customer.builder().name("mary").birthday(LocalDate.now().minusDays(1)).build());
 
-    var criteria = MyCriteria.builder()
+    val criteria = MyCriteria.builder()
         .birthday(LocalDate.now())
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
 
     verify(simpleResolver, times(numberOfLocalField(MyCriteria.class)))
@@ -168,23 +170,23 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Force Or")
   @Test
   void forceOr() {
-    var matt = repository.save(
+    val matt = repository.save(
         Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
-    var bob = repository.save(
+    val bob = repository.save(
         Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
             .build());
-    var mary = repository.save(
+    val mary = repository.save(
         Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
             .build());
 
-    var criteria = ForceOr.builder()
+    val criteria = ForceOr.builder()
         .name(bob.getName())
         .gender(bob.getGender())
         .birthday(LocalDate.now())
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
     verify(simpleResolver, times(numberOfLocalField(ForceOr.class)))
@@ -194,23 +196,23 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Force Or 2")
   @Test
   void forceOr2() {
-    var matt = repository.save(
+    val matt = repository.save(
         Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
-    var bob = repository.save(
+    val bob = repository.save(
         Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
             .build());
     repository.save(
         Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
             .build());
 
-    var criteria = ForceOr2.builder()
+    val criteria = ForceOr2.builder()
         .name(bob.getName())
         .gender(bob.getGender())
         .birthday(LocalDate.now())
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
     verify(simpleResolver, times(numberOfLocalField(ForceOr2.class)))
@@ -220,23 +222,23 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Force And")
   @Test
   void forceAnd() {
-    var matt = repository.save(
+    val matt = repository.save(
         Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
     repository.save(
         Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
             .build());
-    var mary = repository.save(
+    val mary = repository.save(
         Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
             .build());
 
-    var criteria = ForceAnd.builder()
+    val criteria = ForceAnd.builder()
         .name(matt.getName())
         .gender(mary.getGender())
         .birthday(LocalDate.now())
         .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
+    val spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    var actual = repository.findAll(spec);
+    val actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
 
     verify(simpleResolver, times(numberOfLocalField(ForceAnd.class)))
@@ -244,7 +246,7 @@ class SimpleSpecificationResolverTest {
   }
 
   int numberOfLocalField(@Nonnull Class<?> clazz) {
-    var i = new AtomicInteger();
+    val i = new AtomicInteger();
     doWithLocalFields(clazz, f -> i.getAndIncrement());
     return i.intValue();
   }

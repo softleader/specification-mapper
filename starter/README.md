@@ -112,7 +112,7 @@ class PersonService {
   @Autowired PersonRepository personRepository;
 
   List<Person> getPersonByCriteria(PersonCriteria criteria) {
-    var spec = specMapper.toSpec(criteria);
+    val spec = specMapper.toSpec(criteria);
     
     // do more to spec
     
