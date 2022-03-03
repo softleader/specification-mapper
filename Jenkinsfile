@@ -8,7 +8,7 @@ pipeline {
     kubernetes {
       cloud 'SLKE'
       workspaceVolume persistentVolumeClaimWorkspaceVolume(claimName: 'workspace-claim', readOnly: false)
-      defaultContainer 'maven-java11'
+      defaultContainer 'maven-java8'
       yaml """
 kind: Pod
 spec:
@@ -16,7 +16,7 @@ spec:
   securityContext:
     runAsUser: 0
   containers:
-  - name: maven-java1.8
+  - name: maven-java8
     image: harbor.softleader.com.tw/library/maven:3-eclipse-temurin-8
     imagePullPolicy: Always
     command: ['cat']
@@ -124,8 +124,12 @@ spec:
             for (int s = 0; s < springBootVersions.size(); s++) {
               def java = javaVersions[j]
               def springboot = springBootVersions[s]
+              def container = "maven-java${java}"
+              if (java == '1.8') {
+                container = "maven-java8" // Container Names MUST match RFC 1123 - They can only contain lowercase letters, numbers or dashes:
+              }
               stage("Matrix - JAVA = ${java}, SPRING_BOOT = ${springboot}"){
-                container("maven-java${java}") {
+                container(container) {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
               }
