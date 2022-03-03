@@ -56,6 +56,7 @@
     <spring-boot.version>2.6.4</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
     <format.skip>false</format.skip>
+    <archunit-junit5.version>0.23.1</archunit-junit5.version>
   </properties>
 
   <modules>

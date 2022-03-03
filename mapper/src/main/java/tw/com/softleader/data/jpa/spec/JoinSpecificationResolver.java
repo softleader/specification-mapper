@@ -68,7 +68,7 @@ class JoinSpecificationResolver implements SpecificationResolver {
 
   boolean valuePresent(Object value) {
     if (value instanceof Iterable) {
-      return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).count() > 0;
+      return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).findAny().isPresent();
     }
     return true;
   }
