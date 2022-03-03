@@ -20,7 +20,6 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
 
@@ -58,6 +57,9 @@ public class SpecMapper implements SpecCodec {
 
   @Override
   public Specification<Object> toSpec(@NonNull Context context, @Nullable Object rootObject) {
+    if (rootObject == null) {
+      return null;
+    }
     val specs = ReflectionDatabind.of(rootObject)
         .stream()
         .flatMap(databind -> resolveSpec(context, databind))
@@ -66,12 +68,10 @@ public class SpecMapper implements SpecCodec {
     if (specs.isEmpty()) {
       return null;
     }
-    return ofNullable(rootObject)
-        .map(Object::getClass)
-        .filter(clazz -> clazz.isAnnotationPresent(Or.class))
-        .isPresent()
-            ? new Disjunction<>(specs)
-            : new Conjunction<>(specs);
+    if (rootObject.getClass().isAnnotationPresent(Or.class)) {
+      return new Disjunction<>(specs);
+    }
+    return new Conjunction<>(specs);
   }
 
   Stream<Specification<Object>> resolveSpec(@NonNull Context context, @NonNull Databind databind) {
