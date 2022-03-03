@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def javaVersions = ['1.8', '11', '17']
+def javaVersions = ['8', '11', '17']
 def springBootVersions = ['2.4.13', '2.5.10', '2.6.4']
 
 pipeline {
@@ -124,12 +124,8 @@ spec:
             for (int s = 0; s < springBootVersions.size(); s++) {
               def java = javaVersions[j]
               def springboot = springBootVersions[s]
-              def container = "maven-java${java}"
-              if (java == '1.8') {
-                container = "maven-java8" // Container Names MUST match RFC 1123 - They can only contain lowercase letters, numbers or dashes:
-              }
               stage("Matrix - JAVA = ${java}, SPRING_BOOT = ${springboot}"){
-                container(container) {
+                container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
               }
