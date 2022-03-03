@@ -29,7 +29,10 @@ import com.tngtech.archunit.lang.ArchRule;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
-@AnalyzeClasses(packagesOf = SpecCodec.class, importOptions = ImportOption.DoNotIncludeTests.class)
+@AnalyzeClasses(packagesOf = SpecCodec.class, importOptions = {
+    ImportOption.DoNotIncludeTests.class,
+    ImportOption.DoNotIncludeJars.class
+})
 class ArchitectureChecks {
 
   @ArchTest
