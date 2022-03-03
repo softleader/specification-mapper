@@ -20,7 +20,6 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
@@ -38,7 +37,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -61,15 +59,12 @@ class ReflectionDatabind implements Databind {
   private final CountDownLatch latch = new CountDownLatch(1);
   private Object value;
 
-  static List<Databind> of(@Nullable Object target) {
+  static List<Databind> of(@NonNull Object target) {
     return of(target, ReflectionDatabind::new);
   }
 
-  static List<Databind> of(@Nullable Object target,
+  static List<Databind> of(@NonNull Object target,
       @NonNull BiFunction<Object, Field, Databind> factory) {
-    if (target == null) {
-      return emptyList();
-    }
     val lookup = new ArrayList<Databind>();
     doWithLocalFields(target.getClass(),
         field -> lookup.add(factory.apply(target, field)));
