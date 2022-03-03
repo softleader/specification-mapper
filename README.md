@@ -16,7 +16,7 @@ An alternative Specification API for Spring Data JPA.
 
 ### Java
 
-- 1.8
+- 8
 - 11
 - 17
 
