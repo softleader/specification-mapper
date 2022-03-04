@@ -24,6 +24,8 @@ import static com.tngtech.archunit.base.DescribedPredicate.doNot;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.INTERFACES;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
+import static com.tngtech.archunit.core.domain.JavaModifier.ABSTRACT;
+import static com.tngtech.archunit.core.domain.properties.HasModifiers.Predicates.modifier;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
@@ -65,6 +67,7 @@ class ArchitectureCheckTest {
   @ArchTest
   static final ArchRule domainClassesShouldBePublic = classes()
       .that().resideInAPackage(DOMAIN_PACKAGE)
+      .and(doNot(modifier(ABSTRACT)))
       .should().bePublic();
 
   @ArchTest

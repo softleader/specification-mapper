@@ -27,7 +27,7 @@ import lombok.NonNull;
  *
  * @author Matt Ho
  */
-public abstract class ComparableSpecification<T> extends SimpleSpecification<T> {
+abstract class ComparableSpecification<T> extends SimpleSpecification<T> {
 
   protected ComparableSpecification(@NonNull Context context, @NonNull String path,
       @NonNull Object value) {

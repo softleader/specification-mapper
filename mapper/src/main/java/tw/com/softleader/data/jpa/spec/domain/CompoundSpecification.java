@@ -34,7 +34,7 @@ import org.springframework.data.jpa.domain.Specification;
  * @author Matt Ho
  */
 @RequiredArgsConstructor
-public abstract class CompoundSpecification<T> implements Specification<T> {
+abstract class CompoundSpecification<T> implements Specification<T> {
 
   @NonNull
   protected final transient Collection<Specification<T>> specs;

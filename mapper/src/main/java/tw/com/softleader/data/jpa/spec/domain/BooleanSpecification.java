@@ -27,7 +27,7 @@ import lombok.NonNull;
  *
  * @author Matt Ho
  */
-public abstract class BooleanSpecification<T> extends SimpleSpecification<T> {
+abstract class BooleanSpecification<T> extends SimpleSpecification<T> {
 
   protected BooleanSpecification(@NonNull Context context, @NonNull String path,
       @NonNull Object value) {
