@@ -64,17 +64,17 @@ class ArchitectureCheckTest {
 
   @ArchTest
   static final ArchRule domainClassesShouldBePublic = classes()
-      .that().resideInAnyPackage(DOMAIN_PACKAGE)
+      .that().resideInAPackage(DOMAIN_PACKAGE)
       .should().bePublic();
 
   @ArchTest
   static final ArchRule annotationClassesShouldBePublic = classes()
-      .that().resideInAnyPackage(ANNOTATION_PACKAGE)
+      .that().resideInAPackage(ANNOTATION_PACKAGE)
       .should().bePublic();
 
   @ArchTest
   static final ArchRule classesExceptSpecMapperShouldNotBePublicResideInInfra = classes()
-      .that().resideInAnyPackage(INFRA_PACKAGE)
+      .that().resideInAPackage(INFRA_PACKAGE)
       .and(
           doNot(INTERFACES.or(BUILDER).or(assignableTo(SpecMapper.class))))
       .should().notBePublic();
