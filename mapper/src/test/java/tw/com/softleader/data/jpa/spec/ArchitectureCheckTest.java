@@ -39,8 +39,8 @@ import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeJars;
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.junit.ArchTests;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.CompositeArchRule;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
@@ -88,9 +88,20 @@ class ArchitectureCheckTest {
       .should().notBePublic();
 
   @ArchTest
-  static final ArchRule generalCodingRules = CompositeArchRule
-      .of(NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS)
-      .and(NO_CLASSES_SHOULD_USE_JODATIME)
-      .and(NO_CLASSES_SHOULD_USE_FIELD_INJECTION)
-      .and(NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING);
+  static final ArchTests generalCodingRules = ArchTests.in(GeneralCodingRules.class);
+
+  static class GeneralCodingRules {
+
+    @ArchTest
+    static final ArchRule noClassesShouldThrowGenericExceptions = NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
+
+    @ArchTest
+    static final ArchRule noClassesShouldUseJodatime = NO_CLASSES_SHOULD_USE_JODATIME;
+
+    @ArchTest
+    static final ArchRule noClassesShouldUseFieldInjection = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
+
+    @ArchTest
+    static final ArchRule noClassesShouldUseJavaUtilLogging = NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
+  }
 }
