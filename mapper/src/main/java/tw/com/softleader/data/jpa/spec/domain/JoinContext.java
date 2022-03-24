@@ -20,7 +20,6 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
@@ -30,13 +29,10 @@ import javax.persistence.criteria.Root;
  *
  * @author Matt Ho
  */
-public interface Context {
+public interface JoinContext {
 
-  JoinContext join();
+  @SuppressWarnings({ "rawtypes" })
+  Join get(String key, Root<?> root);
 
-  Optional<Object> get(String key);
-
-  Object put(String key, Object value);
-
-  Object remove(String key);
+  void putLazy(String key, Function<Root<?>, Join<?, ?>> function);
 }

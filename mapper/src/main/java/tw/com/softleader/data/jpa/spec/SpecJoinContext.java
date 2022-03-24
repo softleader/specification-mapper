@@ -18,25 +18,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.domain;
+package tw.com.softleader.data.jpa.spec;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import lombok.Synchronized;
+import lombok.val;
+import org.springframework.data.util.Pair;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
-/**
- * Share data between specifications
- *
- * @author Matt Ho
- */
-public interface Context {
+class SpecJoinContext implements JoinContext {
 
-  JoinContext join();
+  private final Map<Pair<String, Root<?>>, Join<?, ?>> joins = new HashMap<>();
+  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = new HashMap<>();
 
-  Optional<Object> get(String key);
+  @Override
+  @Synchronized
+  public Join<?, ?> get(String key, Root<?> root) {
+    val lazyJoin = lazyJoins.get(key);
+    if (lazyJoin == null) {
+      return null;
+    }
+    Pair<String, Root<?>> rootKey = Pair.of(key, root);
+    joins.computeIfAbsent(rootKey, k -> lazyJoin.apply(root));
+    return joins.get(rootKey);
+  }
 
-  Object put(String key, Object value);
-
-  Object remove(String key);
+  public void putLazy(String key, Function<Root<?>, Join<?, ?>> lazyJoin) {
+    lazyJoins.put(key, lazyJoin);
+  }
 }

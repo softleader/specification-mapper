@@ -69,7 +69,7 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
     Path<?> expr = null;
     for (String field : split) {
       if (expr == null) {
-        expr = ofNullable(context.getJoin(field, root))
+        expr = ofNullable(context.join().get(field, root))
             .map(joined -> (Path<T>) joined)
             .orElseGet(() -> root.get(field));
         continue;

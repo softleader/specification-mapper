@@ -20,34 +20,37 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
-import lombok.Synchronized;
-import lombok.val;
-import org.springframework.data.util.Pair;
+import java.util.Optional;
+import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 class SpecContext implements Context {
 
-  private final Map<Pair<String, Root<?>>, javax.persistence.criteria.Join<?, ?>> joins = new HashMap<>();
-  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = new HashMap<>();
+  private final Map<String, Object> bag = new HashMap<>();
+  private final JoinContext join = new SpecJoinContext();
 
   @Override
-  @Synchronized
-  public Join<?, ?> getJoin(String key, Root<?> root) {
-    val lazyJoin = lazyJoins.get(key);
-    if (lazyJoin == null) {
-      return null;
-    }
-    Pair<String, Root<?>> rootKey = Pair.of(key, root);
-    joins.computeIfAbsent(rootKey, k -> lazyJoin.apply(root));
-    return joins.get(rootKey);
+  public JoinContext join() {
+    return join;
   }
 
-  public void putLazyJoin(String key, Function<Root<?>, Join<?, ?>> lazyJoin) {
-    lazyJoins.put(key, lazyJoin);
+  @Override
+  public Optional<Object> get(@NonNull String key) {
+    return ofNullable(bag.get(key));
+  }
+
+  @Override
+  public Object put(@NonNull String key, @NonNull Object value) {
+    return bag.put(key, value);
+  }
+
+  @Override
+  public Object remove(@NonNull String key) {
+    return bag.remove(key);
   }
 }

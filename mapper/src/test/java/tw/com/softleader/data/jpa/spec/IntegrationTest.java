@@ -26,13 +26,12 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.function.Function;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import java.util.Optional;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
  * Integration test with Spring Boot Data JPA
@@ -57,12 +56,22 @@ public @interface IntegrationTest {
     public static Context noopContext() {
       return new Context() {
         @Override
-        public Join<?, ?> getJoin(String key, Root<?> root) {
+        public JoinContext join() {
           throw new UnsupportedOperationException();
         }
 
         @Override
-        public void putLazyJoin(String key, Function<Root<?>, Join<?, ?>> function) {
+        public Optional<Object> get(String key) {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object put(String key, Object value) {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object remove(String key) {
           throw new UnsupportedOperationException();
         }
       };
