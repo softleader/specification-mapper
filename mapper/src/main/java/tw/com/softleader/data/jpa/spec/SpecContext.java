@@ -41,8 +41,28 @@ class SpecContext implements Context {
   }
 
   @Override
+  public int size() {
+    return bag.size();
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return bag.isEmpty();
+  }
+
+  @Override
+  public void clear() {
+    bag.clear();
+  }
+
+  @Override
   public boolean containsKey(@NonNull Object key) {
     return bag.containsKey(key);
+  }
+
+  @Override
+  public boolean containsValue(Object value) {
+    return false;
   }
 
   @Override

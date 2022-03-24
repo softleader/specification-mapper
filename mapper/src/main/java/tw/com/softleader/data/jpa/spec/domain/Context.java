@@ -31,7 +31,15 @@ public interface Context {
 
   JoinContext join();
 
+  int size();
+
+  boolean isEmpty();
+
+  void clear();
+
   boolean containsKey(Object key);
+
+  boolean containsValue(Object value);
 
   Optional<Object> get(Object key);
 
