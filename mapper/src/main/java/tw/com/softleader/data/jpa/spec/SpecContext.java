@@ -20,6 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.Collections.synchronizedMap;
 import static java.util.Optional.ofNullable;
 
 import java.util.HashMap;
@@ -31,7 +32,7 @@ import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 class SpecContext implements Context {
 
-  private final Map<Object, Object> bag = new HashMap<>();
+  private final Map<Object, Object> bag = synchronizedMap(new HashMap<>());
   private final JoinContext join = new SpecJoinContext();
 
   @Override
