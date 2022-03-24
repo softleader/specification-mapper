@@ -20,6 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.util.Collections.synchronizedMap;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,8 +34,9 @@ import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 class SpecJoinContext implements JoinContext {
 
-  private final Map<Pair<String, Root<?>>, Join<?, ?>> joins = new HashMap<>();
-  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = new HashMap<>();
+  private final Map<Pair<String, Root<?>>, Join<?, ?>> joins = synchronizedMap(new HashMap<>());
+  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = synchronizedMap(
+      new HashMap<>());
 
   @Override
   @Synchronized

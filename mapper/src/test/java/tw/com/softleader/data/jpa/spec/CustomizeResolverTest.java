@@ -143,7 +143,8 @@ class CustomizeResolverTest {
     verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
 
-    verify(customizeOnTypeResolver, times(3)) // 跟著 fields 數
+    // 跟掛 annotation 的 class fields 數一樣
+    verify(customizeOnTypeResolver, times(2))
         .buildSpecification(any(Context.class), any(Databind.class));
 
     verify(customizeOnTypeResolver, times(1))
@@ -212,7 +213,6 @@ class CustomizeResolverTest {
   }
 
   @Builder
-  @CustomizeOnType
   static class InnerCriteria {
 
     @Spec

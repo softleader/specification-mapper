@@ -61,7 +61,27 @@ public @interface IntegrationTest {
         }
 
         @Override
+        public int size() {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isEmpty() {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear() {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
         public boolean containsKey(Object key) {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
           throw new UnsupportedOperationException();
         }
 
