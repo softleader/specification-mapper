@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,7 +34,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -44,6 +44,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
@@ -59,9 +60,11 @@ class CustomizeResolverTest {
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
   MaxCreatedTimeSpecificationResolver maxCreatedTimeResolver;
+  NestedSpecificationResolver nestedResolver;
 
   Customer matt;
   Customer bob;
+  Customer mary;
 
   @BeforeEach
   void setup() {
@@ -70,18 +73,21 @@ class CustomizeResolverTest {
         .resolver(maxCreatedTimeResolver = spy(MaxCreatedTimeSpecificationResolver.class))
         .build();
 
-    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    save(
+        Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
     save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now())
         .build());
     matt = save(Customer.builder().name("matt").gender(Gender.MALE)
         .createdTime(LocalDateTime.now())
         .birthday(LocalDate.now())
         .build());
-    save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
+    save(
+        Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
     bob = save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now())
         .build());
-    save(Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
-        .build());
+    mary = save(
+        Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
+            .build());
   }
 
   @SneakyThrows
@@ -112,6 +118,38 @@ class CustomizeResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
+  @DisplayName("客製 Resolver 在 Type 同時用了 NestedSpec")
+  @Test
+  void customizeResolverOnTypeAndNested() {
+    CustomizeOnTypeSpecificationResolver customizeOnTypeResolver;
+    mapper = SpecMapper.builder()
+        .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
+        .resolver(codec -> nestedResolver = spy(new NestedSpecificationResolver(codec)))
+        .resolver(customizeOnTypeResolver = spy(CustomizeOnTypeSpecificationResolver.class))
+        .build();
+
+    val criteria = OuterCriteria.builder()
+        .gender(Gender.FEMALE)
+        .inner(InnerCriteria.builder()
+            .gender(Gender.FEMALE)
+            .build())
+        .build();
+    val spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+
+    val actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(mary);
+
+    verify(nestedResolver, times(1))
+        .buildSpecification(any(Context.class), any(Databind.class));
+
+    verify(customizeOnTypeResolver, times(3)) // 跟著 fields 數
+        .buildSpecification(any(Context.class), any(Databind.class));
+
+    verify(customizeOnTypeResolver, times(1))
+        .buildSpecification();
+  }
+
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ ElementType.FIELD })
   public @interface MaxCreatedTime {
@@ -128,6 +166,12 @@ class CustomizeResolverTest {
 
     @MaxCreatedTime(from = Customer.class)
     String maxBy;
+  }
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ ElementType.TYPE })
+  public @interface CustomizeOnType {
+
   }
 
   public static class MaxCreatedTimeSpecificationResolver implements SpecificationResolver {
@@ -155,4 +199,50 @@ class CustomizeResolverTest {
       };
     }
   }
+
+  @Builder
+  @CustomizeOnType
+  static class OuterCriteria {
+
+    @Spec
+    Gender gender;
+
+    @NestedSpec
+    InnerCriteria inner;
+  }
+
+  @Builder
+  @CustomizeOnType
+  static class InnerCriteria {
+
+    @Spec
+    Gender gender;
+  }
+
+  public static class CustomizeOnTypeSpecificationResolver implements SpecificationResolver {
+
+    static final String BUILT = CustomizeOnTypeSpecificationResolver.class.getTypeName();
+
+    @Override
+    public boolean supports(@NonNull Databind databind) {
+      return databind.getTarget().getClass().isAnnotationPresent(CustomizeOnType.class);
+    }
+
+    @Override
+    public Specification<Object> buildSpecification(Context context, Databind databind) {
+      if (context.containsKey(BUILT)) {
+        return null;
+      }
+      try {
+        return buildSpecification();
+      } finally {
+        context.put(BUILT, new Object());
+      }
+    }
+
+    Specification<Object> buildSpecification() {
+      return (root, query, builder) -> builder.isNotNull(root.get("gender"));
+    }
+  }
+
 }

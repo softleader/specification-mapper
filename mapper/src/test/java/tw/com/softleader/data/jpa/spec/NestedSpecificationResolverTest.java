@@ -54,7 +54,7 @@ class NestedSpecificationResolverTest {
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
-  NestedSpecificationResolver compositionResolver;
+  NestedSpecificationResolver nestedResolver;
 
   Customer matt;
   Customer bob;
@@ -63,7 +63,7 @@ class NestedSpecificationResolverTest {
   @BeforeEach
   void setup() {
     mapper = SpecMapper.builder()
-        .resolver(codec -> compositionResolver = spy(new NestedSpecificationResolver(codec)))
+        .resolver(codec -> nestedResolver = spy(new NestedSpecificationResolver(codec)))
         .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
 
@@ -104,11 +104,11 @@ class NestedSpecificationResolverTest {
     assertThat(actual).hasSize(1).contains(matt);
 
     val inOrder = inOrder(
-        compositionResolver,
+        nestedResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(compositionResolver, times(1))
+    inOrder.verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
@@ -129,11 +129,11 @@ class NestedSpecificationResolverTest {
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
     val inOrder = inOrder(
-        compositionResolver,
+        nestedResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(compositionResolver, times(1))
+    inOrder.verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
@@ -163,11 +163,11 @@ class NestedSpecificationResolverTest {
     assertThat(actual).hasSize(1).contains(matt);
 
     val inOrder = inOrder(
-        compositionResolver,
+        nestedResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(compositionResolver, times(1))
+    inOrder.verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
@@ -191,11 +191,11 @@ class NestedSpecificationResolverTest {
     assertThat(actual).hasSize(3).contains(matt, mary, bob);
 
     val inOrder = inOrder(
-        compositionResolver,
+        nestedResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(compositionResolver, times(1))
+    inOrder.verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
@@ -219,11 +219,11 @@ class NestedSpecificationResolverTest {
     assertThat(actual).hasSize(1).contains(matt);
 
     val inOrder = inOrder(
-        compositionResolver,
+        nestedResolver,
         simpleResolver);
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(compositionResolver, times(1))
+    inOrder.verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
     inOrder.verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
