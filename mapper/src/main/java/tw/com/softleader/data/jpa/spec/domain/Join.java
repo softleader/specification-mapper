@@ -59,13 +59,13 @@ public class Join<T> implements Specification<T> {
 
   private void join(Root<T> root) {
     if (!pathToJoinOn.contains(".")) {
-      context.putLazyJoin(alias, r -> r.join(pathToJoinOn, joinType));
+      context.join().putLazy(alias, r -> r.join(pathToJoinOn, joinType));
       return;
     }
     val byDot = pathToJoinOn.split("\\.");
 
     val extractedAlias = byDot[0];
-    val joined = context.getJoin(extractedAlias, root);
+    val joined = context.join().get(extractedAlias, root);
     if (joined == null) {
       throw new IllegalArgumentException(
           "Join definition with alias: '" + extractedAlias + "' not found! " +
@@ -74,6 +74,6 @@ public class Join<T> implements Specification<T> {
     }
 
     val extractedPathToJoin = byDot[1];
-    context.putLazyJoin(alias, r -> joined.join(extractedPathToJoin, joinType));
+    context.join().putLazy(alias, r -> joined.join(extractedPathToJoin, joinType));
   }
 }

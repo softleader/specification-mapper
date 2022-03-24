@@ -96,7 +96,7 @@ class ArchitectureCheckTest {
     static final ArchRule noClassesShouldThrowGenericExceptions = NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
 
     @ArchTest
-    static final ArchRule noClassesShouldUseJodatime = NO_CLASSES_SHOULD_USE_JODATIME;
+    static final ArchRule noClassesShouldUseJodaTime = NO_CLASSES_SHOULD_USE_JODATIME;
 
     @ArchTest
     static final ArchRule noClassesShouldUseFieldInjection = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
