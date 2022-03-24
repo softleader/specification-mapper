@@ -31,7 +31,7 @@ import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 class SpecContext implements Context {
 
-  private final Map<String, Object> bag = new HashMap<>();
+  private final Map<Object, Object> bag = new HashMap<>();
   private final JoinContext join = new SpecJoinContext();
 
   @Override
@@ -40,17 +40,22 @@ class SpecContext implements Context {
   }
 
   @Override
-  public Optional<Object> get(@NonNull String key) {
+  public boolean containsKey(@NonNull Object key) {
+    return bag.containsKey(key);
+  }
+
+  @Override
+  public Optional<Object> get(@NonNull Object key) {
     return ofNullable(bag.get(key));
   }
 
   @Override
-  public Object put(@NonNull String key, @NonNull Object value) {
+  public Object put(@NonNull Object key, @NonNull Object value) {
     return bag.put(key, value);
   }
 
   @Override
-  public Object remove(@NonNull String key) {
+  public Object remove(@NonNull Object key) {
     return bag.remove(key);
   }
 }

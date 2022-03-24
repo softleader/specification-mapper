@@ -61,17 +61,22 @@ public @interface IntegrationTest {
         }
 
         @Override
-        public Optional<Object> get(String key) {
+        public boolean containsKey(Object key) {
           throw new UnsupportedOperationException();
         }
 
         @Override
-        public Object put(String key, Object value) {
+        public Optional<Object> get(Object key) {
           throw new UnsupportedOperationException();
         }
 
         @Override
-        public Object remove(String key) {
+        public Object put(Object key, Object value) {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object remove(Object key) {
           throw new UnsupportedOperationException();
         }
       };

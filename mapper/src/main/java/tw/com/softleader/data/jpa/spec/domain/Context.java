@@ -21,9 +21,6 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
 import java.util.Optional;
-import java.util.function.Function;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 
 /**
  * Share data between specifications
@@ -34,9 +31,11 @@ public interface Context {
 
   JoinContext join();
 
-  Optional<Object> get(String key);
+  boolean containsKey(Object key);
 
-  Object put(String key, Object value);
+  Optional<Object> get(Object key);
 
-  Object remove(String key);
+  Object put(Object key, Object value);
+
+  Object remove(Object key);
 }
