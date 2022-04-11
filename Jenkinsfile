@@ -24,7 +24,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1.5"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
@@ -38,7 +38,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1.5"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
@@ -52,7 +52,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1.5"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
