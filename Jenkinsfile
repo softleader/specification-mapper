@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 def javaVersions = ['8', '11', '17']
-def springBootVersions = ['2.4.13', '2.5.10', '2.6.4']
+def springBootVersions = ['2.4.13', '2.5.12', '2.6.6']
 
 pipeline {
   agent {
@@ -24,7 +24,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1.5"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
@@ -38,7 +38,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1.5"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
@@ -52,7 +52,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "2"
+        cpu: "1.5"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
