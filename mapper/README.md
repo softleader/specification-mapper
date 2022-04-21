@@ -662,7 +662,17 @@ repository.findAll(spec);
 
 ## Logging 
 
-將 Package `tw.com.softleader.data.jpa.spec` 設定為 *debug*, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題
+將 Package `tw.com.softleader.data.jpa.spec` 設定為 *debug*, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題, 如:
+
+```
++-[CustomerCriteria] (class my.package.CustomerCriteria)
+|  +-[CustomerCriteria.firstname]: @Spec(value=Equals, path=, not=false) -> Equals[path=name, value=matt]
+|  +-[CustomerCriteria.address] (class my.package.AddressCriteria)
+|  |  +-[AddressCriteria.county]: @Spec(value=Equals, path=, not=false) -> null
+|  |  +-[AddressCriteria.city]: @Spec(value=Equals, path=, not=false) -> Equals[path=name, value=Taipei]
+|  \-[CustomerCriteria.address]: Conjunction[specs=[Equals[path=city, value=Taipei]]]
+\-[CustomerCriteria]: Conjunction[specs=[Equals[path=name, value=matt], Conjunction[specs=[Equals[path=city, value=Taipei]]]]]
+```
 
 ## Limitation
 

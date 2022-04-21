@@ -63,8 +63,9 @@ public class SpecMapper implements SpecCodec {
     }
     val context = new SpecContext();
     context.put(DEPTH, 0);
-    log.debug("+-[{}]",
-        rootObject.getClass().getSimpleName());
+    log.debug("+-[{}] ({})",
+        rootObject.getClass().getSimpleName(),
+        rootObject.getClass());
     val spec = toSpec(context, rootObject);
     log.debug("\\-[{}]: {}",
         rootObject.getClass().getSimpleName(),
