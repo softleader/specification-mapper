@@ -38,9 +38,7 @@ public interface SpecCodec {
    */
   @SuppressWarnings("unchecked")
   @Nullable
-  default Specification<Object> toSpec(@Nullable Object rootObject) {
-    return toSpec(new SpecContext(), rootObject);
-  }
+  Specification<Object> toSpec(@Nullable Object rootObject);
 
   /**
    * @return null if non any {@code Specification} was mapped

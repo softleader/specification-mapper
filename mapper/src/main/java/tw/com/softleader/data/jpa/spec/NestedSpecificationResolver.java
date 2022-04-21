@@ -20,6 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static tw.com.softleader.data.jpa.spec.Depth.DEPTH;
+
+import java.lang.reflect.Field;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -47,25 +50,34 @@ class NestedSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
+    val depth = new Depth((int) context.get(DEPTH).get());
     return databind.getFieldValue()
         .map(nested -> {
-          log.debug(" -> Looping fields through nested object [{}.{}] ({})",
+          log.debug("{}|  +-[{}.{}] ({})",
+              depth.getTree(),
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
               databind.getField().getType());
+          context.put(DEPTH, depth.getLevel() + 1);
           val spec = codec.toSpec(context, nested);
-          log.debug(" <- Composed specification from [{}.{}]: {}",
+          val compound = combine(databind.getField(), spec);
+          log.debug("{}|  \\-[{}.{}]: {}",
+              depth.getTree(),
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
-              spec);
-          if (databind.getField().isAnnotationPresent(And.class)) {
-            return new tw.com.softleader.data.jpa.spec.domain.And<>(spec);
-          }
-          if (databind.getField().isAnnotationPresent(Or.class)) {
-            return new tw.com.softleader.data.jpa.spec.domain.Or<>(spec);
-          }
-          return spec;
+              compound);
+          return compound;
         })
         .orElse(null);
+  }
+
+  private Specification<Object> combine(@lombok.NonNull Field field, Specification<Object> spec) {
+    if (field.isAnnotationPresent(And.class)) {
+      return new tw.com.softleader.data.jpa.spec.domain.And<>(spec);
+    }
+    if (field.isAnnotationPresent(Or.class)) {
+      return new tw.com.softleader.data.jpa.spec.domain.Or<>(spec);
+    }
+    return spec;
   }
 }

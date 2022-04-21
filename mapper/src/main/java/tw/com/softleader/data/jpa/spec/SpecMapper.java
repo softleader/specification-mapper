@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
+import static tw.com.softleader.data.jpa.spec.Depth.DEPTH;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -56,6 +57,23 @@ public class SpecMapper implements SpecCodec {
   }
 
   @Override
+  public Specification<Object> toSpec(Object rootObject) {
+    if (rootObject == null) {
+      return null;
+    }
+    val context = new SpecContext();
+    context.put(DEPTH, 0);
+    log.debug("+-[{}] ({})",
+        rootObject.getClass().getSimpleName(),
+        rootObject.getClass());
+    val spec = toSpec(context, rootObject);
+    log.debug("\\-[{}]: {}",
+        rootObject.getClass().getSimpleName(),
+        spec);
+    return spec;
+  }
+
+  @Override
   public Specification<Object> toSpec(@NonNull Context context, @Nullable Object rootObject) {
     if (rootObject == null) {
       return null;
@@ -77,7 +95,13 @@ public class SpecMapper implements SpecCodec {
   Stream<Specification<Object>> resolveSpec(@NonNull Context context, @NonNull Databind databind) {
     return resolvers.stream()
         .filter(resolver -> resolver.supports(databind))
-        .map(resolver -> resolver.buildSpecification(context, databind));
+        .map(resolver -> resolveSpec(context, databind, resolver));
+  }
+
+  Specification<Object> resolveSpec(@NonNull Context context, @NonNull Databind databind,
+      @NonNull SpecificationResolver resolver) {
+    val resolved = resolver.buildSpecification(context, databind);
+    return resolved;
   }
 
   @NoArgsConstructor(access = PACKAGE)
