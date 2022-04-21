@@ -22,7 +22,8 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
-import static tw.com.softleader.data.jpa.spec.Depth.DEPTH;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -62,14 +63,18 @@ public class SpecMapper implements SpecCodec {
       return null;
     }
     val context = new SpecContext();
-    context.put(DEPTH, 0);
-    log.debug("+-[{}] ({})",
+    val ast = new AST();
+    val depth = 0;
+    context.put(CTX_AST, ast);
+    context.put(CTX_DEPTH, depth);
+    ast.add(depth, "+-[%s] (%s)",
         rootObject.getClass().getSimpleName(),
         rootObject.getClass());
     val spec = toSpec(context, rootObject);
-    log.debug("\\-[{}]: {}",
+    ast.add(depth, "\\-[%s]: %s",
         rootObject.getClass().getSimpleName(),
         spec);
+    log.debug("--- Spec AST ---\n{}", ast.print());
     return spec;
   }
 

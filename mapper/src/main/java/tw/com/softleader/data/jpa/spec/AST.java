@@ -20,33 +20,37 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Collections.nCopies;
 
-import lombok.Value;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.val;
 
-@Value
-class Depth {
+class AST {
 
-  static final String DEPTH = Depth.class.getName();
+  static final String CTX_AST = "AST";
+  static final String CTX_DEPTH = "DEPTH";
 
-  int level;
-  String tree;
+  final List<String> nodes = new ArrayList<>();
 
-  Depth(int level) {
-    if (level < 0) {
-      throw new IllegalArgumentException("depth level must >= 0, but was " + level);
+  void add(int depth, String message, Object... args) {
+    if (depth < 0) {
+      throw new IllegalArgumentException("depth must >= 0, but was " + depth);
     }
-    this.level = level;
-    this.tree = drawTree();
+    this.nodes.add(indentLine(depth) + format(message, args));
   }
 
-  private String drawTree() {
-    val joined = join("|", nCopies(level, "  "));
+  private String indentLine(int depth) {
+    val joined = join("|", nCopies(depth, "  "));
     if (joined.isEmpty()) {
       return joined;
     }
     return "|" + joined;
+  }
+
+  String print() {
+    return join("\n", nodes);
   }
 }

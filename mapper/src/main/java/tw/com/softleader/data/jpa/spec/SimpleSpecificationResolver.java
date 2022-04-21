@@ -21,7 +21,8 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
-import static tw.com.softleader.data.jpa.spec.Depth.DEPTH;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
@@ -51,13 +52,13 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
     val def = databind.getField().getAnnotation(Spec.class);
-    val depth = new Depth((int) context.get(DEPTH).get());
+    val ast = context.get(CTX_AST).map(AST.class::cast).get();
+    val depth = (int) context.get(CTX_DEPTH).get();
     val built = databind.getFieldValue()
         .filter(this::valuePresent)
         .map(value -> buildSpecification(context, databind, def, value))
         .orElse(null);
-    log.debug("{}|  +-[{}.{}]: @Spec(value={}, path={}, not={}) -> {}",
-        depth.getTree(),
+    ast.add(depth, "|  +-[%s.%s]: @Spec(value=%s, path=%s, not=%s) -> %s",
         databind.getTarget().getClass().getSimpleName(),
         databind.getField().getName(),
         def.value().getSimpleName(),

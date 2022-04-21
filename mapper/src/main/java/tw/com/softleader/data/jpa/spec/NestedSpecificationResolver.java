@@ -20,7 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static tw.com.softleader.data.jpa.spec.Depth.DEPTH;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 import java.lang.reflect.Field;
 import lombok.RequiredArgsConstructor;
@@ -50,19 +51,18 @@ class NestedSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    val depth = new Depth((int) context.get(DEPTH).get());
+    val ast = context.get(CTX_AST).map(AST.class::cast).get();
+    val depth = (int) context.get(CTX_DEPTH).get();
     return databind.getFieldValue()
         .map(nested -> {
-          log.debug("{}|  +-[{}.{}] ({})",
-              depth.getTree(),
+          ast.add(depth, "|  +-[%s.%s] (%s)",
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
               databind.getField().getType());
-          context.put(DEPTH, depth.getLevel() + 1);
+          context.put(CTX_DEPTH, depth + 1);
           val spec = codec.toSpec(context, nested);
           val compound = combine(databind.getField(), spec);
-          log.debug("{}|  \\-[{}.{}]: {}",
-              depth.getTree(),
+          ast.add(depth, "|  \\-[%s.%s]: %s",
               databind.getTarget().getClass().getSimpleName(),
               databind.getField().getName(),
               compound);
