@@ -662,7 +662,7 @@ repository.findAll(spec);
 
 ## Logging 
 
-將 Package `tw.com.softleader.data.jpa.spec` 設定為 debug, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題
+將 Package `tw.com.softleader.data.jpa.spec` 設定為 *debug*, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題
 
 ## Limitation
 
