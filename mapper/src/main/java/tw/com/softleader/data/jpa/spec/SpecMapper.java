@@ -58,6 +58,9 @@ public class SpecMapper implements SpecCodec {
 
   @Override
   public Specification<Object> toSpec(Object rootObject) {
+    if (rootObject == null) {
+      return null;
+    }
     val context = new SpecContext();
     context.put(DEPTH, 0);
     log.debug("+-[{}] ({})",

@@ -30,7 +30,6 @@ import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
@@ -65,6 +64,13 @@ class SimpleSpecificationResolverTest {
     mapper = SpecMapper.builder()
         .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
         .build();
+  }
+
+  @DisplayName("Null Root Object")
+  @Test
+  void nullRootObject() {
+    assertThat(mapper.toSpec(null))
+        .isNull();
   }
 
   @DisplayName("空的 @Spec")
