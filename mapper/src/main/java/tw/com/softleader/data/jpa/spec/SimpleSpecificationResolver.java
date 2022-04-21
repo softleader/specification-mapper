@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
+import static tw.com.softleader.data.jpa.spec.Depth.DEPTH;
 
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
@@ -50,38 +51,44 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
     val def = databind.getField().getAnnotation(Spec.class);
-    log.debug("Building specification of [{}.{}] for {}",
+    val depth = new Depth((int) context.get(DEPTH).get());
+    val built = databind.getFieldValue()
+        .filter(this::valuePresent)
+        .map(value -> buildSpecification(context, databind, def, value))
+        .orElse(null);
+    log.debug("{}|  +-[{}.{}]: @Spec(value={}, path={}, not={}) -> {}",
+        depth.getTree(),
         databind.getTarget().getClass().getSimpleName(),
         databind.getField().getName(),
-        def);
-    return databind.getFieldValue()
-        .filter(this::valuePresent)
-        .map(value -> {
-          val path = of(def.path())
-              .filter(StringUtils::hasText)
-              .orElseGet(databind.getField()::getName);
-          Specification<Object> spec = SimpleSpecification.builder()
-              .context(context)
-              .domainClass(def.value())
-              .path(path)
-              .value(value)
-              .build();
-          if (def.not()) {
-            spec = new Not<>(spec);
-          }
-          if (databind.getField().isAnnotationPresent(And.class)) {
-            return new tw.com.softleader.data.jpa.spec.domain.And<>(spec);
-          }
-          if (databind.getField().isAnnotationPresent(Or.class)) {
-            return new tw.com.softleader.data.jpa.spec.domain.Or<>(spec);
-          }
-          return spec;
-        }).orElseGet(() -> {
-          log.debug("Value of [{}.{}] is null or empty, skipping it",
-              databind.getTarget().getClass().getSimpleName(),
-              databind.getField().getName());
-          return null;
-        });
+        def.value().getSimpleName(),
+        def.path(),
+        def.not(),
+        built);
+    return built;
+  }
+
+  private Specification<Object> buildSpecification(@NonNull Context context,
+      @NonNull Databind databind, @NonNull Spec def,
+      Object value) {
+    val path = of(def.path())
+        .filter(StringUtils::hasText)
+        .orElseGet(databind.getField()::getName);
+    Specification<Object> spec = SimpleSpecification.builder()
+        .context(context)
+        .domainClass(def.value())
+        .path(path)
+        .value(value)
+        .build();
+    if (def.not()) {
+      spec = new Not<>(spec);
+    }
+    if (databind.getField().isAnnotationPresent(And.class)) {
+      return new tw.com.softleader.data.jpa.spec.domain.And<>(spec);
+    }
+    if (databind.getField().isAnnotationPresent(Or.class)) {
+      return new tw.com.softleader.data.jpa.spec.domain.Or<>(spec);
+    }
+    return spec;
   }
 
   boolean valuePresent(Object value) {
