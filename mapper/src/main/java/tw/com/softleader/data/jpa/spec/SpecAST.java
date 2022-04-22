@@ -20,20 +20,40 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.lang.String.format;
+import static java.lang.String.join;
+import static java.util.Collections.nCopies;
+
+import java.util.ArrayList;
+import java.util.List;
+import lombok.NonNull;
+import lombok.val;
+
 /**
  * @author Matt Ho
  */
-public interface SpecInvocation {
+class SpecAST implements AST {
 
-  AST getAst();
+  private final List<String> nodes = new ArrayList<>();
 
-  int getDepth();
+  @Override
+  public void add(int depth, @NonNull String message, Object... args) {
+    if (depth < 0) {
+      throw new IllegalArgumentException("depth must >= 0, but was " + depth);
+    }
+    this.nodes.add(indentLine(depth) + format(message, args));
+  }
 
-  Class<? extends SpecificationResolver> getResolverType();
+  private String indentLine(int depth) {
+    val joined = join("|", nCopies(depth, "  "));
+    if (joined.isEmpty()) {
+      return joined;
+    }
+    return "|" + joined;
+  }
 
-  Class<?> getTargetType();
-
-  Class<?> getFieldType();
-
-  String getFieldName();
+  @Override
+  public String print() {
+    return join("\n", nodes);
+  }
 }

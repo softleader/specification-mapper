@@ -20,20 +20,35 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import lombok.Getter;
+import lombok.NonNull;
+
 /**
  * @author Matt Ho
  */
-public interface SpecInvocation {
+@Getter
+class ReflectionSpecInvocation implements SpecInvocation {
 
-  AST getAst();
+  private final AST ast;
+  private final int depth;
+  private final Class<? extends SpecificationResolver> resolverType;
+  private final Class<?> targetType;
+  private final Class<?> fieldType;
+  private final String fieldName;
 
-  int getDepth();
-
-  Class<? extends SpecificationResolver> getResolverType();
-
-  Class<?> getTargetType();
-
-  Class<?> getFieldType();
-
-  String getFieldName();
+  ReflectionSpecInvocation(
+      @NonNull AST ast,
+      int depth,
+      @NonNull SpecificationResolver resolver,
+      @NonNull Databind databind) {
+    this.ast = ast;
+    this.depth = depth;
+    this.resolverType = resolver.getClass();
+    this.targetType = databind.getTarget().getClass();
+    this.fieldType = databind.getField().getType();
+    this.fieldName = databind.getField().getName();
+    if (depth < 0) {
+      throw new IllegalArgumentException("depth must >= 0, but was " + depth);
+    }
+  }
 }

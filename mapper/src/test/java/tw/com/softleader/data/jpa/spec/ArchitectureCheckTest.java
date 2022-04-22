@@ -57,13 +57,14 @@ class ArchitectureCheckTest {
   static final String ANNOTATION = "Annotation";
 
   static final String DOMAIN_PACKAGE = SimpleSpecification.class.getPackage().getName();
+  static final String AST_PACKAGE = AST.class.getPackage().getName();
   static final String INFRA_PACKAGE = SpecCodec.class.getPackage().getName();
   static final String ANNOTATION_PACKAGE = Spec.class.getPackage().getName();
 
   @ArchTest
   static final ArchRule layerDependency = layeredArchitecture()
       .layer(DOMAIN).definedBy(DOMAIN_PACKAGE)
-      .layer(INFRA).definedBy(INFRA_PACKAGE)
+      .layer(INFRA).definedBy(INFRA_PACKAGE, AST_PACKAGE)
       .layer(ANNOTATION).definedBy(ANNOTATION_PACKAGE)
       .whereLayer(ANNOTATION).mayOnlyBeAccessedByLayers(INFRA)
       .whereLayer(DOMAIN).mayOnlyBeAccessedByLayers(INFRA, ANNOTATION)
@@ -84,7 +85,9 @@ class ArchitectureCheckTest {
   static final ArchRule classesExceptSpecMapperShouldNotBePublicResideInInfra = classes()
       .that().resideInAPackage(INFRA_PACKAGE)
       .and(
-          doNot(INTERFACES.or(BUILDER).or(assignableTo(SpecMapper.class))))
+          doNot(INTERFACES.or(BUILDER)
+              .or(assignableTo(SpecMapper.class))
+              .or(assignableTo(SpecMapper.class))))
       .should().notBePublic();
 
   @ArchTest

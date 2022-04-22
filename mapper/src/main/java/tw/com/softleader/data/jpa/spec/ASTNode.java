@@ -30,18 +30,18 @@ public interface ASTNode {
 
   default void preVisit(@NonNull SpecInvocation node) {
     node.getAst().add(node.getDepth(), "|  +-[%s.%s]: %s (%s)",
-        node.getDatabind().getTarget().getClass().getSimpleName(),
-        node.getDatabind().getField().getName(),
-        node.getDatabind().getField().getType().getName(),
-        node.getResolverClass().getSimpleName());
+        node.getTargetType().getSimpleName(),
+        node.getFieldName(),
+        node.getFieldType().getName(),
+        node.getResolverType().getSimpleName());
   }
 
   default void postVisit(
       @NonNull SpecInvocation node,
       @Nullable Object resolved) {
     node.getAst().add(node.getDepth(), "|  \\-[%s.%s]: %s",
-        node.getDatabind().getTarget().getClass().getSimpleName(),
-        node.getDatabind().getField().getName(),
+        node.getTargetType().getSimpleName(),
+        node.getFieldName(),
         resolved);
   }
 }

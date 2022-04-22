@@ -20,40 +20,17 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.lang.String.format;
-import static java.lang.String.join;
-import static java.util.Collections.nCopies;
-
-import java.util.ArrayList;
-import java.util.List;
-import lombok.val;
+import lombok.NonNull;
 
 /**
  * @author Matt Ho
  */
-class AST {
+public interface AST {
 
-  static final String CTX_AST = "AST";
-  static final String CTX_DEPTH = "DEPTH";
+  String CTX_AST = "AST";
+  String CTX_DEPTH = "DEPTH";
 
-  final List<String> nodes = new ArrayList<>();
+  void add(int depth, @NonNull String message, Object... args);
 
-  void add(int depth, String message, Object... args) {
-    if (depth < 0) {
-      throw new IllegalArgumentException("depth must >= 0, but was " + depth);
-    }
-    this.nodes.add(indentLine(depth) + format(message, args));
-  }
-
-  private String indentLine(int depth) {
-    val joined = join("|", nCopies(depth, "  "));
-    if (joined.isEmpty()) {
-      return joined;
-    }
-    return "|" + joined;
-  }
-
-  String print() {
-    return join("\n", nodes);
-  }
+  String print();
 }

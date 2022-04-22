@@ -63,7 +63,7 @@ public class SpecMapper implements SpecCodec {
       return null;
     }
     val context = new SpecContext();
-    val ast = new AST();
+    val ast = new SpecAST();
     val depth = 0;
     context.put(CTX_AST, ast);
     context.put(CTX_DEPTH, depth);
@@ -105,10 +105,10 @@ public class SpecMapper implements SpecCodec {
 
   Specification<Object> resolveSpec(@NonNull Context context, @NonNull Databind databind,
       @NonNull SpecificationResolver resolver) {
-    val node = new SpecInvocation(
+    val node = new ReflectionSpecInvocation(
         context.get(CTX_AST).map(AST.class::cast).get(),
         (int) context.get(CTX_DEPTH).get(),
-        resolver.getClass(),
+        resolver,
         databind);
     resolver.preVisit(node);
     val resolved = resolver.buildSpecification(context, databind);
