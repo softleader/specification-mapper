@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
@@ -38,7 +39,7 @@ public interface ASTNode {
 
   default void postVisit(
       @NonNull SpecInvocation node,
-      @Nullable Object resolved) {
+      @Nullable Specification<Object> resolved) {
     node.getAst().add(node.getDepth(), "|  \\-[%s.%s]: %s",
         node.getTargetType().getSimpleName(),
         node.getFieldName(),

@@ -105,7 +105,7 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   }
 
   @Override
-  public void postVisit(@lombok.NonNull SpecInvocation node, Object resolved) {
+  public void postVisit(@lombok.NonNull SpecInvocation node, Specification<Object> resolved) {
     // 這隻自己處理 AST
   }
 }
