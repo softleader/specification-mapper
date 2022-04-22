@@ -67,9 +67,9 @@ public class SpecMapper implements SpecCodec {
     val depth = 0;
     context.put(CTX_AST, ast);
     context.put(CTX_DEPTH, depth);
-    ast.add(depth, "+-[%s] (%s)",
+    ast.add(depth, "+-[%s]: %s",
         rootObject.getClass().getSimpleName(),
-        rootObject.getClass());
+        rootObject.getClass().getName());
     val spec = toSpec(context, rootObject);
     ast.add(depth, "\\-[%s]: %s",
         rootObject.getClass().getSimpleName(),
@@ -105,7 +105,14 @@ public class SpecMapper implements SpecCodec {
 
   Specification<Object> resolveSpec(@NonNull Context context, @NonNull Databind databind,
       @NonNull SpecificationResolver resolver) {
+    val node = new SpecInvocation(
+        context.get(CTX_AST).map(AST.class::cast).get(),
+        (int) context.get(CTX_DEPTH).get(),
+        resolver.getClass(),
+        databind);
+    resolver.preVisit(node);
     val resolved = resolver.buildSpecification(context, databind);
+    resolver.postVisit(node, resolved);
     return resolved;
   }
 

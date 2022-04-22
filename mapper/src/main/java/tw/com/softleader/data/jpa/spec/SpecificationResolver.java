@@ -34,7 +34,7 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 /**
  * @author Matt Ho
  */
-public interface SpecificationResolver {
+public interface SpecificationResolver extends ASTNode {
 
   boolean supports(@NonNull Databind databind);
 

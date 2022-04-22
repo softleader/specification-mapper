@@ -30,6 +30,9 @@ import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
+/**
+ * @author Matt Ho
+ */
 class SpecContext implements Context {
 
   private final Map<Object, Object> bag = synchronizedMap(new HashMap<>());

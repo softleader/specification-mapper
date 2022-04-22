@@ -32,6 +32,9 @@ import lombok.val;
 import org.springframework.data.util.Pair;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
+/**
+ * @author Matt Ho
+ */
 class SpecJoinContext implements JoinContext {
 
   private final Map<Pair<String, Root<?>>, Join<?, ?>> joins = synchronizedMap(new HashMap<>());

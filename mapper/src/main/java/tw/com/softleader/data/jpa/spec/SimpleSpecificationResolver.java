@@ -98,4 +98,14 @@ class SimpleSpecificationResolver implements SpecificationResolver {
     }
     return true;
   }
+
+  @Override
+  public void preVisit(SpecInvocation node) {
+    // 這隻自己處理 AST
+  }
+
+  @Override
+  public void postVisit(SpecInvocation node, Object resolved) {
+    // 這隻自己處理 AST
+  }
 }
