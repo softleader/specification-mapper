@@ -80,4 +80,14 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
         def.joinType(),
         def.distinct());
   }
+
+  @Override
+  public void preVisit(@lombok.NonNull SpecInvocation node) {
+    // 這隻不印
+  }
+
+  @Override
+  public void postVisit(@lombok.NonNull SpecInvocation node, Specification<Object> resolved) {
+    // 這隻不印
+  }
 }

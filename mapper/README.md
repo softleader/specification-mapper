@@ -665,7 +665,7 @@ repository.findAll(spec);
 將 Package `tw.com.softleader.data.jpa.spec` 設定為 *debug*, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題, 如:
 
 ```
-t.c.softleader.data.jpa.spec.SpecMapper  : --- Spec AST ---
+DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : --- Spec AST ---
 +-[CustomerCriteria]: my.package.CustomerCriteria
 |  +-[CustomerCriteria.firstname]: @Spec(value=Equals, path=, not=false) -> Equals[path=name, value=matt]
 |  +-[CustomerCriteria.address]: my.package.AddressCriteria (NestedSpecificationResolver)
