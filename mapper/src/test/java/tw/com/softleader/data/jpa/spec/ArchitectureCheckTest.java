@@ -83,10 +83,7 @@ class ArchitectureCheckTest {
   @ArchTest
   static final ArchRule classesExceptSpecMapperShouldNotBePublicResideInInfra = classes()
       .that().resideInAPackage(INFRA_PACKAGE)
-      .and(
-          doNot(INTERFACES.or(BUILDER)
-              .or(assignableTo(SpecMapper.class))
-              .or(assignableTo(SpecMapper.class))))
+      .and(doNot(INTERFACES.or(BUILDER).or(assignableTo(SpecMapper.class))))
       .should().notBePublic();
 
   @ArchTest
