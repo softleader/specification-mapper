@@ -100,12 +100,12 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   }
 
   @Override
-  public void preVisit(SpecInvocation node) {
+  public void preVisit(@lombok.NonNull SpecInvocation node) {
     // 這隻自己處理 AST
   }
 
   @Override
-  public void postVisit(SpecInvocation node, Object resolved) {
+  public void postVisit(@lombok.NonNull SpecInvocation node, Object resolved) {
     // 這隻自己處理 AST
   }
 }
