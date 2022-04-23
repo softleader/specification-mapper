@@ -1,7 +1,7 @@
 # RELEASE defines the release-version of the bundle.
 VERSION ?=
 JAVA := 1.8
-SPRING_BOOT := 2.6.4
+SPRING_BOOT := 2.6.6
 
 ##@ General
 
