@@ -43,7 +43,7 @@ import tw.com.softleader.data.jpa.spec.SpecificationResolver;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
 import tw.com.softleader.data.jpa.spec.SpecificationResolverCodecBuilder;
 import tw.com.softleader.data.jpa.spec.repository.support.JpaRepositoryFactoryBeanPostProcessor;
-import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
+import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAdapter;
 
 /**
  * @author Matt Ho
@@ -108,16 +108,17 @@ public class SpecMapperAutoConfiguration {
     @Bean
     RepositoryFactoryCustomizer specMapperCustomizer(SpecMapper specMapper) {
       return factory -> factory.addRepositoryProxyPostProcessor(
-          (proxyFactory, repositoryInformation) -> getQueryBySpecExecutorImpl(proxyFactory)
+          (proxyFactory, repositoryInformation) -> getQueryBySpecExecutorAdapter(proxyFactory)
               .ifPresent(target -> target.setSpecMapper(specMapper)));
     }
 
     @SneakyThrows
     @SuppressWarnings({ "rawtypes" })
-    private Optional<QueryBySpecExecutorImpl> getQueryBySpecExecutorImpl(ProxyFactory factory) {
+    private Optional<QueryBySpecExecutorAdapter> getQueryBySpecExecutorAdapter(
+        ProxyFactory factory) {
       return ofNullable(factory.getTargetSource().getTarget())
-          .filter(QueryBySpecExecutorImpl.class::isInstance)
-          .map(QueryBySpecExecutorImpl.class::cast);
+          .filter(QueryBySpecExecutorAdapter.class::isInstance)
+          .map(QueryBySpecExecutorAdapter.class::cast);
     }
   }
 }
