@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec.autoconfigure;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAdapter;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
 
 /**
@@ -37,9 +38,11 @@ public class SpecMapperProperties {
   boolean enabled = true;
 
   /**
-   * Configures the repository base class. the given class must extends QueryBySpecExecutorImpl
+   * Configures the repository base class. the given class must implement
+   * QueryBySpecExecutorAdapter
    *
+   * @see QueryBySpecExecutorAdapter
    * @see QueryBySpecExecutorImpl
    */
-  Class<? extends QueryBySpecExecutorImpl> repositoryBaseClass = QueryBySpecExecutorImpl.class;
+  Class<? extends QueryBySpecExecutorAdapter> repositoryBaseClass = QueryBySpecExecutorImpl.class;
 }
