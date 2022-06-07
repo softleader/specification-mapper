@@ -29,6 +29,7 @@ The following shows versions with compatible [Spring Boot](https://spring.io/pro
 - 2.4.x
 - 2.5.x
 - 2.6.x
+- 2.7.x
 
 ## License
 
