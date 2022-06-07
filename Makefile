@@ -1,7 +1,15 @@
-# RELEASE defines the release-version of the bundle.
+# VERSION defines the release-version of the bundle.
 VERSION ?=
-JAVA := 1.8
-SPRING_BOOT := 2.6.6
+JAVA ?=
+SPRING_BOOT ?=
+
+define java_version
+$(if $(filter-out "",$(JAVA)),-D'java.version=$(JAVA)',)
+endef
+
+define spring_boot_version
+$(if $(filter-out "",$(SPRING_BOOT)),-D'spring-boot.version=$(SPRING_BOOT)',)
+endef
 
 ##@ General
 
@@ -17,13 +25,13 @@ clean: ## Remove files generated at build-time.
 	mvn clean -e
 
 compile: clean  ## Clean and compile the source code.
-	mvn compile -e
+	mvn compile -e $(call java_version) $(call spring_boot_version)
 
 test: clean ## Clean and test the compiled code.
-	mvn test -e -D'java.version=$(JAVA)' -D'spring-boot.version=$(SPRING_BOOT)'
+	mvn test -e $(call java_version) $(call spring_boot_version)
 
 install: clean ## Install project to local repository w/o unit testing.
-	mvn install -e -DskipTests -Prelease
+	mvn install -e -DskipTests -Prelease $(call java_version) $(call spring_boot_version)
 
 ##@ Delivery
 
