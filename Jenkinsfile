@@ -31,7 +31,7 @@ spec:
     - name: dockersock
       mountPath: /var/run/docker.sock
   - name: maven-java11
-    image: harbor.softleader.com.tw/library/maven:3-azulzulu-11
+    image: harbor.softleader.com.tw/library/maven:3-eclipse-temurin-11
     imagePullPolicy: Always
     command: ['cat']
     tty: true
@@ -45,7 +45,7 @@ spec:
     - name: dockersock
       mountPath: /var/run/docker.sock
   - name: maven-java17
-    image: harbor.softleader.com.tw/library/maven:3-azulzulu-17
+    image: harbor.softleader.com.tw/library/maven:3-eclipse-temurin-17
     imagePullPolicy: Always
     command: ['cat']
     tty: true
