@@ -53,10 +53,10 @@
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 
-    <spring-boot.version>2.7.1</spring-boot.version>
+    <spring-boot.version>2.7.4</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
     <format.skip>false</format.skip>
-    <archunit-junit5.version>0.23.1</archunit-junit5.version>
+    <archunit-junit5.version>1.0.0</archunit-junit5.version>
   </properties>
 
   <modules>

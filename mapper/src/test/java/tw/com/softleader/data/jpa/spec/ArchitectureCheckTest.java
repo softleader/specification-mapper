@@ -62,6 +62,7 @@ class ArchitectureCheckTest {
 
   @ArchTest
   static final ArchRule layerDependency = layeredArchitecture()
+      .consideringAllDependencies()
       .layer(DOMAIN).definedBy(DOMAIN_PACKAGE)
       .layer(INFRA).definedBy(INFRA_PACKAGE)
       .layer(ANNOTATION).definedBy(ANNOTATION_PACKAGE)
