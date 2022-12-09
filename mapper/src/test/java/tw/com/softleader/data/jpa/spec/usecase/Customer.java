@@ -26,13 +26,19 @@ import static javax.persistence.FetchType.LAZY;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Set;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -81,4 +87,11 @@ public class Customer {
   @OneToMany(fetch = LAZY, cascade = ALL)
   @JoinColumn(name = "order_id")
   Set<Order> orders;
+
+  @Singular
+  @ElementCollection(fetch = LAZY)
+  @CollectionTable(name = "phones", joinColumns = @JoinColumn(name = "cust_id"))
+  @MapKeyColumn(name = "carrier")
+  @Column(name = "phone_number")
+  Map<String, String> phones;
 }
