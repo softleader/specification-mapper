@@ -6,7 +6,7 @@
 
   <groupId>tw.com.softleader.data</groupId>
   <artifactId>specification-mapper-parent</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7</version>
   <packaging>pom</packaging>
 
   <name>specification-mapper-parent</name>
