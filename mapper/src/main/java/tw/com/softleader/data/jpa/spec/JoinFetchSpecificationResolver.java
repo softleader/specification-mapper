@@ -49,14 +49,24 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    val specs = Stream.concat(
-        joinFetchDef(databind.getTarget()),
-        joinFetchesDef(databind.getTarget())).filter(Objects::nonNull)
-        .collect(toList());
-    if (specs.size() == 1) {
-      return specs.get(0);
+    val handled = handledKey(databind);
+    if (context.containsKey(handled)) {
+      log.trace("Already handled [{}], skipping", handled);
+      return null;
     }
-    return new Conjunction<>(specs);
+    try {
+      val specs = Stream.concat(
+          joinFetchDef(databind.getTarget()),
+          joinFetchesDef(databind.getTarget()))
+          .filter(Objects::nonNull)
+          .collect(toList());
+      if (specs.size() == 1) {
+        return specs.get(0);
+      }
+      return new Conjunction<>(specs);
+    } finally {
+      context.put(handled, null);
+    }
   }
 
   private Stream<Specification<Object>> joinFetchesDef(Object obj) {
@@ -79,6 +89,13 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
         def.paths(),
         def.joinType(),
         def.distinct());
+  }
+
+  private String handledKey(Databind databind) {
+    return String.join("/",
+        JoinFetchSpecificationResolver.class.getName(),
+        databind.getField().getDeclaringClass().getName(),
+        "" + databind.getTarget().hashCode());
   }
 
   @Override
