@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
@@ -74,7 +75,7 @@ class SpecContext implements Context {
   }
 
   @Override
-  public Object put(@NonNull Object key, @NonNull Object value) {
+  public Object put(@NonNull Object key, @Nullable Object value) {
     return bag.put(key, value);
   }
 

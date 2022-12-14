@@ -20,26 +20,18 @@
  */
 package tw.com.softleader.data.jpa.spec.usecase;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Set;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Singular;
-import org.springframework.data.annotation.CreatedDate;
+
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 @Builder
 @AllArgsConstructor
@@ -81,4 +73,25 @@ public class Customer {
   @OneToMany(fetch = LAZY, cascade = ALL)
   @JoinColumn(name = "order_id")
   Set<Order> orders;
+
+  @Singular
+  @ElementCollection(fetch = LAZY)
+  @CollectionTable(name = "phones", joinColumns = @JoinColumn(name = "cust_id"))
+  @MapKeyColumn(name = "carrier")
+  @Column(name = "phone_number")
+  Map<String, String> phones;
+
+  @Singular
+  @ManyToMany(cascade = {
+      CascadeType.PERSIST,
+      CascadeType.MERGE,
+      CascadeType.DETACH,
+      CascadeType.REFRESH
+  }, fetch = FetchType.EAGER)
+  @JoinTable(name = "CCUSTOMER_SCHOOL_MAPPING", joinColumns = {
+      @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+  }, inverseJoinColumns = {
+      @JoinColumn(name = "SCHOOL_ID", nullable = false)
+  })
+  Set<School> schools;
 }
