@@ -128,7 +128,7 @@ Here is a list of the built-in types for `@Spec`:
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
-> In order to facilitate the usage for those who are already familiar with Spring Data JPA, the aforementioned names are aligned as closely as possible with the conventions of [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣
+> In order to facilitate the usage for those who are already familiar with Spring Data JPA, the aforementioned names are aligned as closely as possible with the conventions of [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
 
 ### Negates the @Spec
 
