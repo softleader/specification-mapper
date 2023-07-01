@@ -7,14 +7,20 @@
 
 An alternative Specification API for Spring Data JPA, Jakarta EE 9. 
 
-> It'is heavily influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver).
+## What is Specification Mapper
+
+Specification mapper is a tool that facilitates the construction of Specifications. It reads the fields of a specified POJO and, through simple and memorable annotations, converts the values of these fields into Specifications. Specification mapper also provides many extension points, allowing you to easily expand and implement your own logic.
+
+It is heavily influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver). We used specification-arg-resolver extensively for a period of time. However, in specification-arg-resolver, we had to expose the entity directly to the API. This became a conflict when we started implementing clean architecture and became more concerned about layer dependencies. This conflict led to the development of Specification mapper.
+
+In clean architecture, Specification mapper provides a convenient way to convert and use any POJO in any layer. By using Specification mapper, we can effectively manage dependencies between layers and achieve a clear and structured code architecture. With Specificationpec mapper, you can define and manipulate specifications more effortlessly in your application, improving code readability and maintainability.
+
+The current version is implemented in Jakarta. If you are using Javax, please refer to [this link](https://github.com/softleader/specification-mapper).
 
 ## Getting Started
 
 - **Spec Mapper API:** See documentation for [specification-mapper](./mapper).
 - **Spring Starter:** See documentation for [specification-mapper-starter](./starter).
-
-> Check out Javax version [here](https://github.com/softleader/specification-mapper)
 
 ## Compatibility
 
