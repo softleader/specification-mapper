@@ -20,24 +20,21 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.junit.jupiter.api.Test;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class ReflectionDatabindTest {
 
@@ -45,16 +42,16 @@ class ReflectionDatabindTest {
   @Test
   void fireOnlyOnce() {
 
-    val object = new MyObject("hello", null, Optional.empty(), Arrays.asList());
-    val databind = ReflectionDatabind.of(object,
+    var object = new MyObject("hello", null, Optional.empty(), Arrays.asList());
+    var databind = ReflectionDatabind.of(object,
         (obj, field) -> spy(new ReflectionDatabind(obj, field)));
 
     assertThat(databind)
         .hasSize(4);
 
-    val numberOfThreads = 100;
-    val service = newFixedThreadPool(numberOfThreads);
-    val latch = new CountDownLatch(numberOfThreads);
+    var numberOfThreads = 100;
+    var service = newFixedThreadPool(numberOfThreads);
+    var latch = new CountDownLatch(numberOfThreads);
     for (int i = 0; i < numberOfThreads; i++) {
       service.submit(() -> {
         databind.forEach(Databind::getFieldValue);

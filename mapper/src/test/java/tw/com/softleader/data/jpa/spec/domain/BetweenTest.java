@@ -20,18 +20,17 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 @IntegrationTest
 class BetweenTest {
@@ -41,12 +40,12 @@ class BetweenTest {
 
   @Test
   void test() {
-    val matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
+    var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("matt").birthday(LocalDate.now().minusDays(2)).build());
 
-    val spec = new Between<Customer>(noopContext(), "birthday",
+    var spec = new Between<Customer>(noopContext(), "birthday",
         Arrays.asList(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1)));
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 }

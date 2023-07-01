@@ -23,7 +23,6 @@ package tw.com.softleader.data.jpa.spec;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,7 +70,7 @@ class JoinFetchElementCollectionTest {
   @DisplayName("@JoinFetch 遇上 @ElementCollection")
   @Test
   void joinFetchWithElementCollection() {
-    val matt = repository.save(Customer.builder().name("matt")
+    var matt = repository.save(Customer.builder().name("matt")
         .phone("taiwanmobile", "0911222333")
         .phone("cht", "0944555666")
         .build());
@@ -80,7 +79,7 @@ class JoinFetchElementCollectionTest {
         .phone("fetnet", "0966777888")
         .build());
 
-    val spec = mapper.toSpec(
+    var spec = mapper.toSpec(
         CustomerFetchPhone.builder()
             .name("matt")
             .build(),
@@ -91,17 +90,17 @@ class JoinFetchElementCollectionTest {
         .map(Specification.class::cast)
         .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
         .hasSize(1);
-    val totalFields = CustomerFetchPhone.class.getDeclaredFields().length;
+    var totalFields = CustomerFetchPhone.class.getDeclaredFields().length;
     verify(joinFetchResolver, times(totalFields)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @DisplayName("巢狀的 @JoinFetch")
   @Test
   void nestedJoinFetch() {
-    val matt = repository.save(Customer.builder().name("matt")
+    var matt = repository.save(Customer.builder().name("matt")
         .phone("taiwanmobile", "0911222333")
         .phone("cht", "0944555666")
         .school(School.builder()
@@ -125,14 +124,14 @@ class JoinFetchElementCollectionTest {
             .name("B")
             .build())
         .build());
-    val criteria = CustomerFetchPhone.builder()
+    var criteria = CustomerFetchPhone.builder()
         .school(CustomerFetchSchool.builder()
             .name("A")
             .city("Taipei")
             .build())
         .build();
-    val spec = mapper.toSpec(criteria, Customer.class);
-    val specs = assertThat(spec)
+    var spec = mapper.toSpec(criteria, Customer.class);
+    var specs = assertThat(spec)
         .isNotNull()
         .extracting("specs", LIST)
         .map(Specification.class::cast);
@@ -146,11 +145,11 @@ class JoinFetchElementCollectionTest {
         .extracting("specs", LIST)
         .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
         .hasSize(1);
-    val totalFields = CustomerFetchPhone.class.getDeclaredFields().length
+    var totalFields = CustomerFetchPhone.class.getDeclaredFields().length
         + CustomerFetchSchool.class.getDeclaredFields().length;
     verify(joinFetchResolver, times(totalFields)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 

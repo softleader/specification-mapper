@@ -20,17 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 /**
  * @author Matt Ho
@@ -51,13 +50,13 @@ class NestedSpecificationResolver implements SpecificationResolver {
       @NonNull Databind databind) {
     return databind.getFieldValue()
         .map(nested -> {
-          val depth = (int) context.get(CTX_DEPTH).get();
+          var depth = (int) context.get(CTX_DEPTH).get();
           context.put(CTX_DEPTH, depth + 1);
-          val spec = codec.toSpec(context, nested);
+          var spec = codec.toSpec(context, nested);
           if (spec == null) {
             return null;
           }
-          val field = databind.getField();
+          var field = databind.getField();
           if (field.isAnnotationPresent(And.class)) {
             return new tw.com.softleader.data.jpa.spec.domain.And<>(spec);
           }

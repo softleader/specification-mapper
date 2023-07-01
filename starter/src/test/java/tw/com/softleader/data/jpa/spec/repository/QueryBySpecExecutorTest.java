@@ -49,62 +49,62 @@ class QueryBySpecExecutorTest {
 
   @Test
   void findBySpec() {
-    val matt = repository.save(Customer.builder().name("matt").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    val criteria = MyCriteria.builder().hello(matt.getName()).build();
-    val actual = repository.findBySpec(criteria);
+    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var actual = repository.findBySpec(criteria);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @Test
   void findByEmptySpec() {
-    val matt = repository.save(Customer.builder().name("matt").build());
-    val bob = repository.save(Customer.builder().name("bob").build());
-    val mary = repository.save(Customer.builder().name("mary").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
+    var bob = repository.save(Customer.builder().name("bob").build());
+    var mary = repository.save(Customer.builder().name("mary").build());
 
-    val criteria = MyCriteria.builder().build();
-    val actual = repository.findBySpec(criteria);
+    var criteria = MyCriteria.builder().build();
+    var actual = repository.findBySpec(criteria);
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
   }
 
   @Test
   void findBySpecAndSort() {
-    val matt = repository.save(Customer.builder().name("matt").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    val criteria = MyCriteria.builder().hello(matt.getName()).build();
-    val actual = repository.findBySpec(criteria, Sort.by("name"));
+    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var actual = repository.findBySpec(criteria, Sort.by("name"));
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @Test
   void findBySpecAndPageable() {
-    val matt = repository.save(Customer.builder().name("matt").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    val criteria = MyCriteria.builder().hello(matt.getName()).build();
-    val actual = repository.findBySpec(criteria, Pageable.unpaged());
+    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var actual = repository.findBySpec(criteria, Pageable.unpaged());
     assertThat(actual.getContent()).hasSize(1).contains(matt);
   }
 
   @Test
   void countBySpec() {
-    val matt = repository.save(Customer.builder().name("matt").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    val criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var criteria = MyCriteria.builder().hello(matt.getName()).build();
     long actual = repository.countBySpec(criteria);
     assertThat(actual).isEqualTo(1L);
   }
 
   @Test
   void existBySpec() {
-    val matt = repository.save(Customer.builder().name("matt").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    val criteria = MyCriteria.builder().hello(matt.getName()).build();
-    val actual = repository.existsBySpec(criteria);
+    var criteria = MyCriteria.builder().hello(matt.getName()).build();
+    var actual = repository.existsBySpec(criteria);
     assertThat(actual).isTrue();
   }
 

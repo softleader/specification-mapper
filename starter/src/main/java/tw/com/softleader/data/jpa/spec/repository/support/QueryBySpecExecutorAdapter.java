@@ -20,7 +20,6 @@
  */
 package tw.com.softleader.data.jpa.spec.repository.support;
 
-import java.util.List;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +28,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
+
+import java.util.List;
 
 /**
  * Default implementation of {@code QueryBySpecExecutor}

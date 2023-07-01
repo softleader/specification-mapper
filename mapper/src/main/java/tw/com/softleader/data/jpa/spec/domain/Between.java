@@ -20,14 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import static java.util.stream.StreamSupport.stream;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
-import lombok.val;
+
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * {@code ... where x.age between ? and ?}
@@ -50,7 +49,7 @@ public class Between<T> extends SimpleSpecification<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    val args = stream(((Iterable<?>) value).spliterator(), false)
+    var args = stream(((Iterable<?>) value).spliterator(), false)
         .map(arg -> (Comparable<?>) arg)
         .toArray(Comparable[]::new);
     return builder.between(getPath(root), args[0], args[1]);

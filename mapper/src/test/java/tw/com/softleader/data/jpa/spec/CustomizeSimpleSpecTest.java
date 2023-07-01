@@ -20,24 +20,14 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +38,13 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
+
+import java.time.LocalDateTime;
+
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @IntegrationTest
 class CustomizeSimpleSpecTest {
@@ -91,10 +88,10 @@ class CustomizeSimpleSpecTest {
   @DisplayName("客製 Simple Spec")
   @Test
   void customizeSimpleSpec() {
-    val criteria = MyCriteria.builder().gender(Gender.MALE).simpleMaxBy("name").build();
-    val spec = mapper.toSpec(criteria, Customer.class);
+    var criteria = MyCriteria.builder().gender(Gender.MALE).simpleMaxBy("name").build();
+    var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
     verify(simpleResolver, times(2))
@@ -111,9 +108,10 @@ class CustomizeSimpleSpecTest {
     public Predicate toPredicate(Root<Customer> root,
         CriteriaQuery<?> query,
         CriteriaBuilder builder) {
-      val subquery = query.subquery(Long.class);
-      val subroot = subquery.from(Customer.class);
-      subquery.select(builder.max(subroot.get("createdTime")))
+      var subquery = query.subquery(LocalDateTime.class);
+      var subroot = subquery.from(Customer.class);
+      subquery.select(
+          builder.greatest(subroot.get("createdTime").as(LocalDateTime.class)))
           .where(builder.equal(root.get((String) value), subroot.get((String) value)));
       return builder.equal(root.get("createdTime"), subquery);
     }

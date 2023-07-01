@@ -20,19 +20,19 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
-
-import java.util.Objects;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Matt Ho
@@ -49,13 +49,13 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    val handled = handledKey(databind);
+    var handled = handledKey(databind);
     if (context.containsKey(handled)) {
       log.trace("Already handled [{}], skipping", handled);
       return null;
     }
     try {
-      val specs = Stream.concat(
+      var specs = Stream.concat(
           joinFetchDef(databind.getTarget()),
           joinFetchesDef(databind.getTarget()))
           .filter(Objects::nonNull)

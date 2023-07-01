@@ -20,14 +20,15 @@
  */
 package tw.com.softleader.data.jpa.spec.annotation;
 
+import jakarta.persistence.criteria.Path;
+import org.springframework.data.jpa.domain.Specification;
+import tw.com.softleader.data.jpa.spec.domain.Equals;
+import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.persistence.criteria.Path;
-import org.springframework.data.jpa.domain.Specification;
-import tw.com.softleader.data.jpa.spec.domain.Equals;
-import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
  * @author Matt Ho

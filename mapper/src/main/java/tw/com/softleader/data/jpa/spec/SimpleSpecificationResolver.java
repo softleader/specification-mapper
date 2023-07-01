@@ -20,13 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Optional.of;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
-
-import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
@@ -36,6 +30,12 @@ import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.Not;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
+
+import java.util.stream.StreamSupport;
+
+import static java.util.Optional.of;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 /**
  * @author Matt Ho
@@ -51,10 +51,10 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   @Override
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
-    val def = databind.getField().getAnnotation(Spec.class);
-    val ast = context.get(CTX_AST).map(AST.class::cast).get();
-    val depth = (int) context.get(CTX_DEPTH).get();
-    val built = databind.getFieldValue()
+    var def = databind.getField().getAnnotation(Spec.class);
+    var ast = context.get(CTX_AST).map(AST.class::cast).get();
+    var depth = (int) context.get(CTX_DEPTH).get();
+    var built = databind.getFieldValue()
         .filter(this::valuePresent)
         .map(value -> buildSpecification(context, databind, def, value))
         .orElse(null);
@@ -71,7 +71,7 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   private Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind, @NonNull Spec def,
       Object value) {
-    val path = of(def.path())
+    var path = of(def.path())
         .filter(StringUtils::hasText)
         .orElseGet(databind.getField()::getName);
     Specification<Object> spec = SimpleSpecification.builder()

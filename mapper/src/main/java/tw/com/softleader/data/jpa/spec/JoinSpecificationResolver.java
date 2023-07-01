@@ -20,21 +20,21 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
-
-import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+
+import java.lang.reflect.Field;
+import java.util.Objects;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Matt Ho
@@ -54,7 +54,7 @@ class JoinSpecificationResolver implements SpecificationResolver {
     return databind.getFieldValue()
         .filter(this::valuePresent)
         .map(value -> {
-          val specs = Stream.concat(
+          var specs = Stream.concat(
               joinDef(context, databind.getField()),
               joinsDef(context, databind.getField()))
               .filter(Objects::nonNull)

@@ -20,16 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -62,10 +57,10 @@ public class Join<T> implements Specification<T> {
       context.join().putLazy(alias, r -> r.join(pathToJoinOn, joinType));
       return;
     }
-    val byDot = pathToJoinOn.split("\\.");
+    var byDot = pathToJoinOn.split("\\.");
 
-    val extractedAlias = byDot[0];
-    val joined = context.join().get(extractedAlias, root);
+    var extractedAlias = byDot[0];
+    var joined = context.join().get(extractedAlias, root);
     if (joined == null) {
       throw new IllegalArgumentException(
           "Join definition with alias: '" + extractedAlias + "' not found! " +
@@ -73,7 +68,7 @@ public class Join<T> implements Specification<T> {
               + "' is defined before the join with path: '" + pathToJoinOn + "'");
     }
 
-    val extractedPathToJoin = byDot[1];
+    var extractedPathToJoin = byDot[1];
     context.join().putLazy(alias, r -> joined.join(extractedPathToJoin, joinType));
   }
 }

@@ -70,7 +70,7 @@ class CustomizeResolverTest {
 
   @Test
   void customizeResolver() {
-    val matt = repository.save(Customer.builder()
+    var matt = repository.save(Customer.builder()
         .name("matt")
         .age(20)
         .build());
@@ -83,13 +83,13 @@ class CustomizeResolverTest {
         .age(10)
         .build());
 
-    val criteria = MyCriteria.builder()
+    var criteria = MyCriteria.builder()
         .age(18)
         .profile(Profile.builder()
             .name("m")
             .build())
         .build();
-    val spec = mapper.toSpec(criteria);
+    var spec = mapper.toSpec(criteria);
     assertThat(spec)
         .isNotNull()
         .isInstanceOfAny(Conjunction.class, Disjunction.class)
@@ -98,7 +98,7 @@ class CustomizeResolverTest {
         .asInstanceOf(InstanceOfAssertFactories.LIST)
         .hasSize(2);
 
-    val actual = repository.findBySpec(criteria);
+    var actual = repository.findBySpec(criteria);
     assertThat(actual).hasSize(1).contains(matt);
 
     // SQL will be:
@@ -162,7 +162,7 @@ class CustomizeResolverTest {
 
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
-      val def = databind.getField().getAnnotation(ProfileExists.class);
+      var def = databind.getField().getAnnotation(ProfileExists.class);
       return databind.getFieldValue()
           .map(mapper.get()::toSpec)
           .map(spec -> buildExistsSubquery(def.entity(), def.on(), spec))
@@ -174,13 +174,13 @@ class CustomizeResolverTest {
         String on,
         Specification<?> subquerySpec) {
       return (root, query, builder) -> {
-        val subquery = query.subquery(entityClass);
-        val subroot = subquery.from(entityClass);
+        var subquery = query.subquery(entityClass);
+        var subroot = subquery.from(entityClass);
         subquery
             .select(subroot)
             .where(
                 builder.and(
-                    builder.equal(root, subroot.get(on)),
+                    builder.equal(root.get(on), subroot.get(on)),
                     subquerySpec.toPredicate(subroot, query, builder)));
         return builder.exists(subquery);
       };

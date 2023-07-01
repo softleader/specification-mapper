@@ -20,13 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.repository.support;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
+
+import java.util.List;
 
 /**
  * RepositoryFactoryCustomizer injector, which somehow Spring Data doesn't do the injection...
@@ -43,7 +43,7 @@ public class JpaRepositoryFactoryBeanPostProcessor implements BeanPostProcessor 
   public Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
     if (bean instanceof JpaRepositoryFactoryBean) {
-      val factoryBean = (JpaRepositoryFactoryBean) bean;
+      var factoryBean = (JpaRepositoryFactoryBean) bean;
       customizers.forEach(factoryBean::addRepositoryFactoryCustomizer);
     }
     return bean;

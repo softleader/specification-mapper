@@ -20,10 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.ofNullable;
-import static org.springframework.util.ReflectionUtils.doWithLocalFields;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -32,12 +33,11 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.springframework.util.ReflectionUtils;
+
+import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.ofNullable;
+import static org.springframework.util.ReflectionUtils.doWithLocalFields;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 /**
  * Databind implementation using Spring's {@code ReflectionUtils}
@@ -65,7 +65,7 @@ class ReflectionDatabind implements Databind {
 
   static List<Databind> of(@NonNull Object target,
       @NonNull BiFunction<Object, Field, Databind> factory) {
-    val lookup = new ArrayList<Databind>();
+    var lookup = new ArrayList<Databind>();
     doWithLocalFields(target.getClass(),
         field -> lookup.add(factory.apply(target, field)));
     return unmodifiableList(lookup);
@@ -86,7 +86,7 @@ class ReflectionDatabind implements Databind {
   // Visible for testing
   Object getFieldValue(Object target, Field field) {
     makeAccessible(field);
-    val val = ReflectionUtils.getField(field, target);
+    var val = ReflectionUtils.getField(field, target);
     if (val instanceof Optional) {
       return ((Optional<?>) val).orElse(null);
     }

@@ -2,7 +2,7 @@
 
 ```xml
 <dependency>
-  <groupId>tw.com.softleader.data</groupId>
+  <groupId>tw.com.softleader.data.jakarta</groupId>
   <artifactId>specification-mapper-starter</artifactId>
   <version>last-release-version</version>
 </dependency>
@@ -123,7 +123,7 @@ class PersonService {
   @Autowired PersonRepository personRepository;
 
   List<Person> getPersonByCriteria(PersonCriteria criteria) {
-    val spec = specMapper.toSpec(criteria);
+    var spec = specMapper.toSpec(criteria);
     
     // do more to spec
     

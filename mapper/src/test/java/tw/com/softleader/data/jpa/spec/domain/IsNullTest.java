@@ -20,17 +20,17 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
-
-import java.time.LocalDate;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 @IntegrationTest
 class IsNullTest {
@@ -40,27 +40,27 @@ class IsNullTest {
 
   @Test
   void isNull() {
-    val matt = repository.save(Customer.builder().name("matt").build());
+    var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").birthday(LocalDate.now()).build());
 
-    val spec = new IsNull<Customer>(noopContext(), "birthday", true);
-    val actual = repository.findAll(spec);
+    var spec = new IsNull<Customer>(noopContext(), "birthday", true);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @Test
   void isNotNull() {
-    val matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
+    var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("bob").build());
 
-    val spec = new IsNull<Customer>(noopContext(), "birthday", false);
-    val actual = repository.findAll(spec);
+    var spec = new IsNull<Customer>(noopContext(), "birthday", false);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @Test
   void typeMismatch() {
-    val context = noopContext();
+    var context = noopContext();
     assertThatExceptionOfType(TypeMismatchException.class)
         .isThrownBy(() -> new IsNull<Customer>(context, "name", "true"))
         .withMessage(

@@ -20,16 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
-
-import java.time.LocalDate;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 @IntegrationTest
 class BeforeTest {
@@ -39,11 +39,11 @@ class BeforeTest {
 
   @Test
   void test() {
-    val matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
+    var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("matt").birthday(LocalDate.now().plusDays(1)).build());
 
-    val spec = new Before<Customer>(noopContext(), "birthday", LocalDate.now().plusDays(1));
-    val actual = repository.findAll(spec);
+    var spec = new Before<Customer>(noopContext(), "birthday", LocalDate.now().plusDays(1));
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 }

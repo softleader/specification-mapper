@@ -5,7 +5,7 @@
 
 # specification-mapper
 
-An alternative Specification API for Spring Data JPA.
+An alternative Specification API for Spring Data JPA, Jakarta EE 9.
 
 > It'is heavily influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver).
 
@@ -18,18 +18,14 @@ An alternative Specification API for Spring Data JPA.
 
 ### Java
 
-- 8
-- 11
 - 17
 
 ### Spring
 
 The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
 
-- 2.4.x
-- 2.5.x
-- 2.6.x
-- 2.7.x
+- 3.0.x
+- 3.1.x
 
 ## License
 

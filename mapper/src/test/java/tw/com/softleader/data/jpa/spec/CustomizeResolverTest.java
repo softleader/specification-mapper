@@ -20,25 +20,10 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +35,18 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @IntegrationTest
 class CustomizeResolverTest {
@@ -103,13 +100,13 @@ class CustomizeResolverTest {
   @DisplayName("客製 Resolver")
   @Test
   void customizeResolver() {
-    val criteria = MyCriteria.builder().gender(Gender.MALE).maxBy("name").build();
-    val spec = mapper.toSpec(criteria, Customer.class);
+    var criteria = MyCriteria.builder().gender(Gender.MALE).maxBy("name").build();
+    var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
-    val inOrder = inOrder(
+    var inOrder = inOrder(
         simpleResolver,
         maxCreatedTimeResolver);
     inOrder.verify(simpleResolver, times(1))
@@ -128,16 +125,16 @@ class CustomizeResolverTest {
         .resolver(customizeOnTypeResolver = spy(CustomizeOnTypeSpecificationResolver.class))
         .build();
 
-    val criteria = OuterCriteria.builder()
+    var criteria = OuterCriteria.builder()
         .gender(Gender.FEMALE)
         .inner(InnerCriteria.builder()
             .gender(Gender.FEMALE)
             .build())
         .build();
-    val spec = mapper.toSpec(criteria, Customer.class);
+    var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
 
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(mary);
 
     verify(nestedResolver, times(1))
@@ -184,7 +181,7 @@ class CustomizeResolverTest {
 
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
-      val def = databind.getField().getAnnotation(MaxCreatedTime.class);
+      var def = databind.getField().getAnnotation(MaxCreatedTime.class);
       return databind.getFieldValue()
           .map(value -> subquery(def.from(), value.toString()))
           .orElse(null);
@@ -192,9 +189,9 @@ class CustomizeResolverTest {
 
     Specification<Object> subquery(Class<?> entityClass, String by) {
       return (root, query, builder) -> {
-        val subquery = query.subquery(Long.class);
-        val subroot = subquery.from(entityClass);
-        subquery.select(builder.max(subroot.get("createdTime")))
+        var subquery = query.subquery(LocalDateTime.class);
+        var subroot = subquery.from(entityClass);
+        subquery.select(builder.greatest(subroot.get("createdTime").as(LocalDateTime.class)))
             .where(builder.equal(root.get(by), subroot.get(by)));
         return builder.equal(root.get("createdTime"), subquery);
       };

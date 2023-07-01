@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
-def javaVersions = ['8', '11', '17']
-def springBootVersions = ['2.4.13', '2.5.14', '2.6.14', '2.7.6']
+def javaVersions = ['17']
+def springBootVersions = ['3.0.8', '3.1.1']
 
 pipeline {
   agent {
