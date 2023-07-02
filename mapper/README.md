@@ -88,7 +88,7 @@ The executed SQL in the above example will not have any filtering conditions.
 
 ## Simple Specifications
 
-You can use `@Spec` on fields to define the implementation of the `Specification`, with `Equals` being the default:
+You can use `@Spec` on fields to define the implementation of the `Specification`, `Equals` spec is the default:
 
 ```java
 @Spec // Equivalent to @Spec(Equals.class)
@@ -128,7 +128,7 @@ Here is a list of the built-in types for `@Spec`:
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
-> In order to facilitate the usage for those who are already familiar with Spring Data JPA, the aforementioned names are aligned as closely as possible with the conventions of [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
+> In order to facilitate the usage for those who are already familiar with Spring Data JPA, the specs are named as closely as possible with [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
 
 ### Negates the @Spec
 
