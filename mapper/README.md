@@ -660,7 +660,7 @@ The executed SQL will be:
 
 ## Logging 
 
-To set the tw.com.softleader.data.jpa.spec package to "debug" mode, which prints more information during the object-to-spec conversion process:
+To set the package `tw.com.softleader.data.jpa.spec` to logging level `debug`, which prints more information during the object-to-spec conversion process:
 
 ```
 DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : --- Spec AST ---
