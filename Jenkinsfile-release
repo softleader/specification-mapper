@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-currentBuild.description = "${ref}"
+currentBuild.description = "${ref} -> ${target_commitish}"
 // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 def semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
@@ -143,15 +143,15 @@ spec:
       }
     }
 
-    stage ('Merge Main') {
+    stage ('Merge') {
       steps {
         container('git') {
           sh """
           git checkout -b ${PR_BRANCH}
           git commit -am "chore: bump version to ${TAG}"
           git push --set-upstream origin ${PR_BRANCH}
-          gh pr create --title "chore: bump version to ${TAG}" --body "Bump version to ${TAG}"
-          gh pr merge ${PR_BRANCH} --admin --merge --delete-branch
+          gh pr create --base ${target_commitish} --title "chore: bump version to ${TAG}" --body "Bump version to ${TAG}"
+          gh pr merge ${PR_BRANCH} --admin --squash --delete-branch
           """
         }
       }
@@ -159,13 +159,9 @@ spec:
 
     stage ('Complete Prerelease') {
       steps {
-        sh """
-        curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: Bearer $CREDENTIAL_PSW" \
-          https://api.github.com/repos/softleader/specification-mapper/dispatches \
-          -d '{"event_type":"complete-prerelease","client_payload":{"tag_name":"$TAG"}}'
-        """
+        container('git') {
+          sh "gh release edit ${TAG} --prerelease=false"
+        }
       }
     }
   }
