@@ -20,9 +20,10 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+
 import java.util.function.Function;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 
 /**
  * Share data between specifications

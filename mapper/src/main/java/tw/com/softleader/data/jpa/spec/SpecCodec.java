@@ -20,13 +20,14 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Optional.ofNullable;
-
-import java.util.Optional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Matt Ho

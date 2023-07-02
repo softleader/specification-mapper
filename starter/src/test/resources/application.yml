@@ -5,3 +5,4 @@ logging:
     tw.com.softleader.data.jpa.spec: debug
     sql: debug
     org.hibernate.hql.internal.ast.QueryTranslatorImpl: debug
+debug: true

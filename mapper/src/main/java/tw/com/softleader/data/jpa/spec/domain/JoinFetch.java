@@ -20,17 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Arrays;
-import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.val;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Matt Ho
@@ -71,14 +67,14 @@ public class JoinFetch<T> implements Specification<T> {
       }
       return;
     }
-    val pathToFetch = pathsToFetch.get(0);
+    var pathToFetch = pathsToFetch.get(0);
     if (!pathToFetch.contains(".")) {
       root.fetch(pathToFetch, joinType);
       return;
     }
-    val byDot = pathToFetch.split("\\.");
-    val alias = byDot[0];
-    val path = byDot[1];
+    var byDot = pathToFetch.split("\\.");
+    var alias = byDot[0];
+    var path = byDot[1];
     root.fetch(alias).fetch(path, joinType);
   }
 }

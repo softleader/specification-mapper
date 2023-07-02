@@ -20,17 +20,17 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Collections.synchronizedMap;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import lombok.Synchronized;
+import org.springframework.data.util.Pair;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
-import lombok.Synchronized;
-import lombok.val;
-import org.springframework.data.util.Pair;
-import tw.com.softleader.data.jpa.spec.domain.JoinContext;
+
+import static java.util.Collections.synchronizedMap;
 
 /**
  * @author Matt Ho
@@ -44,7 +44,7 @@ class SpecJoinContext implements JoinContext {
   @Override
   @Synchronized
   public Join<?, ?> get(String key, Root<?> root) {
-    val lazyJoin = lazyJoins.get(key);
+    var lazyJoin = lazyJoins.get(key);
     if (lazyJoin == null) {
       return null;
     }

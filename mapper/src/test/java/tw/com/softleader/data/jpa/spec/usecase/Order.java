@@ -20,19 +20,10 @@
  */
 package tw.com.softleader.data.jpa.spec.usecase;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Singular;
 
 @Builder
 @AllArgsConstructor

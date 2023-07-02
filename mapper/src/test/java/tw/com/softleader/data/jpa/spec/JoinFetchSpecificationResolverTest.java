@@ -20,12 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +33,9 @@ import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
 import tw.com.softleader.data.jpa.spec.usecase.Tag;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
 @IntegrationTest
 class JoinFetchSpecificationResolverTest {
@@ -59,7 +58,7 @@ class JoinFetchSpecificationResolverTest {
   @DisplayName("單一層級的 Join Fetch")
   @Test
   void joinFetch() {
-    val matt = repository.save(Customer.builder().name("matt")
+    var matt = repository.save(Customer.builder().name("matt")
         .order(Order.builder()
             .itemName("Pizza")
             .build())
@@ -75,16 +74,16 @@ class JoinFetchSpecificationResolverTest {
             .build())
         .build());
 
-    val spec = mapper.toSpec(new CustomerOrder(matt.getName()), Customer.class);
+    var spec = mapper.toSpec(new CustomerOrder(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
   @DisplayName("多層級的 Join Fetch")
   @Test
   void joinFetches() {
-    val matt = repository.save(Customer.builder().name("matt")
+    var matt = repository.save(Customer.builder().name("matt")
         .order(Order.builder()
             .itemName("Pizza").tag(Tag.builder()
                 .name("Food")
@@ -108,9 +107,9 @@ class JoinFetchSpecificationResolverTest {
             .build())
         .build());
 
-    val spec = mapper.toSpec(new CustomerOrderTag(matt.getName()), Customer.class);
+    var spec = mapper.toSpec(new CustomerOrderTag(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 

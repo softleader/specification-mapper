@@ -1,4 +1,4 @@
-[中文版](./README.tw-zh.md)
+[English](./README.md)
 
 # specification-mapper
 
@@ -10,19 +10,19 @@
 </dependency>
 ```
 
-specification-mapper is a generator for [Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications). It reads the fields from an object and dynamically creates query conditions based on the definitions of the fields' annotations.
+specification-mapper 是一套 [Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications) 的產生器, 它讀取了 Object 中的欄位, 配合欄位上 Annotation 的定義, 來動態的建立查詢條件!
 
-In addition, [specification-mapper-starter](../starter) provides integration with Spring Boot, allowing you to use it effortlessly in Spring apps without any configuration. We highly recommend checking it out if you are using a Spring Boot application!
+另外 [specification-mapper-starter](../starter) 提供了 Spring Boot 的整合, 讓你可以零配置的在 Spring apps 中使用, 使用 Spring boot 的應用程式可以參考看看!
 
 ## Getting Started
 
-What we need is to create an instance of `SpecMapper`, which is the most important class and serves as the API entry point for all specification operations:
+我們需要的是建立 `SpecMapper` 實例, 這是最重要的 Class 也是所有 Spec 操作的 API 入口:
 
 ```java
 var mapepr = SpecMapper.builder().build();
 ```
 
-Next, we define a POJO (Plain Old Java Object) that encapsulates the query conditions, such as:
+接著我們定義封裝查詢條件的物件, 這是一個 POJO 即可, 如:
 
 ```java
 @Data
@@ -33,7 +33,7 @@ public class CustomerCriteria {
 }
 ```
 
-With this, we can perform the conversion to a `Specification`. Once we have the `Specification`, we can query the database using the original approach, for example, through the repository of Spring Data JPA:
+這樣我們就可以做 `Specification` 的轉換了, 得到 `Specification` 後就可以依照原本的方式去資料庫查詢, 例如透過 Spring Data JPA 的 repository:
 
 ```java
 var criteria = new CustomerCriteria();
@@ -45,7 +45,7 @@ var specification = mapper.toSpec(criteria);
 customerRepository.findAll(specification);
 ```
 
-The executed SQL will be:
+執行 SQL 將會是: 
 
 ```
 ... where x.firstname like '%Hello%'
@@ -53,14 +53,14 @@ The executed SQL will be:
 
 ### Skipping Strategy
 
-In the fields of the POJO, if any of the following conditions are met, they will be ignored during the conversion process:
+在 POJO 中的欄位, 只要符合以下任一條件, 在轉換的過程中都將會忽略:
 
-- No Spec Annotation is attached.
-- If the type is *Iterable* and the value is *empty*.
-- If the type is *Optional* and the value is *empty*.
-- The value is *null*.
+- 沒有掛任何 Spec Annotation 
+- 若 Type 為 *Iterable* 且值為 *empty*
+- 若 Type 為 *Optional* 且值為 *empty*
+- 值為 *null*
 
-For example, after constructing the following POJO, if no values are set and it is directly converted into a `Specification` for querying:
+例如, 將以下 POJO 建構後, 不 set 任何值就直接轉換成 `Specification` 及查詢
 
 ```java
 @Data
@@ -82,29 +82,29 @@ var mapper = SpecMapper.builder().build();
 customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 ```
 
-The executed SQL in the above example will not have any filtering conditions.
+以上執行的 SQL 將不會有任何過濾條件!
 
-> If you are using the Builder Pattern (e.g., Lombok's *@Builder*), please pay special attention to the default values set in the builder.
+> 如果你有使用 Builder Pattern, (e.g. Lombok's *@Builder*), 請特別注意 Builder 的 Default Value!
 
 ## Simple Specifications
 
-You can use `@Spec` on fields to define the implementation of the `Specification`, `Equals` spec is the default:
+你可以在 Field 使用 `@Spec` 來定義 `Specification` 的實作, 預設是 `Equals`: 
 
 ```java
-@Spec // Equivalent to @Spec(Equals.class)
+@Spec // 同等於 @Spec(Equals.class)
 String firstname;
 ```
 
-The corresponding entity path will default to the field name, but you can also set `@Spec#path` to change it:
+對應的 entity path 預設會使用 field name, 你也可以設定 `@Spec#path` 來改變
 
 ```java
-@Spec(path = "...") // Takes precedence if defined
-String firstname; // Defaults to the field name
+@Spec(path = "...") // 有定義則優先使用
+String firstname; // 預設使用欄位名稱
 ```
 
 ### Built-in Simple @Spec
 
-Here is a list of the built-in types for `@Spec`:
+以下是內建的 `@Spec` 的類型清單:
 
 | Spec | Supported field type | Sample | JPQL snippet |
 |---|---|---|---|
@@ -128,20 +128,20 @@ Here is a list of the built-in types for `@Spec`:
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 
-> In order to facilitate the usage for those who are already familiar with Spring Data JPA, the specs are named as closely as possible with [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
+> 為了方便已經熟悉 Spring Data JPA 的人使用, 以上名稱都是儘量跟著 [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣
 
 ### Negates the @Spec
 
-You can use `@Spec#not` to indicate the inverse condition. By default, it is set to `false`, but if you set it to `true`, the result will be inverted.
+你可以使用 `@Spec#not` 來判斷反向條件, 預設是 `false`, 設定成 `true` 就會將結果做反向轉換.
 
-For example, if you want to use `Between` to find data **outside** of a certain range, the example would be as follows:
+例如, 我想要用 `Between` 找**不在**區間內的資料, 則範例如下:
 
 ```java
 @Spec(value = Between.class, not = true)
 Collection<Integer> age;
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where x.age not between ? and ?
@@ -149,37 +149,41 @@ The executed SQL will be:
 
 ### Extending Simple @Spec
 
-`@Spec` can be easily extended by implementing `SimpleSpecification<T>` and providing the required constructor. These classes can then be used in `@Spec` annotations.
+*@Spec* 是可以很容易擴充的, 只要實作了 `SimpleSpecification<T>` 並提供規定的 Constructor, 這些 class 就可以被定義在 *@Spec* 中
 
-For example, let's say we have a `Customer` entity with the following fields:
-- `firstname` (String): Name of the person (can be duplicated)
-- `createdTime` (LocalDateTime): Creation time (unique)
+例如, 我有個 *Customer* Entity, 有以下欄位: 
 
-We want to retrieve the data for each unique name with the latest creation time. To achieve this, we plan to write a subquery. The complete example is as follows:
+- *firstname (String)* - 人名, 可重複
+- *createdTime (LocalDateTime)* - 建立時間, 不可重複
 
-First, we implement `SimpleSpecification<T>` and provide the required constructor:
+我希望可以找出每個人名中, 建立時間為最新的那筆資料! 且我打算撰寫一個 subquery 來完成這需求, 完整的範例如下:
+
+首先我們實作 `SimpleSpecification<T>`, 並提供規定的 Constructor:
 
 ```java
 public class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
 
-  // This is the required constructor, the modifier can be public, protected, default, or private
+  // 這是規定必須提供的建構值, 修飾詞不限定: public, protected, default, private 都支援
   protected MaxCustomerCreatedTime(Context context, String path, Object value) {
     super(context, path, value);
   }
 
   @Override
-  public Predicate toPredicate(Root<Customer> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    // The following provides an example implementation for the subquery
+  public Predicate toPredicate(Root<Customer> root,
+    CriteriaQuery<?> query,
+    CriteriaBuilder builder) {
+    // 以下提供 subquery 的實作, 僅供參考
     var subquery = query.subquery(LocalDateTime.class);
     var subroot = subquery.from(Customer.class);
-    subquery.select(builder.greatest(subroot.get("createdTime").as(LocalDateTime.class)))
-            .where(builder.equal(root.get((String) value), subroot.get((String) value)));
+    subquery.select(
+      builder.greatest(subroot.get("createdTime").as(LocalDateTime.class))
+    ).where(builder.equal(root.get((String) value), subroot.get((String) value)));
     return builder.equal(root.get("createdTime"), subquery);
   }
 }
 ```
 
-The `MaxCustomerCreatedTime` class we implemented above can now be used in `@Spec`. Next, we define the POJO and convert it to a `Specification`:
+上面完成的 `MaxCustomerCreatedTime` 就可以被應用在 *@Spec* 中了, 接著我們定義 POJO 及進行 `Specification` 的轉換:
 
 ```java
 @Data
@@ -196,7 +200,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where customer0_.created_time=(
@@ -207,12 +211,12 @@ The executed SQL will be:
 
 ## Combining Specs
 
-You can use `@And` or `@Or` at the class level to combine multiple specifications within an object. The default combination is `@And`.
+你可以在 class 層級上使用 `@And` 或 `@Or` 來組合一個物件中的多個 Specification, 組合的預設是 `@And`.
 
-For example, if you want to change it to `@Or`, the code would be as follows:
+例如我想要改成 `@Or`, 程式碼範例如下:
 
 ```java
-@Or // Default is @And if not specified
+@Or // 若沒定義預設就是 @And
 @Data
 public class CustomerCriteria {
 
@@ -224,7 +228,7 @@ public class CustomerCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where x.firstname like %?% or x.lastname like %?% 
@@ -232,7 +236,7 @@ The executed SQL will be:
 
 ### Specify Combining Type on Field
 
-You can also use `@And` or `@Or` annotations on fields to control how an individual field is combined with other fields. Here's an example:
+你也可以將 `@And` 或 `@Or` 註記在欄位上來控制單獨一個欄位要怎麼跟其他欄位組合. 舉個例子如下:
 
 ```java
 @Data
@@ -250,15 +254,15 @@ public class CustomerCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where (x.firstname like ?) and (x.lastname like ?) or x.birthday<=?
 ```
 
-**Note that the fields are combined in the order they are declared, and SQL has operator precedence. Please ensure that the combination and the result align with your expectations.**
+**特別注意, 欄位是依照宣告的順序組合的, 而 SQL 也是有[運算子優先順序](https://docs.microsoft.com/zh-tw/sql/t-sql/language-elements/operator-precedence-transact-sql?view=sql-server-ver15)的, 需注意兩者的配合的結果是否符合你的期望**
 
-For example, if we adjust the field order in the above example:
+例如, 將上面的例子調整欄位順序:
 
 ```java
 @Data
@@ -276,7 +280,7 @@ public class CustomerCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where (x.firstname like ? or x.birthday<=?) and (x.lastname like ?)
@@ -284,9 +288,9 @@ The executed SQL will be:
 
 ## Nested Specs
 
-You can use `@NestedSpec` on a field to instruct `SpecMapper` to combine specifications with the nested object. There is no level limitation, so you can keep going deeper!
+你可以在 Field 上使用 `@NestedSpec` 來告知 `SpecMapper` 要往下一層物件 (Nested Object) 去組合 Specification,  這是沒有層級限制的, 可以一直往下找!
 
-For example, let's say we have a shared `AddressCriteria` POJO, and we want to include it in other POJOs. The code would look like this:
+例如我有一個共用的 `AddressCriteria` POJO, 我就可以將它掛載到其他的 POJO 中, 程式碼範例如下:
 
 ```java
 @Data
@@ -311,7 +315,7 @@ public class AddressCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where x.firstname like %?% and ( x.county=? or x.city=? )
@@ -319,9 +323,9 @@ The executed SQL will be:
 
 ### Specify Combining Type on Nested Object
 
-You can also declare `@And` or `@Or` on fields within the nested object to control how the result is combined with other fields. For detailed information, please refer to [Specify Combining Type on Field](#specify-combining-type-on-field).
+你也可以在 Nested Object 的欄位上宣告 `@And` 或 `@Or` 來控制結果要怎麼跟其他的欄位組合, 詳細的說明請參考 [Specify Combining Type on Field](#specify-combining-type-on-field).
 
-Here's an example:
+舉個例子如下:
 
 ```java
 @Data
@@ -346,7 +350,7 @@ public class AddressCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where (x.firstname like ?) or x.county=? and x.city=?
@@ -354,13 +358,13 @@ The executed SQL will be:
 
 ## Join
 
-You can use `@Join` on fields to filter associated entities. It is important that the relationships between entities are properly defined beforehand. For example:
+你可以在 Field 上使用 `@Join`  來過濾關聯 entity, 這些 entity 之間需要都先定義好關係, 例如:
 
 ```java
 @Entity
 class Customer {
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(cascade = ALL, fetch = LAZY)
   @JoinColumn(name = "order_id")
   private Collection<Order> orders;
 }
@@ -372,7 +376,7 @@ class Order {
 }
 ```
 
-If you want to query customers who have purchased specific items, you can define the POJO as follows:
+如果你想要查詢買了指定東西的客戶, 則可以定義 POJO 如下:
 
 ```java
 @Data
@@ -384,15 +388,15 @@ public class CustomerOrderCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
-select distinct ... from customer customer0_ 
+select distinc ... from customer customer0_ 
 inner join orders orders1_ on customer0_.id=orders1_.order_id 
-where orders1_.item_name in (?, ?)
+where orders1_.item_name in (? , ?)
 ```
 
-To align with most use cases, the default join type is `INNER`, and the result is made distinct. You can modify this behavior by setting `@Join#joinType` or `@Join#distinct`. For example:
+為了比較符合大部分的使用情境, 預設的 Join type 是 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@Join#joinType` 或 `@Join#distinct` 來改變, 如:
 
 ```java
 @Join(joinType = JoinType.RIGHT, distinct = false)
@@ -400,13 +404,13 @@ To align with most use cases, the default join type is `INNER`, and the result i
 
 ### Multi Level Joins
 
-You can use `@Joins` to define multi-level joins. For example:
+你可以使用 `@Joins` 來定義多層級的 Join, 例如:
 
 ```java
 @Entity
 class Customer {
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(cascade = ALL, fetch = LAZY)
   @JoinColumn(name = "order_id")
   private Set<Order> orders;
 }
@@ -414,7 +418,7 @@ class Customer {
 @Entity
 class Order {
     
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @ManyToMany(cascade = ALL, fetch = LAZY)
   private Set<Tag> tags;
 }
 
@@ -425,7 +429,7 @@ class Tag {
 }
 ```
 
-If you want to query customers who have purchased items with specific tags, you can define the POJO as follows:
+如果你想要查詢買了指定所屬類別的東西的客戶, 則可以定義 POJO 如下:
 
 ```java
 @Data
@@ -440,7 +444,7 @@ class CustomerOrderTagCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 select distinct ... from customer customer0_ 
@@ -450,32 +454,33 @@ inner join tag tag3_ on tags2_.tags_id=tag3_.id
 where tag3_.name in (?)
 ```
 
-**Note that the processing of annotations is sequential, so the order of `@Joins` must match the order of joins.**
+**特別注意, Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定義 `@Joins`**
 
-For example, in the given scenario, the following definition order is incorrect:
+例如依照上面的情境, 下列的定義順序是錯誤的:
 
 ```java
 @Data
 class CustomerOrderTagCriteria {
 
   @Joins({
-    @Join(path = "o.tags", alias = "t"), // "o" alias will not exist during the processing of this @Join
+    @Join(path = "o.tags", alias = "t"), // "o" alias will be not exist during processing this @Join
     @Join(path = "orders", alias = "o")
   })
   @Spec(path = "t.name", value = In.class)
   Collection<String> tagNames;
 }
+
 ```
 
 ## Join Fetch
 
-You can use `@JoinFetch` at the class level to fetch all lazy associated data at once. For example:
+你可以在 class 層級上使用 `@JoinFetch` 可以一次撈出所有 Lazy 的關聯資料, 例如:
 
 ```java
 @Entity
 class Customer {
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(fetch = LAZY, cascade = ALL)
   @JoinColumn(name = "order_id")
   private Collection<Order> orders;
 }
@@ -487,7 +492,7 @@ class Order {
 }
 ```
 
-If you want to fetch the `Order` entities along with the `Customer` entity, you can use:
+如果你想在取得 Customer 時就順便 Join 出 Order, 則:
 
 ```java
 @JoinFetch(paths = "orders")
@@ -499,7 +504,7 @@ class CustomerOrderCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 select distinct 
@@ -510,7 +515,7 @@ left outer join orders orders1_ on customer0_.id=orders1_.order_id
 where customer0_.name=?
 ```
 
-To align with most use cases, the default join type is `LEFT`, and the result is made distinct. You can modify this behavior by setting `@FetchJoin#joinType` or `@FetchJoin#distinct`. For example:
+為了比較符合大部分的使用情境, 預設的 Join type 是 `LEFT`, 也會將結果排除重複 (*distinct*), 你可以設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 來改變, 如:
 
 ```java
 @FetchJoin(joinType = JoinType.RIGHT, distinct = false)
@@ -518,13 +523,13 @@ To align with most use cases, the default join type is `LEFT`, and the result is
 
 ### Multi Level Fetch Joins
 
-You can use `@FetchJoins` to define multi-level fetch joins. For example:
+你可以使用 `@FetchJoins` 來定義多層級的 Fetch Join, 例如:
 
 ```java
 @Entity
 class Customer {
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(cascade = ALL, fetch = LAZY)
   @JoinColumn(name = "order_id")
   private Set<Order> orders;
 }
@@ -532,7 +537,7 @@ class Customer {
 @Entity
 class Order {
     
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @ManyToMany(cascade = ALL, fetch = LAZY)
   private Set<Tag> tags;
 }
 
@@ -543,7 +548,8 @@ class Tag {
 }
 ```
 
-If you want to fetch the `Order` and `Tag` entities along with the `Customer` entity, you can use:
+如果你想在取得 Customer 時就順便 Join 出 Order 及 Tag, 則:
+
 
 ```java
 @JoinFetches({
@@ -558,7 +564,7 @@ class CustomerOrderTagCriteria {
 }
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 select distinct 
@@ -575,11 +581,11 @@ where customer0_.name=?
 
 ## Customize Spec Annotation
 
-Continuing from the example in the section [Extending Simple @Spec](#extending-simple-spec), let's take it a step further. Now, we want to make the entity class configurable so that it can be used for entities other than `Customer`. 
+延續 [Extending Simple @Spec](#extending-simple-spec) 章節範例, 進階一點現在我們希望可以將 Entity Class 設計成可以配置, 這樣才能在 Customer 以外的 Entity 都可以使用!
 
-To fulfill this requirement, we need to define additional parameters in the annotation. As a result, the Simple `@Spec` approach is no longer suitable. Instead, we need to define a new annotation. Here's the complete code:
+要完成這需求我們需要在 Annotation 中定義更多參數, 因此 Simple @Spec 不適用了, 我們需要的是定義新的 Annotation, 完整的程式碼如下:
 
-First, we define the annotation:
+首先我們定義 Annotation:
 
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -590,14 +596,14 @@ public @interface MaxCreatedTime {
 }
 ```
 
-Next, we need to implement the logic responsible for handling `@MaxCreatedTime`. We can extend it by implementing the `SpecificationResolver` interface:
+接著我們要撰寫負責處理 `@MaxCreatedTime` 的邏輯, 透過實作 `SpecificationResolver` 來擴充:
 
 ```java
 public class MaxCreatedTimeSpecificationResolver implements SpecificationResolver {
 
   @Override
   public boolean supports(Databind databind) { 
-    // Here, we tell the SpecMapper when to use this resolver
+    // 這邊告訴 SpecMapper 什麼時候要使用此 resolver
     return databind.getField().isAnnotationPresent(MaxCreatedTime.class);
   }
 
@@ -610,7 +616,7 @@ public class MaxCreatedTimeSpecificationResolver implements SpecificationResolve
   }
 
   Specification<Object> subquery(Class<?> entityClass, String by) {
-    // Here, we provide an example implementation for the subquery
+    // 以下提供 subquery 的實作, 僅供參考
     return (root, query, builder) -> {
       var subquery = query.subquery(LocalDateTime.class);
       var subroot = subquery.from(entityClass);
@@ -623,7 +629,7 @@ public class MaxCreatedTimeSpecificationResolver implements SpecificationResolve
 }
 ```
 
-Next, we add this resolver to the `SpecMapper` during its construction:
+接著我們在 `SpecMapper` 建構時加入此 resolver:
 
 ```java
 var mapper = SpecMapper.builder()
@@ -632,7 +638,7 @@ var mapper = SpecMapper.builder()
       .build();
 ```
 
-Finally, we define the POJO and convert it to a `Specification`:
+最後我們定義 POJO 及進行  `Specification` 的轉換:
 
 ```java
 @Data
@@ -649,7 +655,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-The executed SQL will be:
+執行的 SQL 將會是:
 
 ```
 ... where customer0_.created_time=(
@@ -660,7 +666,7 @@ The executed SQL will be:
 
 ## Logging 
 
-To set the package `tw.com.softleader.data.jpa.spec` to logging level _debug_, which prints more information during the object-to-spec conversion process:
+將 Package `tw.com.softleader.data.jpa.spec` 設定為 *debug*, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題, 如:
 
 ```
 DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : --- Spec AST ---
@@ -675,4 +681,4 @@ DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : ---
 
 ## Limitation
 
-When `SpecMapper` searches for fields in a POJO, it only looks for local fields within the current class and does not traverse the hierarchy of classes to find fields. If you have shared fields that you want to use in multiple POJOs, consider using the [Nested Specs](#nested-specs) approach.
+`SpecMapper` 在找 POJO 欄位時, 只會找當前 Class 的 Local Field, 而不去往上找 Hierarchy Classes 的 Field, 如果你共用的欄位想要用在多個 POJO, 請考慮使用 [Nested Specs](#nested-Specs) 方式

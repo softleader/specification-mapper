@@ -20,10 +20,15 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PACKAGE;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
+import tw.com.softleader.data.jpa.spec.domain.Conjunction;
+import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,16 +38,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
-import tw.com.softleader.data.jpa.spec.annotation.Or;
-import tw.com.softleader.data.jpa.spec.domain.Conjunction;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.Disjunction;
+
+import static java.util.stream.Collectors.toList;
+import static lombok.AccessLevel.PACKAGE;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 /**
  * @author Matt Ho
@@ -62,15 +62,15 @@ public class SpecMapper implements SpecCodec {
     if (rootObject == null) {
       return null;
     }
-    val context = new SpecContext();
-    val ast = new SpecAST();
-    val depth = 0;
+    var context = new SpecContext();
+    var ast = new SpecAST();
+    var depth = 0;
     context.put(CTX_AST, ast);
     context.put(CTX_DEPTH, depth);
     ast.add(depth, "+-[%s]: %s",
         rootObject.getClass().getSimpleName(),
         rootObject.getClass().getName());
-    val spec = toSpec(context, rootObject);
+    var spec = toSpec(context, rootObject);
     ast.add(depth, "\\-[%s]: %s",
         rootObject.getClass().getSimpleName(),
         spec);
@@ -83,7 +83,7 @@ public class SpecMapper implements SpecCodec {
     if (rootObject == null) {
       return null;
     }
-    val specs = ReflectionDatabind.of(rootObject)
+    var specs = ReflectionDatabind.of(rootObject)
         .stream()
         .flatMap(databind -> resolveSpec(context, databind))
         .filter(Objects::nonNull)
@@ -105,13 +105,13 @@ public class SpecMapper implements SpecCodec {
 
   Specification<Object> resolveSpec(@NonNull Context context, @NonNull Databind databind,
       @NonNull SpecificationResolver resolver) {
-    val node = new ReflectionSpecInvocation(
+    var node = new ReflectionSpecInvocation(
         context.get(CTX_AST).map(AST.class::cast).get(),
         (int) context.get(CTX_DEPTH).get(),
         resolver,
         databind);
     resolver.preVisit(node);
-    val resolved = resolver.buildSpecification(context, databind);
+    var resolved = resolver.buildSpecification(context, databind);
     resolver.postVisit(node, resolved);
     return resolved;
   }
@@ -151,7 +151,7 @@ public class SpecMapper implements SpecCodec {
       if (this.resolvers.isEmpty()) {
         defaultResolvers();
       }
-      val mapper = new SpecMapper();
+      var mapper = new SpecMapper();
       mapper.resolvers = this.resolvers.stream()
           .map(resolver -> resolver.apply(mapper))
           .collect(Collectors.collectingAndThen(

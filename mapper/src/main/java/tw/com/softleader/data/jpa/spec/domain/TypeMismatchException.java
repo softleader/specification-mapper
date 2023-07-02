@@ -20,12 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.stream.Stream;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
+
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author Matt Ho

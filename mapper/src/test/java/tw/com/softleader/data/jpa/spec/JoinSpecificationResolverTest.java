@@ -20,14 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
-
-import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +35,11 @@ import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
 import tw.com.softleader.data.jpa.spec.usecase.Tag;
+
+import java.util.Collection;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
 @IntegrationTest
 class JoinSpecificationResolverTest {
@@ -62,12 +62,12 @@ class JoinSpecificationResolverTest {
   @DisplayName("單一層級的 Join")
   @Test
   void join() {
-    val matt = repository.save(Customer.builder().name("matt")
+    var matt = repository.save(Customer.builder().name("matt")
         .order(Order.builder()
             .itemName("Pizza")
             .build())
         .build());
-    val mary = repository.save(Customer.builder().name("mary")
+    var mary = repository.save(Customer.builder().name("mary")
         .order(Order.builder()
             .itemName("Hamburger")
             .build())
@@ -78,28 +78,28 @@ class JoinSpecificationResolverTest {
             .build())
         .build());
 
-    val criteria = CustomerOrder.builder()
+    var criteria = CustomerOrder.builder()
         .item("Pizza")
         .item("Hamburger")
         .build();
 
-    val spec = mapper.toSpec(criteria, Customer.class);
+    var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
   @DisplayName("多層級的 Join")
   @Test
   void joins() {
-    val matt = repository.save(Customer.builder().name("matt")
+    var matt = repository.save(Customer.builder().name("matt")
         .order(Order.builder()
             .itemName("Pizza").tag(Tag.builder()
                 .name("Food")
                 .build())
             .build())
         .build());
-    val mary = repository.save(Customer.builder().name("mary")
+    var mary = repository.save(Customer.builder().name("mary")
         .order(Order.builder()
             .itemName("Hamburger")
             .tag(Tag.builder()
@@ -116,13 +116,13 @@ class JoinSpecificationResolverTest {
             .build())
         .build());
 
-    val criteria = CustomerOrder.builder()
+    var criteria = CustomerOrder.builder()
         .tag("Food")
         .build();
 
-    val spec = mapper.toSpec(criteria, Customer.class);
+    var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
-    val actual = repository.findAll(spec);
+    var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 

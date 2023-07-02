@@ -20,15 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Collection;
-import java.util.StringJoiner;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Collection;
+import java.util.StringJoiner;
 
 /**
  * @author Matt Ho
@@ -43,8 +44,7 @@ abstract class CompoundSpecification<T> implements Specification<T> {
   public Predicate toPredicate(Root root,
       CriteriaQuery query,
       CriteriaBuilder builder) {
-    // remove casting to Predicate will cause 'incompatible types' in jdk 1.8, maybe a jdk 1.8 bug
-    return (Predicate) specs.stream()
+    return specs.stream()
         .reduce(this::combine)
         .map(spec -> spec.toPredicate(root, query, builder))
         .orElse(null);
