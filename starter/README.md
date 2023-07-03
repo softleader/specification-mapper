@@ -1,4 +1,4 @@
-[中文版](./README.tw-zh.md)
+[中文版](./README.zh-tw.md)
 
 # specification-mapper-starter
 
