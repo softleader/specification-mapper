@@ -4,7 +4,7 @@
 
 ```xml
 <dependency>
-  <groupId>tw.com.softleader.data.jakarta</groupId>
+  <groupId>tw.com.softleader.data</groupId>
   <artifactId>specification-mapper</artifactId>
   <version>last-release-version</version>
 </dependency>
