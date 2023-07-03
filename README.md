@@ -4,7 +4,7 @@
 
 # specification-mapper
 
-An alternative Specification API for Spring Data JPA, Jakarta EE 9. 
+An alternative Specification API for Spring Data JPA.
 
 ## What is Specification Mapper
 
