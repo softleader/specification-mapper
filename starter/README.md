@@ -1,3 +1,5 @@
+[中文版](./README.zh-tw.md)
+
 # specification-mapper-starter
 
 ```xml
@@ -8,19 +10,18 @@
 </dependency>
 ```
 
-specification-mapper-starter 整合了 [specification-mapper](../mapper) 及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa), 並提供了 Query by Spec 的查詢方式等
+The `specification-mapper-starter` integrates [specification-mapper](../mapper) with [Spring Data JPA](https://spring.io/projects/spring-data-jpa) and provides a way to query by specifications.
 
-Query by Spec (QBS) 是一個  user-friendly 的查詢方式, 可以動態的建立查詢條件 ([Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications)), 透過 QBS interface 就可以執行查詢語句!
+Query by Spec (QBS) is a user-friendly querying approach that allows you to dynamically build query conditions using specifications. With the QBS interface, you can execute query statements easily.
 
 ## Getting Started
 
-只要在 `pom.xml` 中加入 dependency, 此 Starter 在 Spring Boot 啟動過程就會自動的配置一切, 讓你可以零配置的就開始使用, 包含了:
+By adding the dependency in your `pom.xml` file, the `specification-mapper-starter` will automatically configure everything during the Spring Boot startup process, allowing you to start using it without any additional configuration. The starter includes the following features:
 
-- [Query By Spec](#query-by-spec) 的設定
-- 註冊預設的 [`SpecMapper`](#default-specmapper)
+- Configuration for [Query By Spec](#query-by-spec)
+- Registration of the default [`SpecMapper`](#default-specmapper)
 
-
-自動配置預設是啟用的, 你可以透過 properties 中的 `spec.mapper.enabled` 控制, 如要關閉則:
+The auto-configuration is enabled by default, and you can control it through the `spec.mapper.enabled` property in your application's properties file. To disable the auto-configuration, you can use the following configuration:
 
 ```yaml
 spec:
@@ -30,7 +31,7 @@ spec:
 
 ## Query by Spec
 
-Query by Spec (QBS) 提供了 [`QueryBySpecExecutor<T>`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/QueryBySpecExecutor.java) 包含了許多查詢方法:
+Query by Spec (QBS) provides the [`QueryBySpecExecutor<T>`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/QueryBySpecExecutor.java) interface, which includes several query methods:
 
 ```java
 public interface QueryBySpecExecutor<T> {
@@ -45,7 +46,7 @@ public interface QueryBySpecExecutor<T> {
 }
 ```
 
-只要在原本的 repository interface 中去繼承 `QueryBySpecExecutor<T>` 就可以直接使用了:
+To use these methods, you simply need to extend `QueryBySpecExecutor<T>` in your existing repository interface:
 
 ```java
 public interface PersonRepository 
@@ -64,13 +65,15 @@ public class PersonService {
 }
 ```
 
+By inheriting `QueryBySpecExecutor<T>`, you can directly use the query methods in your repository interface, making it easy to perform queries using specifications.
+
 ### Customize the QBS Base Repository
 
-在配置的過程中, QBS 會自動配置 Spring Data JPA 的 [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository), 預設的實作為 [`QueryBySpecExecutorImpl`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorImpl.java)
+During the configuration process, QBS automatically configures the Spring Data JPA [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository). The default implementation is [`QueryBySpecExecutorImpl`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorImpl.java).
 
-由於 Java 只能單一繼承, 為了應用程式可以保留原有的 Parent Base Repository, QBS 還多提供了 [`QueryBySpecExecutorAdapter`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorAdapter.java) 擴展點
+However, since Java only supports single inheritance, and to allow your application to retain its original parent Base Repository, QBS provides an extension point called [`QueryBySpecExecutorAdapter`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorAdapter.java).
 
-你的應用程式可以視情況選擇繼承 `QueryBySpecExecutorImpl` 或實作 `QueryBySpecExecutorAdapter` 去客製化 Base Repository, 如:
+Depending on your application's needs, you can choose to either extend `QueryBySpecExecutorImpl` or implement `QueryBySpecExecutorAdapter` to customize the Base Repository. For example:
 
 ```java
 class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
@@ -86,7 +89,7 @@ class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
                           EntityManager entityManager) {
     super(entityInformation, entityManager);
 
-    // Keep the EntityManager around to used from the newly introduced methods.
+    // Keep the EntityManager around to be used from the newly introduced methods.
     this.entityManager = entityManager;
   }
 
@@ -102,7 +105,7 @@ class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
 }
 ```
 
-並且透過 properties 中的 `spec.mapper.repository-base-class` 設定成自定義的 base repository 的 fulll package name, 如:
+You can configure your custom Base Repository by setting the `spec.mapper.repository-base-class` property in your application's properties file, specifying the full package name of your custom base repository, like this:
 
 ```yaml
 spec:
@@ -112,9 +115,9 @@ spec:
 
 ## Default SpecMapper
 
-此 Starter 會在 App 啟動的過程中自動的配置一個 *Default  SpecMapper* 並註冊到 *Spring @Bean* 中, 你可以透過 *Autowired* 的方式跟 Spring 取得.
+This starter automatically configures a *Default SpecMapper* during the application startup process and registers it as a Spring `@Bean`. You can obtain an instance of the SpecMapper through dependency injection (`@Autowired`) in your application.
 
-例如, 我想要在轉換成 Specification 後, 先做一些加強再去查詢, 則範例如下:
+For example, if you want to enhance the specifications before performing the query, you can use the SpecMapper as follows:
 
 ```java
 class PersonService {
@@ -123,20 +126,22 @@ class PersonService {
   @Autowired PersonRepository personRepository;
 
   List<Person> getPersonByCriteria(PersonCriteria criteria) {
-    val spec = specMapper.toSpec(criteria);
+    var spec = specMapper.toSpec(criteria);
     
-    // do more to spec
+    // Perform additional operations on the spec
     
     return personRepository.findAll(spec);
   }
 }
 ```
 
+In the above example, the SpecMapper is injected into the `PersonService`, allowing you to convert the criteria into a specification using `specMapper.toSpec()`. You can then modify the spec as needed before passing it to the `personRepository` for querying.
+
 ### Customize SpecificationResolver
 
-只要將你自定義的 `SpecificationResolver` 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
+By registering your custom `SpecificationResolver` as a Spring `@Bean`, it will be automatically detected and added to the *Default SpecMapper* during the application startup process.
 
-例如, 我想要[增加自定義的 Spec Annotation](../mapper#customize-spec-annotation), 配置範例如下:
+For example, if you want to add your custom spec annotation as mentioned in [Customize Spec Annotation](../mapper#customize-spec-annotation), you can configure it as follows:
 
 ```java
 @Configuration
@@ -149,7 +154,7 @@ class MyConfig {
 }
 ```
 
-如果你的 `SpecificationResolver` 需要用到 `SpecMapper` 本身, 則你可以包裝成 `SpecificationResolverCodecBuilder`, 在建構 resolver 時就會把 `SpecCodec`, 即 `SpecMapper` 的 interface, 傳進去, 例如:
+If your `SpecificationResolver` needs access to the `SpecMapper` itself, you can wrap it in a `SpecificationResolverCodecBuilder`. This way, the `SpecCodec`, which is the interface of `SpecMapper`, will be passed in when constructing the resolver. Here's an example:
 
 ```java
 @Configuration
@@ -166,7 +171,7 @@ class MySpecificationResolver implements SpecificationResolver {
   private final SpecCodec codec;
   
   MySpecificationResolver(SpecCodec codec) {
-    // Keep the SpecCodec around to used.
+    // Keep the SpecCodec around to be used.
     this.codec = codec;
   }
   
@@ -174,11 +179,13 @@ class MySpecificationResolver implements SpecificationResolver {
 }
 ```
 
+In the above example, the `MySpecificationResolver` is constructed with the `SpecCodec` provided by the `SpecMapper`. This allows you to access and utilize the `SpecMapper` functionality within your custom resolver.
+
 ### Customize Default SpecMapper
 
-當然, 你也可以完全的客製化 `SpecMapper`, 只要將你的 `SpecMapper` 註冊成 *Spring @Bean*,  App 啟動的過程中就會**略過 *Default SpecMapper* 的配置**而優先採用的你所註冊的那個! 
+Certainly, you can fully customize the `SpecMapper`. Just register your `SpecMapper` as a Spring `@Bean`, and during the application startup process, the configuration of the **Default SpecMapper** will be **skipped** in favor of the one you registered.
 
-配置範例如下:
+Here's an example configuration:
 
 ```java
 @Configuration
@@ -193,3 +200,4 @@ class MyConfig {
 }
 ```
 
+In the above example, you can customize the `SpecMapper` according to your needs by providing the desired configuration options within the `mySpecMapper` method. This way, the application will use the `SpecMapper` instance that you registered as a `@Bean`, overriding the default configuration of the `SpecMapper`.
