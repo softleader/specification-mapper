@@ -14,7 +14,7 @@ It is influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/
 
 In the Clean Architecture, Specification Mapper provides a convenient way to convert and use any POJO in any layer. By using Specification Mapper, we can effectively manage dependencies between layers and achieve a clear and structured code architecture. With Specification Mapper, you can define and manipulate specifications more effortlessly in your application, improving code readability and maintainability.
 
-The current version is implemented using Javax. Versions for Javax implementations typically start with _1.x_. If you are using Jakarta, please refer to [this link](https://github.com/softleader/specification-mapper/tree/jakarta).
+The current version is implemented using Javax. If you are using Jakarta, please refer to [this link](https://github.com/softleader/specification-mapper/tree/jakarta).
 
 ## Getting Started
 
