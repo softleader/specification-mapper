@@ -1,8 +1,3 @@
-[![version](https://img.shields.io/github/v/release/softleader/specification-mapper?color=brightgreen&sort=semver)](https://github.com/softleader/specification-mapper/releases/latest)
-[![Maven Central](https://img.shields.io/maven-central/v/tw.com.softleader.data/specification-mapper-parent?color=orange)](https://search.maven.org/search?q=g:tw.com.softleader.data%20AND%20a:specification-mapper*)
-![GitHub tag checks state](https://img.shields.io/github/checks-status/softleader/specification-mapper/main)
-![GitHub issues](https://img.shields.io/github/issues-raw/softleader/specification-mapper)
-
 # specification-mapper
 
 An alternative Specification API for Spring Data JPA.
