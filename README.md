@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/tw.com.softleader.data/specification-mapper-parent?color=orange)](https://central.sonatype.com/search?q=g%3Atw.com.softleader.data&smo=true&namespace=tw.com.softleader.data)
-![GitHub tag checks state](https://img.shields.io/github/checks-status/softleader/specification-mapper/main)
+![GitHub tag checks state](https://img.shields.io/github/checks-status/softleader/specification-mapper/javax)
 ![GitHub issues](https://img.shields.io/github/issues-raw/softleader/specification-mapper)
 
 # specification-mapper
@@ -12,7 +12,7 @@ Specification Mapper is a tool that facilitates the construction of [Specificati
 
 It is influenced by [tkaczmarzyk/specification-arg-resolver](https://github.com/tkaczmarzyk/specification-arg-resolver). We used specification-arg-resolver extensively for a period of time. However, in specification-arg-resolver, we had to expose the entity directly to the API. This became a conflict when we started implementing the [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) and became more concerned about layer dependencies. This conflict led to the development of Specification Mapper.
 
-In the Clean Architecture, Specification Mapper provides a convenient way to convert and use any POJO in any layer. By using Specification Mapper, we can effectively manage dependencies between layers and achieve a clear and structured code architecture. With Specification Mapper, you can define and manipulate specifications more effortlessly in your application, improving code readability and maintainability.
+In the Clean Architecture, Specification Mapper provides a convenient way to convert and use any POJO in any layer. For example, in the infrastructure layer, Specification mapper can be used to convert domain objects into specifications. By using Specification Mapper, we can effectively manage dependencies between layers and achieve a clear and structured code architecture, enhancing code readability and maintainability.
 
 The current version is implemented using Javax. If you are using Jakarta, please refer to [this link](https://github.com/softleader/specification-mapper/tree/jakarta).
 
