@@ -1,0 +1,82 @@
+# specification-mapper 進版
+name: Bump Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      auto-bump:
+        type: choice
+        description: "Auto Bump"
+        default: "no"
+        options:
+          - "no"
+          - "patch"
+          - "minor"
+      version:
+        description: 'Version, required if "Auto Bump" = no'
+        type: string
+
+jobs:
+  auto-bump:
+    runs-on: ubuntu-latest
+    if: inputs.auto-bump != 'no'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - id: get-current-version
+        run: echo "current_version=$(make version)" >> "$GITHUB_OUTPUT"
+      - id: bump
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.get-current-version.outputs.current_version }}
+    outputs:
+      bumped_version: ${{ steps.bump.outputs[inputs.auto-bump] }}
+  ensure-version-not-exists:
+    runs-on: ubuntu-latest
+    if: ${{ !failure() }}
+    needs: auto-bump
+    outputs:
+      final_version: ${{ steps.determine-version.outputs.final_version }}
+    steps:
+      - id: determine-version
+        env:
+          auto_bump_version: ${{needs.auto-bump.outputs.bumped_version}}
+          input_version: ${{inputs.version}}
+        run: |
+          if [[ -n "$auto_bump_version" ]]; then
+            echo "final_version=$auto_bump_version" >> "$GITHUB_OUTPUT"
+          elif [[ -n "$input_version" ]]; then
+            echo "final_version=$input_version" >> "$GITHUB_OUTPUT"
+          else
+            echo "Either select auto-bump or input version is required";
+            exit 1;
+          fi
+      - id: check-version
+        uses: mukunku/tag-exists-action@v1.2.0
+        with:
+          tag: '${{ steps.determine-version.outputs.final_version }}'
+      - id: fail-if-version-exists
+        run: |
+          if [ "${{ steps.check-version.outputs.exists }}" == "true" ]; then
+            echo "Version ${{ steps.determine-version.outputs.final_version }} already exists";
+            exit 1;
+          fi
+  trigger-jenkins:
+    runs-on: ubuntu-latest
+    if: ${{ !failure() }}
+    needs: ensure-version-not-exists
+    steps:
+      - id: specification-mapper-bump-version
+        uses: shihyuho/go-jenkins-trigger@v1
+        with:
+          jenkins-url: "${{ secrets.JENKINS_URL }}"
+          jenkins-user: "${{ secrets.JENKINS_USER }}"
+          jenkins-pat: "${{ secrets.JENKINS_PAT }}"
+          job: "${{ github.action }}"
+          params: "ref=${{ github.ref }},version=${{ needs.ensure-version-not-exists.outputs.final_version }},actor=${{ github.actor }}"
+          wait: false
