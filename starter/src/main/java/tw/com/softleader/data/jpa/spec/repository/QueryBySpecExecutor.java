@@ -65,15 +65,6 @@ public interface QueryBySpecExecutor<T> {
   List<T> findBySpec(@Nullable Object spec);
 
   /**
-   * Returns all entities matching the given {@code spec} and {@link Sort}.
-   *
-   * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
-   * @return never {@literal null}.
-   * @see JpaSpecificationExecutor#findAll(Specification, Sort)
-   */
-  List<T> findBySpec(@Nullable Object spec, @NonNull Sort sort);
-
-  /**
    * Returns a {@link Page} of entities matching the given {@code spec}.
    *
    * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
@@ -81,6 +72,15 @@ public interface QueryBySpecExecutor<T> {
    * @see JpaSpecificationExecutor#findAll(Specification, Pageable)
    */
   Page<T> findBySpec(@Nullable Object spec, @NonNull Pageable pageable);
+
+  /**
+   * Returns all entities matching the given {@code spec} and {@link Sort}.
+   *
+   * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
+   * @return never {@literal null}.
+   * @see JpaSpecificationExecutor#findAll(Specification, Sort)
+   */
+  List<T> findBySpec(@Nullable Object spec, @NonNull Sort sort);
 
   /**
    * Checks whether the data store contains elements that match the given {@code spec}.
