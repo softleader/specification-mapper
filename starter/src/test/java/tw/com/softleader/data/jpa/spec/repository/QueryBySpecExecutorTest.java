@@ -20,23 +20,25 @@
  */
 package tw.com.softleader.data.jpa.spec.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import lombok.Builder;
 import lombok.Data;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.repository.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Transactional
 @EnableAutoConfiguration
@@ -108,6 +110,33 @@ class QueryBySpecExecutorTest {
     assertThat(actual).isTrue();
   }
 
+  @Test
+  void findOneBySpec() {
+    var matt = repository.save(Customer.builder().name("matt").build());
+    repository.save(Customer.builder().name("bob").build());
+    repository.save(Customer.builder().name("mary").build());
+
+    assertThat(
+        repository.findOneBySpec(MyCriteria.builder().hello("matt").build())).isNotEmpty().get().isEqualTo(matt);
+
+    assertThat(
+        repository.findOneBySpec(MyCriteria.builder().hello("no-one").build())).isEmpty();
+
+    assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class)
+        .isThrownBy(() -> repository.findOneBySpec(MyCriteria.builder().build()));
+  }
+
+  @Test
+  void findBySpecAndQuery() {
+    var matt = repository.save(Customer.builder().name("matt").build());
+    repository.save(Customer.builder().name("bob").build());
+    repository.save(Customer.builder().name("mary").build());
+
+    var criteria = MyCriteria.builder().hello("matt").build();
+    var actual = repository.findBySpec(criteria, FluentQuery.FetchableFluentQuery::all);
+    assertThat(actual).hasSize(1).contains(matt);
+  }
+
   @Builder
   @Data
   static class MyCriteria {
@@ -115,5 +144,4 @@ class QueryBySpecExecutorTest {
     @Spec(path = "name")
     String hello;
   }
-
 }
