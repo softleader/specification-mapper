@@ -20,16 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec.repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.FluentQuery;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * This class is meant to ensure that all methods in {@link JpaSpecificationExecutor} are either used or considered in

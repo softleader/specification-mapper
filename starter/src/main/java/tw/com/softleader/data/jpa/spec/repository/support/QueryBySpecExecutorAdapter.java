@@ -20,7 +20,12 @@
  */
 package tw.com.softleader.data.jpa.spec.repository.support;
 
-import lombok.NonNull;
+import static org.springframework.util.Assert.notNull;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,14 +33,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.springframework.util.Assert.notNull;
 
 /**
  * Default implementation of {@code QueryBySpecExecutor}

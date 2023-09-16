@@ -20,17 +20,18 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.NonNull;
-import org.springframework.lang.Nullable;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.JoinContext;
+import static java.util.Collections.synchronizedMap;
+import static java.util.Optional.ofNullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Collections.synchronizedMap;
-import static java.util.Optional.ofNullable;
+import org.springframework.lang.Nullable;
+
+import lombok.NonNull;
+import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
  * @author Matt Ho

@@ -20,16 +20,17 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import java.util.Collection;
+import java.util.StringJoiner;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
-
-import java.util.Collection;
-import java.util.StringJoiner;
 
 /**
  * @author Matt Ho

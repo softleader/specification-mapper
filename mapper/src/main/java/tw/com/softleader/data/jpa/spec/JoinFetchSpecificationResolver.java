@@ -20,19 +20,20 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
-import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
-import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
-import tw.com.softleader.data.jpa.spec.domain.Conjunction;
-import tw.com.softleader.data.jpa.spec.domain.Context;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+
+import lombok.extern.slf4j.Slf4j;
+import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
+import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
+import tw.com.softleader.data.jpa.spec.domain.Conjunction;
+import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
  * @author Matt Ho

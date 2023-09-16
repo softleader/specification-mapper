@@ -20,16 +20,17 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-
-import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 /**
  * @author Matt Ho

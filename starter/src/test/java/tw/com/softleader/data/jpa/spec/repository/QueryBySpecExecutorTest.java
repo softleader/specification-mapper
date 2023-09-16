@@ -20,8 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec.repository;
 
-import lombok.Builder;
-import lombok.Data;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -33,12 +34,12 @@ import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.Builder;
+import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.repository.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @Transactional
 @EnableAutoConfiguration

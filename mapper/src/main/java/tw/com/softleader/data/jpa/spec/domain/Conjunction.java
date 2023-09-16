@@ -20,10 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import lombok.NonNull;
+import java.util.Collection;
+
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Collection;
+import lombok.NonNull;
 
 /**
  * @author Matt Ho

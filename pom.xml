@@ -40,6 +40,7 @@
     <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -52,6 +53,7 @@
     <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+    <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
     <spring-boot.version>3.1.1</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
@@ -137,6 +139,26 @@
               <phase>process-sources</phase>
               <goals>
                 <goal>format</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>net.revelc.code</groupId>
+          <artifactId>impsort-maven-plugin</artifactId>
+          <version>${impsort-maven-plugin.version}</version>
+          <configuration>
+            <lineEnding>LF</lineEnding>
+            <groups>java.,javax.,org.,com.</groups>
+            <staticGroups>java,*</staticGroups>
+            <removeUnused>true</removeUnused>
+            <skip>${skip.formatting}</skip>
+          </configuration>
+          <executions>
+            <execution>
+              <id>sort-imports</id>
+              <goals>
+                <goal>sort</goal>
               </goals>
             </execution>
           </executions>

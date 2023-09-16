@@ -20,17 +20,18 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
-import lombok.Synchronized;
-import org.springframework.data.util.Pair;
-import tw.com.softleader.data.jpa.spec.domain.JoinContext;
+import static java.util.Collections.synchronizedMap;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.util.Collections.synchronizedMap;
+import org.springframework.data.util.Pair;
+
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import lombok.Synchronized;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
  * @author Matt Ho

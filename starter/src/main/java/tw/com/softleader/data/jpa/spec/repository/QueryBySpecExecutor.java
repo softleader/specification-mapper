@@ -20,6 +20,10 @@
  */
 package tw.com.softleader.data.jpa.spec.repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,11 +34,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import tw.com.softleader.data.jpa.spec.SpecMapper;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
 
 /**
  * Interface to allow execution of Query by Spec instances.

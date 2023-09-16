@@ -20,12 +20,26 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.Builder;
-import lombok.Data;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.util.ReflectionUtils.doWithLocalFields;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.annotation.Nonnull;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.Builder;
+import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -35,18 +49,6 @@ import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
-
-import javax.annotation.Nonnull;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 
 @IntegrationTest
 class SimpleSpecificationResolverTest {

@@ -20,14 +20,14 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.NonNull;
+import static java.lang.String.format;
+import static java.lang.String.join;
+import static java.util.Collections.nCopies;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.format;
-import static java.lang.String.join;
-import static java.util.Collections.nCopies;
+import lombok.NonNull;
 
 /**
  * @author Matt Ho

@@ -20,13 +20,20 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
@@ -37,12 +44,6 @@ import tw.com.softleader.data.jpa.spec.domain.StartingWith;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
-
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @IntegrationTest
 class NestedSpecificationResolverTest {

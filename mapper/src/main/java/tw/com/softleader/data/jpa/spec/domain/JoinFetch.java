@@ -20,13 +20,14 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.ToString;
-import org.springframework.data.jpa.domain.Specification;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Matt Ho

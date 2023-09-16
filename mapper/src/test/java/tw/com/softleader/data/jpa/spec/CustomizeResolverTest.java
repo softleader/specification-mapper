@@ -20,21 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
-import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
-import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.usecase.Customer;
-import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
-import tw.com.softleader.data.jpa.spec.usecase.Gender;
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -43,10 +33,22 @@ import java.lang.annotation.Target;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.usecase.Customer;
+import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.usecase.Gender;
 
 @IntegrationTest
 class CustomizeResolverTest {
