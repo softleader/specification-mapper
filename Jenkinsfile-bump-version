@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-currentBuild.description = "${ref} -> ${tag}"
+currentBuild.description = "${version} -> ${ref}"
 // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 def semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
@@ -23,15 +23,14 @@ spec:
     tty: true
     resources:
       limits:
-        memory: "1Gi"
+        memory: "2.5Gi"
         cpu: "2"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
-    - name: gpg
-      mountPath: /var/gpg
   - name: git
     image: harbor.softleader.com.tw/library/git:2
+    imagePullPolicy: Always
     command: ['cat']
     tty: true
     resources:
@@ -42,9 +41,6 @@ spec:
   - name: m2
     persistentVolumeClaim:
       claimName: m2-claim
-  - name: gpg
-    persistentVolumeClaim:
-      claimName: gpg-claim
 """
     }
   }
@@ -60,6 +56,9 @@ spec:
 
     stage('Setup') {
       steps {
+        script {
+          env.PR_BRANCH = "bot/bump-version-to-${version}"
+        }
         container('git') {
           script {
             env.GIT_PATH = sh(
@@ -83,49 +82,44 @@ spec:
 
     stage ('Preflight Checks') {
       steps {
-        container('git') {
-          script {
-            def isSemVer = ("${tag}" ==~ semverPattern)
-            if (!isSemVer) {
-              error "Tag must matches semantic versioning 2 (https://semver.org/) but got: ${tag}";
-            }
-            TAG_EXISTS = sh(
-              script: 'gh release view ${tag} --json name',
-              returnStatus: true
-            )
-            def tagExists = ("${TAG_EXISTS}" == "0")
-            if (tagExists) {
-              error "Tag ${tag} already exists";
-            }
+        script {
+          def isSemVer = ("${version}" ==~ semverPattern)
+          if (!isSemVer) {
+            error "Tag must matches semantic versioning 2 (https://semver.org/) but got: ${version}";
           }
         }
-      }
-    }
-
-    stage ('Create Release') {
-      steps {
+        sh "make format"
         container('git') {
-          sh "gh release create ${tag} --target ${ref} --generate-notes --draft"
+          sh '[ ! -z "$(git status -s)" ] && echo "排版檢查不通過!" && exit 1 || echo "Good to go!"'
+        }
+        sh "make new-version VERSION=${version}"
+        container('git') {
+          sh '[ -z "$(git status -s)" ] && echo "版本號沒異動喔! 是不是用到重複的版本號了!?" && exit 1 || echo "Good to go!"'
         }
       }
     }
 
-    stage ('Publish Release') {
+    stage('Unit Testing') {
       steps {
-        sh """
-        echo /var/gpg/softleader.passphrase | gpg --batch --yes --import /var/gpg/softleader.key
-        make release
-        """
+        sh "make test"
       }
       post {
-        success {
-          script {
-            container('git') {
-              sh """
-              gh release edit ${tag} --draft=false --latest
-              """
-            }
-          }
+        always {
+          junit "**/target/surefire-reports/**/*.xml"
+        }
+      }
+    }
+
+    stage ('Bump New Version') {
+      steps {
+        container('git') {
+          sh """
+          git checkout -b ${PR_BRANCH}
+          git commit -am "chore: bump version to ${version}"
+          git push --set-upstream origin ${PR_BRANCH}
+          gh pr create --base ${ref} --title "chore: bump version to ${version}" --body "Bump version to ${version} -> ${ref}"
+          gh pr merge ${PR_BRANCH} --merge --admin --delete-branch
+          """
         }
       }
     }
@@ -136,7 +130,7 @@ spec:
       slackSend(
         color: "danger",
         channel: "@matt",
-        message: "Attention @here, The pipeline <$BUILD_URL|*${env.JOB_NAME} #${env.BUILD_NUMBER}*> has failed! :omg:\n>Last commit by ${env.LAST_COMMIT_AUTHOR_NAME} (${env.LAST_COMMIT_AUTHOR_EMAIL}) @ ${env.LAST_COMMIT_TIME}"
+        message: "Attention @here, The pipeline <$BUILD_URL|*${env.JOB_NAME} #${env.BUILD_NUMBER}*> has failed! :omg:"
       )
     }
   }
