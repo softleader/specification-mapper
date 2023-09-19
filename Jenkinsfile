@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 def javaVersions = ['17']
-def springBootVersions = ['3.0.10', '3.1.3']
+def springBootVersions = ['3.0.10'] // 只需要放"非最新"的中版號的最後一版
 
 pipeline {
   agent {
@@ -84,6 +84,19 @@ spec:
       }
     }
 
+    // 用當前 pom.xml 定義的 java, spring 版本執行測試, 這個組合也會是 release 時所使用的
+    stage('Unit Testing') {
+      steps {
+        sh "make test"
+      }
+      post {
+        always {
+          junit "**/target/surefire-reports/**/*.xml"
+        }
+      }
+    }
+
+    // 執行當前 pom.xml 以外, 還支援的 java, spring 版本的交叉測試
     stage('Matrix Testing') {
       steps {
         script {
@@ -98,11 +111,6 @@ spec:
               }
             }
           }
-        }
-      }
-      post {
-        always {
-          junit "**/target/surefire-reports/**/*.xml"
         }
       }
     }
