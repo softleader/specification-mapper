@@ -20,6 +20,14 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static com.tngtech.archunit.base.DescribedPredicate.doNot;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.*;
+import static com.tngtech.archunit.core.domain.JavaModifier.ABSTRACT;
+import static com.tngtech.archunit.core.domain.properties.HasModifiers.Predicates.modifier;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
+import static com.tngtech.archunit.library.GeneralCodingRules.*;
+
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeJars;
@@ -28,16 +36,9 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.junit.ArchTests;
 import com.tngtech.archunit.lang.ArchRule;
+
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
-
-import static com.tngtech.archunit.base.DescribedPredicate.doNot;
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.*;
-import static com.tngtech.archunit.core.domain.JavaModifier.ABSTRACT;
-import static com.tngtech.archunit.core.domain.properties.HasModifiers.Predicates.modifier;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
-import static com.tngtech.archunit.library.GeneralCodingRules.*;
 
 @AnalyzeClasses(packagesOf = SpecCodec.class, importOptions = {
     DoNotIncludeTests.class,

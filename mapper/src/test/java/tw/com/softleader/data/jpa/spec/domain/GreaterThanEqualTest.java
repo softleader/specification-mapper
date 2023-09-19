@@ -20,17 +20,18 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import tw.com.softleader.data.jpa.spec.IntegrationTest;
-import tw.com.softleader.data.jpa.spec.usecase.Customer;
-import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
-
-import java.time.LocalDate;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
+
+import java.time.LocalDate;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import tw.com.softleader.data.jpa.spec.IntegrationTest;
+import tw.com.softleader.data.jpa.spec.usecase.Customer;
+import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
 @IntegrationTest
 class GreaterThanEqualTest {

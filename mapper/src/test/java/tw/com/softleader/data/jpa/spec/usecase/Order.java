@@ -20,10 +20,10 @@
  */
 package tw.com.softleader.data.jpa.spec.usecase;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor

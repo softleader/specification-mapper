@@ -20,12 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho

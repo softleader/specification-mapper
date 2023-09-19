@@ -20,17 +20,19 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import tw.com.softleader.data.jpa.spec.domain.Context;
+import static java.util.Objects.requireNonNull;
+
+import static lombok.AccessLevel.PACKAGE;
 
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import static java.util.Objects.requireNonNull;
-import static lombok.AccessLevel.PACKAGE;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+
+import lombok.NoArgsConstructor;
+import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
  * @author Matt Ho

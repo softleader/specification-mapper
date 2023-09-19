@@ -20,22 +20,24 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.extern.slf4j.Slf4j;
+import static java.util.Optional.of;
+
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
+
+import java.util.stream.StreamSupport;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.Not;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
-
-import java.util.stream.StreamSupport;
-
-import static java.util.Optional.of;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 /**
  * @author Matt Ho

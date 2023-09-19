@@ -20,9 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec.usecase;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,8 +29,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 
-import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.FetchType.LAZY;
+import org.springframework.data.annotation.CreatedDate;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor

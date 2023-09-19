@@ -20,11 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.util.ReflectionUtils;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.ofNullable;
+
+import static org.springframework.util.ReflectionUtils.doWithLocalFields;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -34,10 +34,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.ofNullable;
-import static org.springframework.util.ReflectionUtils.doWithLocalFields;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
+import org.springframework.util.ReflectionUtils;
+
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 /**
  * Databind implementation using Spring's {@code ReflectionUtils}

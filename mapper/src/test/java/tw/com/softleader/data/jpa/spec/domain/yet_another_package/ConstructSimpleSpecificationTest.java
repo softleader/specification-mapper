@@ -20,17 +20,18 @@
  */
 package tw.com.softleader.data.jpa.spec.domain.yet_another_package;
 
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
+
+import org.junit.jupiter.api.Test;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
-import org.junit.jupiter.api.Test;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
-
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 class ConstructSimpleSpecificationTest {
 

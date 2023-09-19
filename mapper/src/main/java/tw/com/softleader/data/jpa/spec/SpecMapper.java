@@ -20,15 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
-import tw.com.softleader.data.jpa.spec.annotation.Or;
-import tw.com.softleader.data.jpa.spec.domain.Conjunction;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.Disjunction;
+import static java.util.stream.Collectors.toList;
+
+import static lombok.AccessLevel.PACKAGE;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
+import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,10 +35,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PACKAGE;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
-import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
+
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import tw.com.softleader.data.jpa.spec.annotation.Or;
+import tw.com.softleader.data.jpa.spec.domain.Conjunction;
+import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 
 /**
  * @author Matt Ho

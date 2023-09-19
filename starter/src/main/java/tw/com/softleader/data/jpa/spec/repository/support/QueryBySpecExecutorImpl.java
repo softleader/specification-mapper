@@ -20,15 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec.repository.support;
 
+import java.io.Serializable;
+
+import org.springframework.data.jpa.repository.support.JpaEntityInformation;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-
-import java.io.Serializable;
 
 /**
  * Default implementation of {@code QueryBySpecExecutor}

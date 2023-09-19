@@ -20,9 +20,12 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -30,11 +33,10 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
+
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 
 class ReflectionDatabindTest {
 

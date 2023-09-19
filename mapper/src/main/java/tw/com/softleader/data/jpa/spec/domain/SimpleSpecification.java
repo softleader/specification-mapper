@@ -20,17 +20,19 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Optional.ofNullable;
+
+import static org.springframework.util.ReflectionUtils.accessibleConstructor;
+
+import java.util.StringJoiner;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import org.springframework.data.jpa.domain.Specification;
-
-import java.util.StringJoiner;
-
-import static java.util.Optional.ofNullable;
-import static org.springframework.util.ReflectionUtils.accessibleConstructor;
 
 /**
  * To constraint the constructor, the implementations must provide accessible constructor.

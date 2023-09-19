@@ -20,9 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration;
-
 import java.util.function.Function;
+
+import tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration;
 
 /**
  * Represents a builder that accepts {@code SpecCodec} and produces a {@code SpecificationResolver},

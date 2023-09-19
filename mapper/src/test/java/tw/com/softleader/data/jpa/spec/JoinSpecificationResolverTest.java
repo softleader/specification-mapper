@@ -20,13 +20,19 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+
+import java.util.Collection;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -35,11 +41,6 @@ import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
 import tw.com.softleader.data.jpa.spec.usecase.Tag;
-
-import java.util.Collection;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 
 @IntegrationTest
 class JoinSpecificationResolverTest {

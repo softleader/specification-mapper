@@ -20,16 +20,23 @@
  */
 package tw.com.softleader.data.jpa.spec.repository.support;
 
-import lombok.NonNull;
+import static org.springframework.util.Assert.notNull;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.query.FluentQuery;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
-
-import java.util.List;
 
 /**
  * Default implementation of {@code QueryBySpecExecutor}
@@ -41,37 +48,78 @@ public interface QueryBySpecExecutorAdapter<T> extends JpaSpecificationExecutor<
 
   @Override
   @Transactional(readOnly = true)
-  default List<T> findBySpec(Object spec) {
-    return findAll(getSpecMapper().toSpec(spec, getDomainClass()));
+  default List<T> findBySpec(@Nullable Object spec) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return findAll(mapper.toSpec(spec, domainClass));
   }
 
   @Override
   @Transactional(readOnly = true)
-  default List<T> findBySpec(Object spec, @NonNull Sort sort) {
-    return findAll(getSpecMapper().toSpec(spec, getDomainClass()), sort);
+  default List<T> findBySpec(@Nullable Object spec, @NonNull Sort sort) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return findAll(mapper.toSpec(spec, domainClass), sort);
   }
 
   @Override
   @Transactional(readOnly = true)
-  default Page<T> findBySpec(Object spec, @NonNull Pageable pageable) {
-    return findAll(getSpecMapper().toSpec(spec, getDomainClass()), pageable);
+  default Page<T> findBySpec(@Nullable Object spec, @NonNull Pageable pageable) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return findAll(mapper.toSpec(spec, domainClass), pageable);
   }
 
   @Override
   @Transactional(readOnly = true)
-  default long countBySpec(Object spec) {
-    return count(getSpecMapper().toSpec(spec, getDomainClass()));
+  default long countBySpec(@Nullable Object spec) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return count(mapper.toSpec(spec, domainClass));
   }
 
   @Override
   @Transactional(readOnly = true)
-  default boolean existsBySpec(Object spec) {
-    return count(getSpecMapper().toSpec(spec, getDomainClass())) > 0;
+  default boolean existsBySpec(@Nullable Object spec) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return exists(mapper.toSpec(spec, domainClass));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  default Optional<T> findOneBySpec(@Nullable Object spec) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return findOne(mapper.toSpec(spec, domainClass));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  default <S extends T, R> R findBySpec(@Nullable Object spec,
+      @NonNull Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return findBy(mapper.toSpec(spec, domainClass), queryFunction);
   }
 
   SpecMapper getSpecMapper();
 
-  void setSpecMapper(SpecMapper specMapper);
+  void setSpecMapper(@org.springframework.lang.NonNull SpecMapper specMapper);
 
   Class<T> getDomainClass();
 }

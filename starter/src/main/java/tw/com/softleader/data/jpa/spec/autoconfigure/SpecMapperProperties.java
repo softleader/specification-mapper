@@ -20,8 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec.autoconfigure;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import lombok.Data;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAdapter;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
 

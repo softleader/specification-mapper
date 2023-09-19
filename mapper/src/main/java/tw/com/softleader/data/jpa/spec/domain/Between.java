@@ -20,13 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.stream.StreamSupport.stream;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
-
-import static java.util.stream.StreamSupport.stream;
 
 /**
  * {@code ... where x.age between ? and ?}

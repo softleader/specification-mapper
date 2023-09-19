@@ -20,14 +20,22 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
@@ -38,13 +46,6 @@ import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
 import tw.com.softleader.data.jpa.spec.usecase.School;
-
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @IntegrationTest
 class JoinFetchElementCollectionTest {
