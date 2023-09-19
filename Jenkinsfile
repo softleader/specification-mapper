@@ -24,7 +24,7 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "1.5"
+        cpu: "2"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
