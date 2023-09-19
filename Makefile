@@ -33,10 +33,20 @@ test: clean ## Clean and test the compiled code.
 install: clean ## Install project to local repository w/o unit testing.
 	mvn install -e -DskipTests -Prelease $(call java_version) $(call spring_boot_version)
 
+spring-boot-version: ## Get current Spring Boot version
+	@mvn help:evaluate -Dexpression=spring-boot.version -DforceStdout -q
+
+bump-spring-boot: ## Bump Spring Boot version
+ifeq ($(strip $(BOOT)),)
+	$(error BOOT is required)
+endif
+	mvn versions:set-property -Dproperty=spring-boot.version -DnewVersion=$(BOOT)
+	mvn versions:commit
+
 ##@ Delivery
 
 version: ## Get current project version
-	mvn help:evaluate -Dexpression=project.version
+	@mvn help:evaluate -Dexpression=project.version -DforceStdout -q
 
 new-version: ## Update version.
 ifeq ($(strip $(VERSION)),)

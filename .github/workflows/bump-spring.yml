@@ -1,0 +1,69 @@
+# A GitHub action to bump Spring to the latest version.
+name: Bump Spring
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # In UTC time, 8:00 In Taipei time
+  workflow_dispatch:
+
+jobs:
+  current-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "${{ github.ref_name }}"
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - id: get-current-version
+        run: echo "version=$(make spring-boot-version)" >> "$GITHUB_OUTPUT"
+      - uses: gautamkrishnar/keepalive-workflow@v1
+    outputs:
+      spring-boot: ${{ steps.get-current-version.outputs.version }}
+
+  latest-version:
+    runs-on: ubuntu-latest
+    steps:
+      - id: get-latest-version
+        uses: shihyuho/go-spring-version@v1
+        with:
+          boot-version: "~3.x"
+    outputs:
+      spring-boot: ${{ steps.get-latest-version.outputs.spring-boot }}
+
+  bump-spring:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: [current-version, latest-version]
+    if: "${{ needs.current-version.outputs.spring-boot != needs.latest-version.outputs.spring-boot }}"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "${{ github.ref_name }}"
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Bump version
+        run: make bump-spring-boot BOOT=${{ needs.latest-version.outputs.spring-boot }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "chore: bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
+          title: "Bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
+          committer: bot 👾 <bot-noreply@softleader.com.tw>
+          author: bot 👾 <bot-noreply@softleader.com.tw>
+          body: >-
+            Bumps [spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+            from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}
+          labels: "type: dependency-upgrade"
+          branch: "bot/${{ github.ref_name }}/spring-boot-${{ needs.current-version.outputs.spring-boot }}-${{ needs.latest-version.outputs.spring-boot }}"
+          delete-branch: true

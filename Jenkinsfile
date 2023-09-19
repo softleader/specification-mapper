@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 def javaVersions = ['17']
-def springBootVersions = ['3.0.8', '3.1.1']
+def springBootVersions = ['3.0.10', '3.1.3']
 
 pipeline {
   agent {
@@ -24,12 +24,10 @@ spec:
     resources:
       limits:
         memory: "1Gi"
-        cpu: "1.5"
+        cpu: "2"
     volumeMounts:
     - name: m2
       mountPath: /root/.m2
-    - name: dockersock
-      mountPath: /var/run/docker.sock
   - name: git
     image: alpine/git:v2.32.0
     command: ['cat']
@@ -42,9 +40,6 @@ spec:
   - name: m2
     persistentVolumeClaim:
       claimName: m2-claim
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
 """
     }
   }
