@@ -55,7 +55,7 @@
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
-    <spring-boot.version>3.1.4</spring-boot.version>
+    <spring-boot.version>3.1.5</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
     <format.skip>false</format.skip>
     <archunit-junit5.version>1.0.0</archunit-junit5.version>
