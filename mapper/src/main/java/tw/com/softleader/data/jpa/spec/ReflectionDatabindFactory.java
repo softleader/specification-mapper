@@ -18,31 +18,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.domain;
-
-import static java.util.Optional.ofNullable;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import lombok.NonNull;
+package tw.com.softleader.data.jpa.spec;
 
 /**
- * {@code ... where x.active = false} or {@code ... where x.active = true}
+ * This interface is designed to abstractly construct a {@link ReflectionDatabind} factory,
+ * primarily for facilitating spy intervention during testing.
  *
  * @author Matt Ho
  */
-public class False<T> extends True<T> {
+@FunctionalInterface
+interface ReflectionDatabindFactory<T, U, V, R> {
 
-  public False(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path, value);
-  }
-
-  @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
-    return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
-  }
+  R apply(T t, U u, V v);
 }

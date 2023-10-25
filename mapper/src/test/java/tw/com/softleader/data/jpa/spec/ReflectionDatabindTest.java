@@ -46,7 +46,8 @@ class ReflectionDatabindTest {
 
     var object = new MyObject("hello", null, Optional.empty(), Arrays.asList());
     var databind = ReflectionDatabind.of(object,
-        (obj, field) -> spy(new ReflectionDatabind(obj, field)));
+        new DefaultSkippingStrategy(),
+        (obj, field, strategy) -> spy(new ReflectionDatabind(obj, field, strategy)));
 
     assertThat(databind)
         .hasSize(4);

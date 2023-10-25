@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,7 +40,7 @@ import org.springframework.data.repository.core.support.RepositoryFactoryCustomi
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import tw.com.softleader.data.jpa.spec.SkippingStrategy;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
@@ -60,33 +61,38 @@ public class SpecMapperAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   SpecMapper specMapper(
-      List<SpecificationResolver> resolvers,
-      List<SpecificationResolverBuilder> builders,
-      List<SpecificationResolverCodecBuilder> codecBuilders) {
+      ObjectProvider<SpecificationResolver> resolvers,
+      ObjectProvider<SpecificationResolverBuilder> builders,
+      ObjectProvider<SpecificationResolverCodecBuilder> codecBuilders,
+      ObjectProvider<SkippingStrategy> skippingStrategy) {
     if (log.isTraceEnabled()) {
-      if (resolvers.isEmpty()) {
+      if (!resolvers.iterator().hasNext()) {
         log.trace("No SpecificationResolver declared");
       }
-      if (builders.isEmpty()) {
+      if (!builders.iterator().hasNext()) {
         log.trace("No SpecificationResolverBuilder declared");
       }
-      if (codecBuilders.isEmpty()) {
+      if (!codecBuilders.iterator().hasNext()) {
         log.trace("No SpecificationResolverCodecBuilder declared");
+      }
+      if (!skippingStrategy.iterator().hasNext()) {
+        log.trace("No SkippingStrategy declared");
       }
     }
     if (log.isDebugEnabled()) {
       concat(
-          resolvers.stream(),
+          resolvers.orderedStream(),
           concat(
               builders.stream(),
               codecBuilders.stream()))
                   .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
-    val mapper = SpecMapper.builder()
+    var mapper = SpecMapper.builder()
         .defaultResolvers()
-        .resolvers(resolvers);
-    builders.forEach(builder -> mapper.resolver(builder::build));
-    codecBuilders.forEach(mapper::resolver);
+        .resolvers(resolvers.orderedStream().toList());
+    builders.orderedStream().forEach(builder -> mapper.resolver(builder::build));
+    codecBuilders.orderedStream().forEach(mapper::resolver);
+    skippingStrategy.ifAvailable(mapper::skippingStrategy);
     return mapper.build();
   }
 

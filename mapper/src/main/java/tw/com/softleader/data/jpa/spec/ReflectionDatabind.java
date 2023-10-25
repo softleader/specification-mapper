@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
+import static java.util.function.Predicate.not;
 
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -57,19 +57,23 @@ class ReflectionDatabind implements Databind {
   @NonNull
   private final Field field;
 
+  @NonNull
+  private final SkippingStrategy skippingStrategy;
+
   private final AtomicBoolean loaded = new AtomicBoolean();
   private final CountDownLatch latch = new CountDownLatch(1);
   private Object value;
 
-  static List<Databind> of(@NonNull Object target) {
-    return of(target, ReflectionDatabind::new);
+  static List<Databind> of(@NonNull Object target, @NonNull SkippingStrategy skippingStrategy) {
+    return of(target, skippingStrategy, ReflectionDatabind::new);
   }
 
   static List<Databind> of(@NonNull Object target,
-      @NonNull BiFunction<Object, Field, Databind> factory) {
+      @NonNull SkippingStrategy skippingStrategy,
+      @NonNull ReflectionDatabindFactory<Object, Field, SkippingStrategy, Databind> factory) {
     var lookup = new ArrayList<Databind>();
     doWithLocalFields(target.getClass(),
-        field -> lookup.add(factory.apply(target, field)));
+        field -> lookup.add(factory.apply(target, field, skippingStrategy)));
     return unmodifiableList(lookup);
   }
 
@@ -82,7 +86,7 @@ class ReflectionDatabind implements Databind {
     } else {
       latch.await();
     }
-    return ofNullable(value);
+    return ofNullable(value).filter(not(skippingStrategy::shouldSkip));
   }
 
   // Visible for testing

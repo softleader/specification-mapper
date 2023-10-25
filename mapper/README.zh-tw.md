@@ -56,9 +56,12 @@ customerRepository.findAll(specification);
 在 POJO 中的欄位, 只要符合以下任一條件, 在轉換的過程中都將會忽略:
 
 - 沒有掛任何 Spec Annotation 
+- 值為 *null*
 - 若 Type 為 *Iterable* 且值為 *empty*
 - 若 Type 為 *Optional* 且值為 *empty*
-- 值為 *null*
+- 若 Type 為 *CharSequence* 且長度為 *0*
+- 若 Type 為 *Array* 且長度為 *0*
+- 若 Type 為 *Map* 且值為 *empty*
 
 例如, 將以下 POJO 建構後, 不 set 任何值就直接轉換成 `Specification` 及查詢
 
@@ -70,7 +73,10 @@ public class CustomerCriteria {
   String firstname;
   
   String lastname = "Hello";
-  
+ 
+  @Spec
+  String nickname;
+     
   @Spec(GreaterThat.class)
   Optional<Integer> age = Optional.empty();
   
@@ -85,6 +91,17 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 以上執行的 SQL 將不會有任何過濾條件!
 
 > 如果你有使用 Builder Pattern, (e.g. Lombok's *@Builder*), 請特別注意 Builder 的 Default Value!
+
+若你想要客製化跳脫邏輯, 可以實作 `SkippingStrategy`, 並在建構 `SpecMapper` 時傳入:
+
+```java
+var mapper = SpecMapper.builder()
+      .defaultResolvers()
+      .skippingStrategy(fieldValue -> {
+        // 判斷是否要跳 field value, 回傳 boolean
+      })
+      .build();
+```
 
 ## Simple Specifications
 
@@ -127,6 +144,8 @@ String firstname; // 預設使用欄位名稱
 | `NotIn` | *Iterable of Any* | `@Spec(NotIn.class) Set<String> firstname;` | `... where x.firstname not in (?, ?, ...)` |
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
+| `HasLength` | *Boolean* | `@Spec(HasLength.class) Boolean firstname;` | `... where x.firstname is not null and character_length(x.firstname)>0` *(if true)* <br> `... where not(x.firstname is not null and character_length(x.firstname)>0)` *(if false)* |
+| `HasText` | *Boolean* | `@Spec(HasText) Boolean firstname;` | `... where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0` *(if true)* <br> `... where not(where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0)` *(if false)* |
 
 > 為了方便已經熟悉 Spring Data JPA 的人使用, 以上名稱都是儘量跟著 [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣
 

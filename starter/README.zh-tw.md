@@ -176,6 +176,24 @@ class MySpecificationResolver implements SpecificationResolver {
 }
 ```
 
+
+### Customize SkippingStrategy
+
+只要將你自定義的 [`SkippingStrategy`](../mapper#skipping-strategy) 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
+
+配置範例如下:
+
+```java
+@Configuration
+class MyConfig {
+
+  @Bean
+  SkippingStrategy mySkippingStrategy() {
+    return ...
+  }
+}
+```
+
 ### Customize Default SpecMapper
 
 當然, 你也可以完全的客製化 `SpecMapper`, 只要將你的 `SpecMapper` 註冊成 *Spring @Bean*,  App 啟動的過程中就會**略過 *Default SpecMapper* 的配置**而優先採用的你所註冊的那個! 

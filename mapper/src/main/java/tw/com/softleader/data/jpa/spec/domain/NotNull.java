@@ -20,6 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Optional.ofNullable;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -41,6 +43,6 @@ public class NotNull<T> extends IsNull<T> {
   public Predicate toPredicate(Root<T> root,
       CriteriaQuery<?> query,
       CriteriaBuilder builder) {
-    return super.toPredicate(root, query, builder).not();
+    return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
   }
 }

@@ -25,8 +25,6 @@ import static java.util.Optional.of;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
-import java.util.stream.StreamSupport;
-
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
@@ -57,7 +55,6 @@ class SimpleSpecificationResolver implements SpecificationResolver {
     var ast = context.get(CTX_AST).map(AST.class::cast).get();
     var depth = (int) context.get(CTX_DEPTH).get();
     var built = databind.getFieldValue()
-        .filter(this::valuePresent)
         .map(value -> buildSpecification(context, databind, def, value))
         .orElse(null);
     ast.add(depth, "|  +-[%s.%s]: @Spec(value=%s, path=%s, not=%s) -> %s",
@@ -92,13 +89,6 @@ class SimpleSpecificationResolver implements SpecificationResolver {
       return new tw.com.softleader.data.jpa.spec.domain.Or<>(spec);
     }
     return spec;
-  }
-
-  boolean valuePresent(Object value) {
-    if (value instanceof Iterable) {
-      return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).findAny().isPresent();
-    }
-    return true;
   }
 
   @Override
