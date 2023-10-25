@@ -145,7 +145,7 @@ String firstname; // 預設使用欄位名稱
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
 | `HasLength` | *Boolean* | `@Spec(HasLength.class) Boolean firstname;` | `... where x.firstname is not null and character_length(x.firstname)>0` *(if true)* <br> `... where not(x.firstname is not null and character_length(x.firstname)>0)` *(if false)* |
-| `HasText` | *Boolean* | `@Spec(HasText) Boolean firstname;` | `... where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0` *(if true)* <br> `... where not(where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0)` *(if false)* |
+| `HasText` | *Boolean* | `@Spec(HasText.class) Boolean firstname;` | `... where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0` *(if true)* <br> `... where not(where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0)` *(if false)* |
 
 > 為了方便已經熟悉 Spring Data JPA 的人使用, 以上名稱都是儘量跟著 [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation) 一樣
 
