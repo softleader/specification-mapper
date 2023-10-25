@@ -87,9 +87,8 @@ public class SpecMapperAutoConfiguration {
               codecBuilders.stream()))
                   .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
-    var mapper = SpecMapper.builder()
-        .defaultResolvers()
-        .resolvers(resolvers.orderedStream().toList());
+    var mapper = SpecMapper.builder().defaultResolvers();
+    resolvers.orderedStream().forEach(mapper::resolver);
     builders.orderedStream().forEach(builder -> mapper.resolver(builder::build));
     codecBuilders.orderedStream().forEach(mapper::resolver);
     skippingStrategy.ifAvailable(mapper::skippingStrategy);
