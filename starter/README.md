@@ -181,6 +181,23 @@ class MySpecificationResolver implements SpecificationResolver {
 
 In the above example, the `MySpecificationResolver` is constructed with the `SpecCodec` provided by the `SpecMapper`. This allows you to access and utilize the `SpecMapper` functionality within your custom resolver.
 
+### Customize SkippingStrategy
+
+As long as you register your custom [`SkippingStrategy`](../mapper#skipping-strategy) as a *Spring @Bean*, it will automatically be detected and added to the *Default SpecMapper* during the application startup process!
+
+Here's a configuration example:
+
+```java
+@Configuration
+class MyConfig {
+
+  @Bean
+  SkippingStrategy mySkippingStrategy() {
+    return ...
+  }
+}
+```
+
 ### Customize Default SpecMapper
 
 Certainly, you can fully customize the `SpecMapper`. Just register your `SpecMapper` as a Spring `@Bean`, and during the application startup process, the configuration of the **Default SpecMapper** will be **skipped** in favor of the one you registered.

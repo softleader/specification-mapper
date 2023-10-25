@@ -18,31 +18,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.domain;
+package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Optional.ofNullable;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
- * {@code ... where x.active = false} or {@code ... where x.active = true}
+ * This is an interface for defining strategies to skip certain conditions.
  *
  * @author Matt Ho
  */
-public class False<T> extends True<T> {
+public interface SkippingStrategy {
 
-  public False(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path, value);
-  }
-
-  @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
-    return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
-  }
+  /**
+   * This method is used to determine whether a given field value should be skipped.
+   *
+   * @param fieldValue The field value to be checked. It can be an object of any type, and even null.
+   * @return True if the field value should be skipped, false otherwise.
+   */
+  boolean shouldSkip(@Nullable Object fieldValue);
 }

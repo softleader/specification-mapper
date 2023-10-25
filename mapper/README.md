@@ -56,9 +56,12 @@ The executed SQL will be:
 In the fields of the POJO, if any of the following conditions are met, they will be ignored during the conversion process:
 
 - No Spec Annotation is attached.
+- The value is *null*.
 - If the type is *Iterable* and the value is *empty*.
 - If the type is *Optional* and the value is *empty*.
-- The value is *null*.
+- If the type is *CharSequence* and the length of value is *0*.
+- If the type is *Array* and the length of value is *0*.
+- If the type is *Map* and the value is *empty*.
 
 For example, after constructing the following POJO, if no values are set and it is directly converted into a `Specification` for querying:
 
@@ -70,6 +73,9 @@ public class CustomerCriteria {
   String firstname;
   
   String lastname = "Hello";
+   
+  @Spec
+  String nickname;
   
   @Spec(GreaterThat.class)
   Optional<Integer> age = Optional.empty();
@@ -85,6 +91,17 @@ customerRepository.findAll(mapper.toSpec(new CustomerCriteria()));
 The executed SQL in the above example will not have any filtering conditions.
 
 > If you are using the Builder Pattern (e.g., Lombok's *@Builder*), please pay special attention to the default values set in the builder.
+
+If you want to customize the logic for skipping, you can implement a `SkippingStrategy` and pass it when constructing a `SpecMapper`:
+
+```java
+var mapper = SpecMapper.builder()
+      .defaultResolvers()
+      .skippingStrategy(fieldValue -> {
+        // Determine whether to skip the field value and return a boolean
+      })
+      .build();
+```
 
 ## Simple Specifications
 
@@ -127,6 +144,8 @@ Here is a list of the built-in types for `@Spec`:
 | `NotIn` | *Iterable of Any* | `@Spec(NotIn.class) Set<String> firstname;` | `... where x.firstname not in (?, ?, ...)` |
 | `True` | *Boolean* | `@Spec(True.class) Boolean active;` | `... where x.active = true` *(if true)* <br> `... where x.active = false` *(if false)* |
 | `False` | *Boolean* | `@Spec(False.class) Boolean active;` | `... where x.active = false` *(if true)* <br> `... where x.active = true` *(if false)* |
+| `HasLength` | *Boolean* | `@Spec(HasLength.class) Boolean firstname;` | `... where x.firstname is not null and character_length(x.firstname)>0` *(if true)* <br> `... where not(x.firstname is not null and character_length(x.firstname)>0)` *(if false)* |
+| `HasText` | *Boolean* | `@Spec(HasText) Boolean firstname;` | `... where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0` *(if true)* <br> `... where not(where x.firstname is not null and character_length(trim(BOTH from x.firstname))>0)` *(if false)* |
 
 > In order to facilitate the usage for those who are already familiar with Spring Data JPA, the specs are named as closely as possible with [Query Methods](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
 

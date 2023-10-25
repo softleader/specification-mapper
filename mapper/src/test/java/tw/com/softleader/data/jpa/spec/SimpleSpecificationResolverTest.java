@@ -257,6 +257,50 @@ class SimpleSpecificationResolverTest {
     return i.intValue();
   }
 
+  @DisplayName("Skip if empty text")
+  @Test
+  void skipIfEmptyText() {
+    var matt = repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob = repository.save(
+        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+            .build());
+    var mary = repository.save(
+        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var criteria = SkipEmptyText.builder().name("").build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
+
+    verify(simpleResolver, times(numberOfLocalField(SkipEmptyText.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("Not to skip if blank text")
+  @Test
+  void notToSkipIfBlackText() {
+    repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    repository.save(
+        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+            .build());
+    repository.save(
+        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var criteria = SkipEmptyText.builder().name(" ").build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).isEmpty();
+
+    verify(simpleResolver, times(numberOfLocalField(SkipEmptyText.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
   @Builder
   @Data
   public static class MyCriteria {
@@ -318,5 +362,13 @@ class SimpleSpecificationResolverTest {
     @And
     @Spec(value = After.class, not = true)
     LocalDate birthday;
+  }
+
+  @Builder
+  @Data
+  public static class SkipEmptyText {
+
+    @Spec
+    String name;
   }
 }

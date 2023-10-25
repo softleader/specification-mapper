@@ -22,6 +22,8 @@ package tw.com.softleader.data.jpa.spec;
 
 import java.util.function.Function;
 
+import org.springframework.core.Ordered;
+
 import tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration;
 
 /**
@@ -34,6 +36,9 @@ import tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration
  * @see SpecMapperAutoConfiguration
  */
 public interface SpecificationResolverCodecBuilder extends
-    Function<SpecCodec, SpecificationResolver> {
-
+    Function<SpecCodec, SpecificationResolver>, Ordered {
+  @Override
+  default int getOrder() {
+    return 0;
+  }
 }

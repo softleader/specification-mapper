@@ -40,6 +40,7 @@ import org.springframework.lang.Nullable;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
@@ -50,9 +51,11 @@ import tw.com.softleader.data.jpa.spec.domain.Disjunction;
  * @author Matt Ho
  */
 @Slf4j
-@NoArgsConstructor(access = PACKAGE)
+@RequiredArgsConstructor(access = PACKAGE)
 public class SpecMapper implements SpecCodec {
 
+  @NonNull
+  private final SkippingStrategy skippingStrategy;
   private Collection<SpecificationResolver> resolvers; // Order matters
 
   public static SpecMapperBuilder builder() {
@@ -85,7 +88,7 @@ public class SpecMapper implements SpecCodec {
     if (rootObject == null) {
       return null;
     }
-    var specs = ReflectionDatabind.of(rootObject)
+    var specs = ReflectionDatabind.of(rootObject, skippingStrategy)
         .stream()
         .flatMap(databind -> resolveSpec(context, databind))
         .filter(Objects::nonNull)
@@ -122,6 +125,12 @@ public class SpecMapper implements SpecCodec {
   public static class SpecMapperBuilder {
 
     private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers = new LinkedList<>();
+    private SkippingStrategy strategy = new DefaultSkippingStrategy();
+
+    public SpecMapperBuilder skippingStrategy(@NonNull SkippingStrategy strategy) {
+      this.strategy = strategy;
+      return this;
+    }
 
     public SpecMapperBuilder resolver(
         @NonNull Function<SpecCodec, SpecificationResolver> resolver) {
@@ -153,7 +162,7 @@ public class SpecMapper implements SpecCodec {
       if (this.resolvers.isEmpty()) {
         defaultResolvers();
       }
-      var mapper = new SpecMapper();
+      var mapper = new SpecMapper(strategy);
       mapper.resolvers = this.resolvers.stream()
           .map(resolver -> resolver.apply(mapper))
           .collect(Collectors.collectingAndThen(

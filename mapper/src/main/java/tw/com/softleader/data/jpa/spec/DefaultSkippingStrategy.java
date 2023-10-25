@@ -18,31 +18,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.domain;
+package tw.com.softleader.data.jpa.spec;
 
-import static java.util.Optional.ofNullable;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import lombok.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.util.ObjectUtils;
 
 /**
- * {@code ... where x.active = false} or {@code ... where x.active = true}
- *
  * @author Matt Ho
  */
-public class False<T> extends True<T> {
-
-  public False(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path, value);
-  }
-
+record DefaultSkippingStrategy() implements SkippingStrategy {
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
-    return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
+  public boolean shouldSkip(@Nullable Object fieldValue) {
+    if (fieldValue == null) {
+      return true;
+    }
+    if (fieldValue instanceof Iterable<?> iterable) {
+      return !iterable.iterator().hasNext();
+    }
+    return ObjectUtils.isEmpty(fieldValue);
   }
 }

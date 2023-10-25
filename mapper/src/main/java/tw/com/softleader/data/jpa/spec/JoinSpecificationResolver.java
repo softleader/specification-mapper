@@ -26,7 +26,6 @@ import static java.util.stream.Collectors.toList;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
@@ -53,7 +52,6 @@ class JoinSpecificationResolver implements SpecificationResolver {
   public Specification<Object> buildSpecification(@NonNull Context context,
       @NonNull Databind databind) {
     return databind.getFieldValue()
-        .filter(this::valuePresent)
         .map(value -> {
           var specs = Stream.concat(
               joinDef(context, databind.getField()),
@@ -65,13 +63,6 @@ class JoinSpecificationResolver implements SpecificationResolver {
           }
           return new Conjunction<>(specs);
         }).orElse(null);
-  }
-
-  boolean valuePresent(Object value) {
-    if (value instanceof Iterable) {
-      return StreamSupport.stream(((Iterable<?>) value).spliterator(), false).findAny().isPresent();
-    }
-    return true;
   }
 
   private Stream<Specification<Object>> joinsDef(Context context, Field field) {

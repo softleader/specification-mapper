@@ -27,6 +27,7 @@ import static lombok.AccessLevel.PACKAGE;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.springframework.core.Ordered;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -37,22 +38,27 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 /**
  * @author Matt Ho
  */
-public interface SpecificationResolver extends ASTNode {
+public interface SpecificationResolver extends ASTNode, Ordered {
 
   boolean supports(@NonNull Databind databind);
 
   @Nullable
   Specification<Object> buildSpecification(@NonNull Context context, @NonNull Databind databind);
 
+  default int getOrder() {
+    return 0;
+  }
+
   static SpecificationResolverBuilder builder() {
     return new SpecificationResolverBuilder();
   }
 
   @NoArgsConstructor(access = PACKAGE)
-  class SpecificationResolverBuilder {
+  class SpecificationResolverBuilder implements Ordered {
 
     Predicate<Databind> supports;
     BiFunction<Context, Databind, Specification<Object>> buildSpecification;
+    int order = 0;
 
     public SpecificationResolverBuilder supports(@NonNull Predicate<Databind> supports) {
       this.supports = supports;
@@ -62,6 +68,11 @@ public interface SpecificationResolver extends ASTNode {
     public SpecificationResolverBuilder buildSpecification(
         @NonNull BiFunction<Context, Databind, Specification<Object>> buildSpecification) {
       this.buildSpecification = buildSpecification;
+      return this;
+    }
+
+    public SpecificationResolverBuilder order(int order) {
+      this.order = order;
       return this;
     }
 
@@ -80,8 +91,17 @@ public interface SpecificationResolver extends ASTNode {
             @NonNull Context context, @NonNull Databind databind) {
           return buildSpecification.apply(context, databind);
         }
+
+        @Override
+        public int getOrder() {
+          return order;
+        }
       };
     }
-  }
 
+    @Override
+    public int getOrder() {
+      return 0;
+    }
+  }
 }
