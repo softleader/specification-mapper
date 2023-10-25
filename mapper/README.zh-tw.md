@@ -75,7 +75,7 @@ public class CustomerCriteria {
   String lastname = "Hello";
  
   @Spec
-  String nickname;
+  String nickname = "";
      
   @Spec(GreaterThat.class)
   Optional<Integer> age = Optional.empty();
