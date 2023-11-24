@@ -54,6 +54,7 @@ class SpecJoinContext implements JoinContext {
     return joins.get(rootKey);
   }
 
+  @Override
   public void putLazy(String key, Function<Root<?>, Join<?, ?>> lazyJoin) {
     lazyJoins.put(key, lazyJoin);
   }

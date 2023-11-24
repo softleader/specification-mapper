@@ -68,7 +68,7 @@ class SpecContext implements Context {
 
   @Override
   public boolean containsValue(Object value) {
-    return false;
+    return bag.containsValue(value);
   }
 
   @Override
