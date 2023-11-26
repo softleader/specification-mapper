@@ -114,7 +114,7 @@ spec:
         script {
             for (int s = 0; s < java17_springBootVersions.size(); s++) {
               def java = 17
-              def springboot = springBootVersions[s]
+              def springboot = java17_springBootVersions[s]
               stage("JAVA = ${java}, SPRING_BOOT = ${springboot}"){
                 container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
@@ -130,7 +130,7 @@ spec:
         script {
             for (int s = 0; s < java21_springBootVersions.size(); s++) {
               def java = 21
-              def springboot = springBootVersions[s]
+              def springboot = java21_springBootVersions[s]
               stage("JAVA = ${java}, SPRING_BOOT = ${springboot}"){
                 container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
