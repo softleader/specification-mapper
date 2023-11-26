@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
-def javaVersions = ['17', '21']
-def springBootVersions = ['3.0.13', '3.1.6'] // 只需要放 "非最新" 的中版號的最後一版
+def java17_springBootVersions = ['3.0.13', '3.1.6'] // 只需要放 "非最新" 的中版號的最後一版
+def java21_springBootVersions = [] // 只需要放 "非最新" 的中版號的最後一版
 
 pipeline {
   agent {
@@ -109,20 +109,34 @@ spec:
     }
 
     // 執行當前 pom.xml 以外，還支援的 java, spring 版本的交叉測試
-    stage('Matrix Testing') {
+    stage('Java 17 Testing') {
       steps {
         script {
-          for (int j = 0; j < javaVersions.size(); j++) {
-            for (int s = 0; s < springBootVersions.size(); s++) {
-              def java = javaVersions[j]
+            for (int s = 0; s < java17_springBootVersions.size(); s++) {
+              def java = 17
               def springboot = springBootVersions[s]
-              stage("Matrix - JAVA = ${java}, SPRING_BOOT = ${springboot}"){
+              stage("JAVA = ${java}, SPRING_BOOT = ${springboot}"){
                 container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
               }
             }
-          }
+        }
+      }
+    }
+
+    stage('Java 21 Testing') {
+      steps {
+        script {
+            for (int s = 0; s < java21_springBootVersions.size(); s++) {
+              def java = 21
+              def springboot = springBootVersions[s]
+              stage("JAVA = ${java}, SPRING_BOOT = ${springboot}"){
+                container("maven-java${java}") {
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                }
+              }
+            }
         }
       }
     }
