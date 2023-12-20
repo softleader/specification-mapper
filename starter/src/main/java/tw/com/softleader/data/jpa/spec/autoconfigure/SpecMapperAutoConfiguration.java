@@ -22,6 +22,8 @@ package tw.com.softleader.data.jpa.spec.autoconfigure;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Stream.concat;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import static org.springframework.util.Assert.notNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 import tw.com.softleader.data.jpa.spec.SkippingStrategy;
@@ -89,6 +92,7 @@ public class SpecMapperAutoConfiguration {
     return mapper.build();
   }
 
+  @Role(ROLE_INFRASTRUCTURE)
   @ConditionalOnBean(JpaRepositoryFactoryBean.class)
   static class RepositoryFactoryCustomizerAutoConfiguration {
 
@@ -100,20 +104,31 @@ public class SpecMapperAutoConfiguration {
     }
 
     @Bean
-    RepositoryFactoryCustomizer repositoryBaseClassCustomizer(SpecMapperProperties properties) {
-      log.debug(
-          "Configuring repository-base-class with '{}'",
-          properties.getRepositoryBaseClass().getName());
-      return factory -> factory.setRepositoryBaseClass(properties.getRepositoryBaseClass());
+    @Role(ROLE_INFRASTRUCTURE)
+    RepositoryFactoryCustomizer repositoryBaseClassCustomizer(
+        ObjectProvider<SpecMapperProperties> propertiesProvider) {
+      return factory -> {
+        var properties = propertiesProvider.getIfAvailable();
+        notNull(properties, "SpecMapperProperties must not be null");
+        log.debug(
+            "Configuring repository-base-class with '{}'",
+            properties.getRepositoryBaseClass().getName());
+        factory.setRepositoryBaseClass(properties.getRepositoryBaseClass());
+      };
     }
 
     @Bean
-    RepositoryFactoryCustomizer specMapperCustomizer(SpecMapper specMapper) {
-      return factory ->
-          factory.addRepositoryProxyPostProcessor(
-              (proxyFactory, repositoryInformation) ->
-                  getQueryBySpecExecutorAdapter(proxyFactory)
-                      .ifPresent(target -> target.setSpecMapper(specMapper)));
+    @Role(ROLE_INFRASTRUCTURE)
+    RepositoryFactoryCustomizer specMapperCustomizer(
+        ObjectProvider<SpecMapper> specMapperProvider) {
+      return factory -> {
+        var specMapper = specMapperProvider.getIfAvailable();
+        notNull(specMapper, "SpecMapper must not be null");
+        factory.addRepositoryProxyPostProcessor(
+            (proxyFactory, repositoryInformation) ->
+                getQueryBySpecExecutorAdapter(proxyFactory)
+                    .ifPresent(target -> target.setSpecMapper(specMapper)));
+      };
     }
 
     @SneakyThrows
