@@ -20,15 +20,14 @@
  */
 package tw.com.softleader.data.jpa.spec.annotation;
 
+import jakarta.persistence.criteria.JoinType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import jakarta.persistence.criteria.JoinType;
-
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 public @interface JoinFetch {
 
   String[] paths();
@@ -38,7 +37,7 @@ public @interface JoinFetch {
   boolean distinct() default true;
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ ElementType.TYPE })
+  @Target({ElementType.TYPE})
   @interface JoinFetches {
 
     JoinFetch[] value();

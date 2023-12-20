@@ -27,7 +27,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.function.Supplier;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectFactory;
@@ -40,11 +43,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.Databind;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver;
@@ -63,33 +61,18 @@ import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
 @SpringBootTest
 class CustomizeResolverTest {
 
-  @Autowired
-  SpecMapper mapper;
+  @Autowired SpecMapper mapper;
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   @Test
   void customizeResolver() {
-    var matt = repository.save(Customer.builder()
-        .name("matt")
-        .age(20)
-        .build());
-    repository.save(Customer.builder()
-        .name("mary")
-        .age(10)
-        .build());
-    repository.save(Customer.builder()
-        .name("bob")
-        .age(10)
-        .build());
+    var matt = repository.save(Customer.builder().name("matt").age(20).build());
+    repository.save(Customer.builder().name("mary").age(10).build());
+    repository.save(Customer.builder().name("bob").age(10).build());
 
-    var criteria = MyCriteria.builder()
-        .age(18)
-        .profile(Profile.builder()
-            .name("m")
-            .build())
-        .build();
+    var criteria =
+        MyCriteria.builder().age(18).profile(Profile.builder().name("m").build()).build();
     var spec = mapper.toSpec(criteria);
     assertThat(spec)
         .isNotNull()
@@ -103,13 +86,15 @@ class CustomizeResolverTest {
     assertThat(actual).hasSize(1).contains(matt);
 
     // SQL will be:
-    // select customer0_.id as id1_0_, customer0_.age as age2_0_, customer0_.name as name3_0_ from customer customer0_
+    // select customer0_.id as id1_0_, customer0_.age as age2_0_, customer0_.name as name3_0_ from
+    // customer customer0_
     // where customer0_.age>=18
-    //    and (exists (select customer1_.id from customer customer1_ where customer0_.id=customer1_.id and (customer1_.name like ?)))
+    //    and (exists (select customer1_.id from customer customer1_ where
+    // customer0_.id=customer1_.id and (customer1_.name like ?)))
   }
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ ElementType.FIELD })
+  @Target({ElementType.FIELD})
   public @interface ProfileExists {
 
     /**
@@ -164,16 +149,15 @@ class CustomizeResolverTest {
     @Override
     public Specification<Object> buildSpecification(Context context, Databind databind) {
       var def = databind.getField().getAnnotation(ProfileExists.class);
-      return databind.getFieldValue()
+      return databind
+          .getFieldValue()
           .map(mapper.get()::toSpec)
           .map(spec -> buildExistsSubquery(def.entity(), def.on(), spec))
           .orElse(null);
     }
 
     private Specification<Object> buildExistsSubquery(
-        Class entityClass,
-        String on,
-        Specification<?> subquerySpec) {
+        Class entityClass, String on, Specification<?> subquerySpec) {
       return (root, query, builder) -> {
         var subquery = query.subquery(entityClass);
         var subroot = subquery.from(entityClass);

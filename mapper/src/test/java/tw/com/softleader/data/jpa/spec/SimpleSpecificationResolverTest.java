@@ -30,16 +30,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.annotation.Nonnull;
-
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.Builder;
-import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -53,24 +50,23 @@ import tw.com.softleader.data.jpa.spec.usecase.Gender;
 @IntegrationTest
 class SimpleSpecificationResolverTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-        .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
-        .build();
+    mapper =
+        SpecMapper.builder()
+            .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
+            .build();
   }
 
   @DisplayName("Null Root Object")
   @Test
   void nullRootObject() {
-    assertThat(mapper.toSpec(null))
-        .isNull();
+    assertThat(mapper.toSpec(null)).isNull();
   }
 
   @DisplayName("空的 @Spec")
@@ -100,9 +96,7 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Optional Empty")
   @Test
   void optionalEmpty() {
-    var criteria = MyCriteria.builder()
-        .opt(Optional.empty())
-        .build();
+    var criteria = MyCriteria.builder().opt(Optional.empty()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNull();
   }
@@ -113,9 +107,7 @@ class SimpleSpecificationResolverTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder()
-        .opt(Optional.of("matt"))
-        .build();
+    var criteria = MyCriteria.builder().opt(Optional.of("matt")).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -128,9 +120,7 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Iterable Empty")
   @Test
   void iterableEmpty() {
-    var criteria = MyCriteria.builder()
-        .names(Arrays.asList())
-        .build();
+    var criteria = MyCriteria.builder().names(Arrays.asList()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNull();
   }
@@ -141,9 +131,7 @@ class SimpleSpecificationResolverTest {
     var matt = repository.save(Customer.builder().name("matt").build());
     repository.save(Customer.builder().name("bob").build());
 
-    var criteria = MyCriteria.builder()
-        .names(Arrays.asList("matt"))
-        .build();
+    var criteria = MyCriteria.builder().names(Arrays.asList("matt")).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -158,12 +146,11 @@ class SimpleSpecificationResolverTest {
   void notSpec() {
     var matt = repository.save(Customer.builder().name("matt").birthday(LocalDate.now()).build());
     repository.save(Customer.builder().name("bob").birthday(LocalDate.now().plusDays(1)).build());
-    var mary = repository.save(
-        Customer.builder().name("mary").birthday(LocalDate.now().minusDays(1)).build());
+    var mary =
+        repository.save(
+            Customer.builder().name("mary").birthday(LocalDate.now().minusDays(1)).build());
 
-    var criteria = MyCriteria.builder()
-        .birthday(LocalDate.now())
-        .build();
+    var criteria = MyCriteria.builder().birthday(LocalDate.now()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -176,20 +163,30 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Force Or")
   @Test
   void forceOr() {
-    var matt = repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
-    var bob = repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
-            .build());
-    var mary = repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
-            .build());
+    var matt =
+        repository.save(
+            Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob =
+        repository.save(
+            Customer.builder()
+                .name("bob")
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now().plusDays(1))
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now().minusDays(1))
+                .build());
 
-    var criteria = ForceOr.builder()
-        .name(bob.getName())
-        .gender(bob.getGender())
-        .birthday(LocalDate.now())
-        .build();
+    var criteria =
+        ForceOr.builder()
+            .name(bob.getName())
+            .gender(bob.getGender())
+            .birthday(LocalDate.now())
+            .build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -202,20 +199,29 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Force Or 2")
   @Test
   void forceOr2() {
-    var matt = repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
-    var bob = repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
-            .build());
+    var matt =
+        repository.save(
+            Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob =
+        repository.save(
+            Customer.builder()
+                .name("bob")
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now().plusDays(1))
+                .build());
     repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+        Customer.builder()
+            .name("mary")
+            .gender(Gender.FEMALE)
+            .birthday(LocalDate.now().minusDays(1))
             .build());
 
-    var criteria = ForceOr2.builder()
-        .name(bob.getName())
-        .gender(bob.getGender())
-        .birthday(LocalDate.now())
-        .build();
+    var criteria =
+        ForceOr2.builder()
+            .name(bob.getName())
+            .gender(bob.getGender())
+            .birthday(LocalDate.now())
+            .build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -228,20 +234,29 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Force And")
   @Test
   void forceAnd() {
-    var matt = repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var matt =
+        repository.save(
+            Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
     repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+        Customer.builder()
+            .name("bob")
+            .gender(Gender.MALE)
+            .birthday(LocalDate.now().plusDays(1))
             .build());
-    var mary = repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
-            .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now().minusDays(1))
+                .build());
 
-    var criteria = ForceAnd.builder()
-        .name(matt.getName())
-        .gender(mary.getGender())
-        .birthday(LocalDate.now())
-        .build();
+    var criteria =
+        ForceAnd.builder()
+            .name(matt.getName())
+            .gender(mary.getGender())
+            .birthday(LocalDate.now())
+            .build();
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
@@ -260,14 +275,23 @@ class SimpleSpecificationResolverTest {
   @DisplayName("Skip if empty text")
   @Test
   void skipIfEmptyText() {
-    var matt = repository.save(
-        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
-    var bob = repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
-            .build());
-    var mary = repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
-            .build());
+    var matt =
+        repository.save(
+            Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob =
+        repository.save(
+            Customer.builder()
+                .name("bob")
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now().plusDays(1))
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now().minusDays(1))
+                .build());
 
     var criteria = SkipEmptyText.builder().name("").build();
     var spec = mapper.toSpec(criteria, Customer.class);
@@ -285,10 +309,16 @@ class SimpleSpecificationResolverTest {
     repository.save(
         Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
     repository.save(
-        Customer.builder().name("bob").gender(Gender.MALE).birthday(LocalDate.now().plusDays(1))
+        Customer.builder()
+            .name("bob")
+            .gender(Gender.MALE)
+            .birthday(LocalDate.now().plusDays(1))
             .build());
     repository.save(
-        Customer.builder().name("mary").gender(Gender.FEMALE).birthday(LocalDate.now().minusDays(1))
+        Customer.builder()
+            .name("mary")
+            .gender(Gender.FEMALE)
+            .birthday(LocalDate.now().minusDays(1))
             .build());
 
     var criteria = SkipEmptyText.builder().name(" ").build();
@@ -305,8 +335,7 @@ class SimpleSpecificationResolverTest {
   @Data
   public static class MyCriteria {
 
-    @Spec
-    String name;
+    @Spec String name;
 
     @Spec(path = "name")
     Optional<String> opt;
@@ -322,11 +351,9 @@ class SimpleSpecificationResolverTest {
   @Data
   public static class ForceOr {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
 
     @Or
     @Spec(value = After.class, not = true)
@@ -337,15 +364,13 @@ class SimpleSpecificationResolverTest {
   @Data
   public static class ForceOr2 {
 
-    @Spec
-    String name;
+    @Spec String name;
 
     @Or
     @Spec(value = After.class, not = true)
     LocalDate birthday;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
   }
 
   @Or
@@ -353,11 +378,9 @@ class SimpleSpecificationResolverTest {
   @Data
   public static class ForceAnd {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
 
     @And
     @Spec(value = After.class, not = true)
@@ -368,7 +391,6 @@ class SimpleSpecificationResolverTest {
   @Data
   public static class SkipEmptyText {
 
-    @Spec
-    String name;
+    @Spec String name;
   }
 }

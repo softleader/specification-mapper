@@ -38,9 +38,7 @@ public class IsNull<T> extends BooleanSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
     if (getValue()) {
       return builder.isNull(getPath(root));
     }

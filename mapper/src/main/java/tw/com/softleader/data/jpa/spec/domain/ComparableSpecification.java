@@ -29,15 +29,15 @@ import lombok.NonNull;
  */
 abstract class ComparableSpecification<T> extends SimpleSpecification<T> {
 
-  protected ComparableSpecification(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  protected ComparableSpecification(
+      @NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
     if (!(value instanceof Comparable)) {
       throw new TypeMismatchException(value, Comparable.class);
     }
   }
 
-  @SuppressWarnings({ "rawtypes" })
+  @SuppressWarnings({"rawtypes"})
   protected Comparable getValue() {
     return (Comparable) value;
   }

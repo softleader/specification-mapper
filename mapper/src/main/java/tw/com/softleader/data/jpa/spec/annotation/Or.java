@@ -31,6 +31,5 @@ import java.lang.annotation.Target;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.FIELD })
-public @interface Or {
-}
+@Target({ElementType.TYPE, ElementType.FIELD})
+public @interface Or {}

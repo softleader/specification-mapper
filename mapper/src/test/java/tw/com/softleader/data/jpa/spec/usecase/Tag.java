@@ -37,9 +37,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "tag")
 public class Tag {
 
-  @Id
-  @GeneratedValue
-  Long id;
+  @Id @GeneratedValue Long id;
 
   String name;
 }

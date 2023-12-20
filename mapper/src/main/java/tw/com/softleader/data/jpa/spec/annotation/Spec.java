@@ -20,14 +20,12 @@
  */
 package tw.com.softleader.data.jpa.spec.annotation;
 
+import jakarta.persistence.criteria.Path;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import org.springframework.data.jpa.domain.Specification;
-
-import jakarta.persistence.criteria.Path;
 import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
@@ -35,7 +33,7 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
+@Target({ElementType.FIELD})
 public @interface Spec {
 
   /**
@@ -45,9 +43,7 @@ public @interface Spec {
    */
   String path() default "";
 
-  /**
-   * {@code Specification} domain class
-   */
+  /** {@code Specification} domain class */
   Class<? extends SimpleSpecification> value() default Equals.class;
 
   /**

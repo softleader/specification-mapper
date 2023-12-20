@@ -23,7 +23,6 @@ package tw.com.softleader.data.jpa.spec.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,13 +31,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.FluentQuery;
 
 /**
- * This class is meant to ensure that all methods in {@link JpaSpecificationExecutor} are either used or considered in
- * {@link QueryBySpecExecutor}.
+ * This class is meant to ensure that all methods in {@link JpaSpecificationExecutor} are either
+ * used or considered in {@link QueryBySpecExecutor}.
  *
- * <p>
- * <br>
- * If methods in {@link JpaSpecificationExecutor} change in the future, this class will trigger a compilation error,
- * alerting the maintainers that some adjustments are required.
+ * <p><br>
+ * If methods in {@link JpaSpecificationExecutor} change in the future, this class will trigger a
+ * compilation error, alerting the maintainers that some adjustments are required.
  *
  * @author Matt Ho
  */
@@ -79,7 +77,8 @@ record EnsureAllMethodsAreConsidered() implements JpaSpecificationExecutor<Objec
   }
 
   @Override
-  public <S, R> R findBy(Specification<Object> spec, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+  public <S, R> R findBy(
+      Specification<Object> spec, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
     return null;
   }
 }

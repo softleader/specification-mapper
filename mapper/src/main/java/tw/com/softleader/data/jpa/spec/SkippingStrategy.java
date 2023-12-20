@@ -32,7 +32,8 @@ public interface SkippingStrategy {
   /**
    * This method is used to determine whether a given field value should be skipped.
    *
-   * @param fieldValue The field value to be checked. It can be an object of any type, and even null.
+   * @param fieldValue The field value to be checked. It can be an object of any type, and even
+   *     null.
    * @return True if the field value should be skipped, false otherwise.
    */
   boolean shouldSkip(@Nullable Object fieldValue);

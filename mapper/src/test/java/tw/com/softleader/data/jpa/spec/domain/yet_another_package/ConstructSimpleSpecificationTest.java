@@ -23,13 +23,12 @@ package tw.com.softleader.data.jpa.spec.domain.yet_another_package;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
-import org.junit.jupiter.api.Test;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.junit.jupiter.api.Test;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
@@ -38,75 +37,76 @@ class ConstructSimpleSpecificationTest {
   @Test
   void newProtectedConstructorSpec() {
     assertThatNoException()
-        .isThrownBy(() -> SimpleSpecification.builder()
-            .context(noopContext())
-            .domainClass(ProtectedConstructorSpec.class)
-            .path("")
-            .value(new Object())
-            .build());
+        .isThrownBy(
+            () ->
+                SimpleSpecification.builder()
+                    .context(noopContext())
+                    .domainClass(ProtectedConstructorSpec.class)
+                    .path("")
+                    .value(new Object())
+                    .build());
   }
 
   @Test
   void newDefaultConstructorSpec() {
     assertThatNoException()
-        .isThrownBy(() -> SimpleSpecification.builder()
-            .context(noopContext())
-            .domainClass(DefaultConstructorSpec.class)
-            .path("")
-            .value(new Object())
-            .build());
+        .isThrownBy(
+            () ->
+                SimpleSpecification.builder()
+                    .context(noopContext())
+                    .domainClass(DefaultConstructorSpec.class)
+                    .path("")
+                    .value(new Object())
+                    .build());
   }
 
   @Test
   void newPrivateConstructorSpec() {
     assertThatNoException()
-        .isThrownBy(() -> SimpleSpecification.builder()
-            .context(noopContext())
-            .domainClass(PrivateConstructorSpec.class)
-            .path("")
-            .value(new Object())
-            .build());
+        .isThrownBy(
+            () ->
+                SimpleSpecification.builder()
+                    .context(noopContext())
+                    .domainClass(PrivateConstructorSpec.class)
+                    .path("")
+                    .value(new Object())
+                    .build());
   }
 
   @Test
   void newDefaultClassSpec() {
     assertThatNoException()
-        .isThrownBy(() -> SimpleSpecification.builder()
-            .context(noopContext())
-            .domainClass(DefaultClassSpec.class)
-            .path("")
-            .value(new Object())
-            .build());
+        .isThrownBy(
+            () ->
+                SimpleSpecification.builder()
+                    .context(noopContext())
+                    .domainClass(DefaultClassSpec.class)
+                    .path("")
+                    .value(new Object())
+                    .build());
   }
 
   public static class ProtectedConstructorSpec extends SimpleSpecification<Object> {
 
     protected ProtectedConstructorSpec(
-        @NonNull Context context, @NonNull String path,
-        @NonNull Object value) {
+        @NonNull Context context, @NonNull String path, @NonNull Object value) {
       super(context, path, value);
     }
 
     @Override
-    public Predicate toPredicate(Root root,
-        CriteriaQuery query,
-        CriteriaBuilder criteriaBuilder) {
+    public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
       return null;
     }
   }
 
   public static class DefaultConstructorSpec extends SimpleSpecification<Object> {
 
-    DefaultConstructorSpec(
-        @NonNull Context context, @NonNull String path,
-        @NonNull Object value) {
+    DefaultConstructorSpec(@NonNull Context context, @NonNull String path, @NonNull Object value) {
       super(context, path, value);
     }
 
     @Override
-    public Predicate toPredicate(Root root,
-        CriteriaQuery query,
-        CriteriaBuilder criteriaBuilder) {
+    public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
       return null;
     }
   }
@@ -114,15 +114,12 @@ class ConstructSimpleSpecificationTest {
   public static class PrivateConstructorSpec extends SimpleSpecification<Object> {
 
     private PrivateConstructorSpec(
-        @NonNull Context context, @NonNull String path,
-        @NonNull Object value) {
+        @NonNull Context context, @NonNull String path, @NonNull Object value) {
       super(context, path, value);
     }
 
     @Override
-    public Predicate toPredicate(Root root,
-        CriteriaQuery query,
-        CriteriaBuilder criteriaBuilder) {
+    public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
       return null;
     }
   }
@@ -130,16 +127,12 @@ class ConstructSimpleSpecificationTest {
 
 class DefaultClassSpec extends SimpleSpecification<Object> {
 
-  private DefaultClassSpec(
-      @NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  private DefaultClassSpec(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 
   @Override
-  public Predicate toPredicate(Root root,
-      CriteriaQuery query,
-      CriteriaBuilder criteriaBuilder) {
+  public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
     return null;
   }
 }

@@ -37,9 +37,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "badges")
 public class Badge {
 
-  @Id
-  @GeneratedValue
-  Long id;
+  @Id @GeneratedValue Long id;
 
   String badgeType;
 }

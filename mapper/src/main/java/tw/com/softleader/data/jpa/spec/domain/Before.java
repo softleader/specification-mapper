@@ -29,8 +29,7 @@ import lombok.NonNull;
  */
 public class Before<T> extends LessThan<T> {
 
-  public Before(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  public Before(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 }

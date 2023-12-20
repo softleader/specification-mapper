@@ -26,10 +26,8 @@ import static java.util.Optional.ofNullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import org.springframework.lang.Nullable;
-
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 

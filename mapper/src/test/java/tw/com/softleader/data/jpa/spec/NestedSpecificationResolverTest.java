@@ -25,15 +25,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
@@ -48,8 +46,7 @@ import tw.com.softleader.data.jpa.spec.usecase.Gender;
 @IntegrationTest
 class NestedSpecificationResolverTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
@@ -61,27 +58,36 @@ class NestedSpecificationResolverTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-        .resolver(codec -> nestedResolver = spy(new NestedSpecificationResolver(codec)))
-        .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
-        .build();
+    mapper =
+        SpecMapper.builder()
+            .resolver(codec -> nestedResolver = spy(new NestedSpecificationResolver(codec)))
+            .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
+            .build();
 
-    matt = repository.save(Customer.builder()
-        .name("matt")
-        .gold(true)
-        .gender(Gender.MALE)
-        .birthday(LocalDate.now())
-        .build());
-    bob = repository.save(Customer.builder().name("bob")
-        .gold(false)
-        .gender(Gender.MALE)
-        .birthday(LocalDate.now().plusDays(1))
-        .build());
-    mary = repository.save(Customer.builder().name("mary")
-        .gold(true)
-        .gender(Gender.FEMALE)
-        .birthday(LocalDate.now())
-        .build());
+    matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .gold(true)
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now())
+                .build());
+    bob =
+        repository.save(
+            Customer.builder()
+                .name("bob")
+                .gold(false)
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now().plusDays(1))
+                .build());
+    mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gold(true)
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now())
+                .build());
 
     // Data will be:
     // matt, gold,     male,   today is birthday
@@ -92,68 +98,72 @@ class NestedSpecificationResolverTest {
   @DisplayName("全部都用 AND 組合多個條件")
   @Test
   void allAnd() {
-    var criteria = AllAnd.builder()
-        .name(matt.getName())
-        .nestedAnd(new NestedAnd(matt.getName(), new NestedInNestedAnd(matt.getName())))
-        .build();
+    var criteria =
+        AllAnd.builder()
+            .name(matt.getName())
+            .nestedAnd(new NestedAnd(matt.getName(), new NestedInNestedAnd(matt.getName())))
+            .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = inOrder(
-        nestedResolver,
-        simpleResolver);
-    inOrder.verify(simpleResolver, times(1))
+    var inOrder = inOrder(nestedResolver, simpleResolver);
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(nestedResolver, times(1))
+    inOrder
+        .verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @DisplayName("全部都用 OR 組合多個條件")
   @Test
   void allOr() {
-    var criteria = AllOr.builder()
-        .name(matt.getName())
-        .nestedOr(
-            new NestedOr(bob.getName(), new NestedInNestedOr(mary.getName())))
-        .build();
+    var criteria =
+        AllOr.builder()
+            .name(matt.getName())
+            .nestedOr(new NestedOr(bob.getName(), new NestedInNestedOr(mary.getName())))
+            .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
-    var inOrder = inOrder(
-        nestedResolver,
-        simpleResolver);
-    inOrder.verify(simpleResolver, times(1))
+    var inOrder = inOrder(nestedResolver, simpleResolver);
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(nestedResolver, times(1))
+    inOrder
+        .verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @DisplayName("混合 AND 或 OR 組合多個條件")
   @Test
   void mix() {
-    var criteria = Mix.builder()
-        .name(matt.getName())
-        .nestedMix(
-            NestedMix.builder()
-                .gender(bob.getGender())
-                .birthday(bob.getBirthday())
-                .nin(
-                    NestedInNestedMix.builder()
-                        .gold(mary.isGold())
-                        .gender(bob.getGender())
-                        .build())
-                .build())
-        .build();
+    var criteria =
+        Mix.builder()
+            .name(matt.getName())
+            .nestedMix(
+                NestedMix.builder()
+                    .gender(bob.getGender())
+                    .birthday(bob.getBirthday())
+                    .nin(
+                        NestedInNestedMix.builder()
+                            .gold(mary.isGold())
+                            .gender(bob.getGender())
+                            .build())
+                    .build())
+            .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     System.out.println(spec);
@@ -161,70 +171,70 @@ class NestedSpecificationResolverTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = inOrder(
-        nestedResolver,
-        simpleResolver);
-    inOrder.verify(simpleResolver, times(1))
+    var inOrder = inOrder(nestedResolver, simpleResolver);
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(nestedResolver, times(1))
+    inOrder
+        .verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @DisplayName("強制使用 Or 串連")
   @Test
   void forceOr() {
-    var criteria = ForceOr.builder()
-        .name("m")
-        .gold(true)
-        .nestedOr(NestedForceOr.builder()
-            .birthday(LocalDate.now())
-            .gender(Gender.MALE)
-            .build())
-        .build();
+    var criteria =
+        ForceOr.builder()
+            .name("m")
+            .gold(true)
+            .nestedOr(NestedForceOr.builder().birthday(LocalDate.now()).gender(Gender.MALE).build())
+            .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, mary, bob);
 
-    var inOrder = inOrder(
-        nestedResolver,
-        simpleResolver);
-    inOrder.verify(simpleResolver, times(1))
+    var inOrder = inOrder(nestedResolver, simpleResolver);
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(nestedResolver, times(1))
+    inOrder
+        .verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
   @DisplayName("強制使用 And 串連")
   @Test
   void forceAnd() {
-    var criteria = ForceAnd.builder()
-        .name("m")
-        .gold(true)
-        .nestedAnd(NestedForceAnd.builder()
-            .birthday(LocalDate.now())
-            .gender(Gender.MALE)
-            .build())
-        .build();
+    var criteria =
+        ForceAnd.builder()
+            .name("m")
+            .gold(true)
+            .nestedAnd(
+                NestedForceAnd.builder().birthday(LocalDate.now()).gender(Gender.MALE).build())
+            .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
-    var inOrder = inOrder(
-        nestedResolver,
-        simpleResolver);
-    inOrder.verify(simpleResolver, times(1))
+    var inOrder = inOrder(nestedResolver, simpleResolver);
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(nestedResolver, times(1))
+    inOrder
+        .verify(nestedResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
-    inOrder.verify(simpleResolver, times(1))
+    inOrder
+        .verify(simpleResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
@@ -236,12 +246,9 @@ class NestedSpecificationResolverTest {
     @Spec(StartingWith.class)
     String name;
 
-    @Spec
-    Boolean gold;
+    @Spec Boolean gold;
 
-    @And
-    @NestedSpec
-    NestedForceAnd nestedAnd;
+    @And @NestedSpec NestedForceAnd nestedAnd;
   }
 
   @Or
@@ -252,8 +259,7 @@ class NestedSpecificationResolverTest {
     @Spec(After.class)
     LocalDate birthday;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
   }
 
   @And
@@ -264,12 +270,9 @@ class NestedSpecificationResolverTest {
     @Spec(StartingWith.class)
     String name;
 
-    @Spec
-    Boolean gold;
+    @Spec Boolean gold;
 
-    @Or
-    @NestedSpec
-    NestedForceOr nestedOr;
+    @Or @NestedSpec NestedForceOr nestedOr;
   }
 
   @And
@@ -280,19 +283,16 @@ class NestedSpecificationResolverTest {
     @Spec(After.class)
     LocalDate birthday;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
   }
 
   @Builder
   @Data
   public static class AllAnd {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @NestedSpec
-    NestedAnd nestedAnd;
+    @NestedSpec NestedAnd nestedAnd;
   }
 
   @And
@@ -300,11 +300,9 @@ class NestedSpecificationResolverTest {
   @Data
   public static class NestedAnd {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @NestedSpec
-    NestedInNestedAnd nin;
+    @NestedSpec NestedInNestedAnd nin;
   }
 
   @And
@@ -312,8 +310,7 @@ class NestedSpecificationResolverTest {
   @AllArgsConstructor
   public static class NestedInNestedAnd {
 
-    @NestedSpec
-    String name;
+    @NestedSpec String name;
   }
 
   @Builder
@@ -321,11 +318,9 @@ class NestedSpecificationResolverTest {
   @Or
   public static class AllOr {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @NestedSpec
-    NestedOr nestedOr;
+    @NestedSpec NestedOr nestedOr;
   }
 
   @Or
@@ -333,11 +328,9 @@ class NestedSpecificationResolverTest {
   @Data
   public static class NestedOr {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @NestedSpec
-    NestedInNestedOr nin;
+    @NestedSpec NestedInNestedOr nin;
   }
 
   @Or
@@ -345,19 +338,16 @@ class NestedSpecificationResolverTest {
   @AllArgsConstructor
   public static class NestedInNestedOr {
 
-    @Spec
-    String name;
+    @Spec String name;
   }
 
   @Builder
   @Data
   public static class Mix {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @NestedSpec
-    NestedMix nestedMix;
+    @NestedSpec NestedMix nestedMix;
   }
 
   @Or
@@ -365,14 +355,11 @@ class NestedSpecificationResolverTest {
   @Data
   public static class NestedMix {
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
 
-    @Spec
-    LocalDate birthday;
+    @Spec LocalDate birthday;
 
-    @NestedSpec
-    NestedInNestedMix nin;
+    @NestedSpec NestedInNestedMix nin;
   }
 
   @And
@@ -380,11 +367,8 @@ class NestedSpecificationResolverTest {
   @Data
   public static class NestedInNestedMix {
 
-    @Spec
-    boolean gold;
+    @Spec boolean gold;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
   }
-
 }

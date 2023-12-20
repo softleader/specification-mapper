@@ -21,10 +21,8 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
 import java.util.Collection;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
@@ -36,8 +34,7 @@ public class Conjunction<T> extends CompoundSpecification<T> {
   }
 
   @Override
-  protected Specification<T> combine(Specification<T> result,
-      Specification<T> element) {
+  protected Specification<T> combine(Specification<T> result, Specification<T> element) {
     if (element instanceof Or) {
       return result.or(element);
     }
