@@ -20,13 +20,12 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import org.springframework.data.jpa.domain.Specification;
-
 import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
@@ -35,15 +34,10 @@ import lombok.ToString.Exclude;
 @RequiredArgsConstructor
 public class Join<T> implements Specification<T> {
 
-  @Exclude
-  @NonNull
-  private final transient Context context;
-  @NonNull
-  private final String pathToJoinOn;
-  @NonNull
-  private final String alias;
-  @NonNull
-  private final JoinType joinType;
+  @Exclude @NonNull private final transient Context context;
+  @NonNull private final String pathToJoinOn;
+  @NonNull private final String alias;
+  @NonNull private final JoinType joinType;
   private final boolean distinct;
 
   @Override
@@ -64,9 +58,14 @@ public class Join<T> implements Specification<T> {
     var joined = context.join().get(extractedAlias, root);
     if (joined == null) {
       throw new IllegalArgumentException(
-          "Join definition with alias: '" + extractedAlias + "' not found! " +
-              "Make sure that join with the alias '" + extractedAlias
-              + "' is defined before the join with path: '" + pathToJoinOn + "'");
+          "Join definition with alias: '"
+              + extractedAlias
+              + "' not found! "
+              + "Make sure that join with the alias '"
+              + extractedAlias
+              + "' is defined before the join with path: '"
+              + pathToJoinOn
+              + "'");
     }
 
     var extractedPathToJoin = byDot[1];

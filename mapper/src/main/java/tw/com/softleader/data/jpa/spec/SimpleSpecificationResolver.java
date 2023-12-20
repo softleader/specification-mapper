@@ -21,15 +21,13 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Optional.of;
-
 import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -49,15 +47,19 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   }
 
   @Override
-  public Specification<Object> buildSpecification(@NonNull Context context,
-      @NonNull Databind databind) {
+  public Specification<Object> buildSpecification(
+      @NonNull Context context, @NonNull Databind databind) {
     var def = databind.getField().getAnnotation(Spec.class);
     var ast = context.get(CTX_AST).map(AST.class::cast).get();
     var depth = (int) context.get(CTX_DEPTH).get();
-    var built = databind.getFieldValue()
-        .map(value -> buildSpecification(context, databind, def, value))
-        .orElse(null);
-    ast.add(depth, "|  +-[%s.%s]: @Spec(value=%s, path=%s, not=%s) -> %s",
+    var built =
+        databind
+            .getFieldValue()
+            .map(value -> buildSpecification(context, databind, def, value))
+            .orElse(null);
+    ast.add(
+        depth,
+        "|  +-[%s.%s]: @Spec(value=%s, path=%s, not=%s) -> %s",
         databind.getTarget().getClass().getSimpleName(),
         databind.getField().getName(),
         def.value().getSimpleName(),
@@ -67,18 +69,16 @@ class SimpleSpecificationResolver implements SpecificationResolver {
     return built;
   }
 
-  private Specification<Object> buildSpecification(@NonNull Context context,
-      @NonNull Databind databind, @NonNull Spec def,
-      Object value) {
-    var path = of(def.path())
-        .filter(StringUtils::hasText)
-        .orElseGet(databind.getField()::getName);
-    Specification<Object> spec = SimpleSpecification.builder()
-        .context(context)
-        .domainClass(def.value())
-        .path(path)
-        .value(value)
-        .build();
+  private Specification<Object> buildSpecification(
+      @NonNull Context context, @NonNull Databind databind, @NonNull Spec def, Object value) {
+    var path = of(def.path()).filter(StringUtils::hasText).orElseGet(databind.getField()::getName);
+    Specification<Object> spec =
+        SimpleSpecification.builder()
+            .context(context)
+            .domainClass(def.value())
+            .path(path)
+            .value(value)
+            .build();
     if (def.not()) {
       spec = new Not<>(spec);
     }

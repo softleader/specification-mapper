@@ -25,11 +25,9 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Objects;
 import java.util.stream.Stream;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
-
-import lombok.extern.slf4j.Slf4j;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
@@ -48,19 +46,18 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
   }
 
   @Override
-  public Specification<Object> buildSpecification(@NonNull Context context,
-      @NonNull Databind databind) {
+  public Specification<Object> buildSpecification(
+      @NonNull Context context, @NonNull Databind databind) {
     var handled = handledKey(databind);
     if (context.containsKey(handled)) {
       log.trace("Already handled [{}], skipping", handled);
       return null;
     }
     try {
-      var specs = Stream.concat(
-          joinFetchDef(databind.getTarget()),
-          joinFetchesDef(databind.getTarget()))
-          .filter(Objects::nonNull)
-          .collect(toList());
+      var specs =
+          Stream.concat(joinFetchDef(databind.getTarget()), joinFetchesDef(databind.getTarget()))
+              .filter(Objects::nonNull)
+              .collect(toList());
       if (specs.size() == 1) {
         return specs.get(0);
       }
@@ -74,8 +71,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
     if (!obj.getClass().isAnnotationPresent(JoinFetches.class)) {
       return Stream.empty();
     }
-    return stream(obj.getClass().getAnnotation(JoinFetches.class).value())
-        .map(this::newJoinFetch);
+    return stream(obj.getClass().getAnnotation(JoinFetches.class).value()).map(this::newJoinFetch);
   }
 
   private Stream<Specification<Object>> joinFetchDef(Object obj) {
@@ -87,13 +83,12 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
 
   Specification<Object> newJoinFetch(@NonNull JoinFetch def) {
     return new tw.com.softleader.data.jpa.spec.domain.JoinFetch<>(
-        def.paths(),
-        def.joinType(),
-        def.distinct());
+        def.paths(), def.joinType(), def.distinct());
   }
 
   private String handledKey(Databind databind) {
-    return String.join("/",
+    return String.join(
+        "/",
         JoinFetchSpecificationResolver.class.getName(),
         databind.getField().getDeclaringClass().getName(),
         "" + databind.getTarget().hashCode());

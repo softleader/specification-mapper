@@ -23,13 +23,12 @@ package tw.com.softleader.data.jpa.spec;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -41,8 +40,7 @@ import tw.com.softleader.data.jpa.spec.usecase.Tag;
 @IntegrationTest
 class JoinFetchSpecificationResolverTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   SpecMapper mapper;
   JoinFetchSpecificationResolver joinFetchResolver;
@@ -50,30 +48,29 @@ class JoinFetchSpecificationResolverTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-        .resolver(joinFetchResolver = spy(new JoinFetchSpecificationResolver()))
-        .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
-        .build();
+    mapper =
+        SpecMapper.builder()
+            .resolver(joinFetchResolver = spy(new JoinFetchSpecificationResolver()))
+            .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
+            .build();
   }
 
   @DisplayName("單一層級的 Join Fetch")
   @Test
   void joinFetch() {
-    var matt = repository.save(Customer.builder().name("matt")
-        .order(Order.builder()
-            .itemName("Pizza")
-            .build())
-        .build());
-    repository.save(Customer.builder().name("mary")
-        .order(Order.builder()
-            .itemName("Hamburger")
-            .build())
-        .build());
-    repository.save(Customer.builder().name("bob")
-        .order(Order.builder()
-            .itemName("Coke")
-            .build())
-        .build());
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(Order.builder().itemName("Pizza").build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .order(Order.builder().itemName("Hamburger").build())
+            .build());
+    repository.save(
+        Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
 
     var spec = mapper.toSpec(new CustomerOrder(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
@@ -84,29 +81,34 @@ class JoinFetchSpecificationResolverTest {
   @DisplayName("多層級的 Join Fetch")
   @Test
   void joinFetches() {
-    var matt = repository.save(Customer.builder().name("matt")
-        .order(Order.builder()
-            .itemName("Pizza").tag(Tag.builder()
-                .name("Food")
-                .build())
-            .build())
-        .build());
-    repository.save(Customer.builder().name("mary")
-        .order(Order.builder()
-            .itemName("Hamburger")
-            .tag(Tag.builder()
-                .name("Food")
-                .build())
-            .build())
-        .build());
-    repository.save(Customer.builder().name("bob")
-        .order(Order.builder()
-            .itemName("Coke")
-            .tag(Tag.builder()
-                .name("Beverage")
-                .build())
-            .build())
-        .build());
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(
+                    Order.builder()
+                        .itemName("Pizza")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .order(
+                Order.builder()
+                    .itemName("Hamburger")
+                    .tag(Tag.builder().name("Food").build())
+                    .build())
+            .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .order(
+                Order.builder()
+                    .itemName("Coke")
+                    .tag(Tag.builder().name("Beverage").build())
+                    .build())
+            .build());
 
     var spec = mapper.toSpec(new CustomerOrderTag(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
@@ -119,20 +121,14 @@ class JoinFetchSpecificationResolverTest {
   @Data
   public static class CustomerOrder {
 
-    @Spec
-    String name;
+    @Spec String name;
   }
 
-  @JoinFetches({
-      @JoinFetch(paths = "orders"),
-      @JoinFetch(paths = "orders.tags")
-  })
+  @JoinFetches({@JoinFetch(paths = "orders"), @JoinFetch(paths = "orders.tags")})
   @Data
   @AllArgsConstructor
   public static class CustomerOrderTag {
 
-    @Spec
-    String name;
+    @Spec String name;
   }
-
 }

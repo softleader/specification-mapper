@@ -22,15 +22,14 @@ package tw.com.softleader.data.jpa.spec.domain;
 
 import static org.springframework.data.jpa.domain.Specification.not;
 
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 
 /**
  * Negates the given Specification.
@@ -47,13 +46,10 @@ import lombok.ToString;
 @AllArgsConstructor
 public class Not<T> implements Specification<T> {
 
-  @Nullable
-  final Specification<T> spec;
+  @Nullable final Specification<T> spec;
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
     return not(spec).toPredicate(root, query, builder);
   }
 }

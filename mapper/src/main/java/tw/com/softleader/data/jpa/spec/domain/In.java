@@ -44,7 +44,7 @@ public class In<T> extends SimpleSpecification<T> {
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    return getPath(root).in(
-        stream(((Iterable<?>) value).spliterator(), false).toArray(Object[]::new));
+    return getPath(root)
+        .in(stream(((Iterable<?>) value).spliterator(), false).toArray(Object[]::new));
   }
 }

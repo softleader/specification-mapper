@@ -29,8 +29,8 @@ import lombok.NonNull;
  */
 abstract class BooleanSpecification<T> extends SimpleSpecification<T> {
 
-  protected BooleanSpecification(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  protected BooleanSpecification(
+      @NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
     if (!(value instanceof Boolean)) {
       throw new TypeMismatchException(value, Boolean.class);

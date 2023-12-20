@@ -22,7 +22,6 @@ package tw.com.softleader.data.jpa.spec;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
-
 import org.springframework.lang.NonNull;
 
 /**
@@ -32,20 +31,14 @@ import org.springframework.lang.NonNull;
  */
 public interface Databind {
 
-  /**
-   * 欄位所在的物件
-   */
+  /** 欄位所在的物件 */
   @NonNull
   Object getTarget();
 
-  /**
-   * 欄位
-   */
+  /** 欄位 */
   @NonNull
   Field getField();
 
-  /**
-   * 欄位值
-   */
+  /** 欄位值 */
   Optional<Object> getFieldValue();
 }

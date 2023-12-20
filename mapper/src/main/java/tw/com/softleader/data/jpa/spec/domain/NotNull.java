@@ -40,9 +40,7 @@ public class NotNull<T> extends IsNull<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
     return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
   }
 }

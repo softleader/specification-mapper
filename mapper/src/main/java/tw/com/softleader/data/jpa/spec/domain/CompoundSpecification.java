@@ -20,17 +20,15 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Collection;
-import java.util.StringJoiner;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.Collection;
+import java.util.StringJoiner;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
@@ -38,13 +36,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 abstract class CompoundSpecification<T> implements Specification<T> {
 
-  @NonNull
-  protected final transient Collection<Specification<T>> specs;
+  @NonNull protected final transient Collection<Specification<T>> specs;
 
   @Override
-  public Predicate toPredicate(Root root,
-      CriteriaQuery query,
-      CriteriaBuilder builder) {
+  public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder builder) {
     return specs.stream()
         .reduce(this::combine)
         .map(spec -> spec.toPredicate(root, query, builder))
@@ -55,9 +50,7 @@ abstract class CompoundSpecification<T> implements Specification<T> {
    * @param result 到目前 Combine 的結果
    * @param element 下一個元素
    */
-  protected abstract Specification<T> combine(
-      Specification<T> result,
-      Specification<T> element);
+  protected abstract Specification<T> combine(Specification<T> result, Specification<T> element);
 
   @Override
   public String toString() {

@@ -23,11 +23,9 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Optional.ofNullable;
 
 import java.util.Optional;
-
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
@@ -63,8 +61,8 @@ public interface SpecCodec {
    * @return empty if non any {@code Specification} was mapped
    */
   @NonNull
-  default <T> Optional<Specification<T>> trySpec(@Nullable T rootObject,
-      @Nullable Class<T> rootType) {
+  default <T> Optional<Specification<T>> trySpec(
+      @Nullable T rootObject, @Nullable Class<T> rootType) {
     return ofNullable(toSpec(rootObject, rootType));
   }
 
@@ -72,8 +70,8 @@ public interface SpecCodec {
    * @return empty if non any {@code Specification} was mapped
    */
   @NonNull
-  default Optional<Specification<Object>> trySpec(@NonNull Context context,
-      @Nullable Object rootObject) {
+  default Optional<Specification<Object>> trySpec(
+      @NonNull Context context, @Nullable Object rootObject) {
     return ofNullable(toSpec(context, rootObject));
   }
 
@@ -81,8 +79,8 @@ public interface SpecCodec {
    * @return empty if non any {@code Specification} was mapped
    */
   @NonNull
-  default <T> Optional<Specification<T>> trySpec(@NonNull Context context, @Nullable T rootObject,
-      @Nullable Class<T> rootType) {
+  default <T> Optional<Specification<T>> trySpec(
+      @NonNull Context context, @Nullable T rootObject, @Nullable Class<T> rootType) {
     return ofNullable(toSpec(context, rootObject, rootType));
   }
 
@@ -97,8 +95,8 @@ public interface SpecCodec {
    */
   @Nullable
   @SuppressWarnings("unchecked")
-  default <T> Specification<T> toSpec(@NonNull Context context, @Nullable Object rootObject,
-      @Nullable Class<T> rootType) {
+  default <T> Specification<T> toSpec(
+      @NonNull Context context, @Nullable Object rootObject, @Nullable Class<T> rootType) {
     return (Specification<T>) toSpec(context, rootObject);
   }
 }

@@ -35,9 +35,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class School {
 
-  @Id
-  @GeneratedValue
-  Long id;
+  @Id @GeneratedValue Long id;
   String name;
 
   String city;

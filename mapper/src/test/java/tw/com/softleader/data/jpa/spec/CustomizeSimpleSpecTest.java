@@ -21,26 +21,23 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
-import java.time.LocalDateTime;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
@@ -51,8 +48,7 @@ import tw.com.softleader.data.jpa.spec.usecase.Gender;
 @IntegrationTest
 class CustomizeSimpleSpecTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   SpecMapper mapper;
   SimpleSpecificationResolver simpleResolver;
@@ -62,19 +58,49 @@ class CustomizeSimpleSpecTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-        .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
-        .build();
+    mapper =
+        SpecMapper.builder()
+            .resolver(simpleResolver = spy(SimpleSpecificationResolver.class))
+            .build();
 
-    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now())
-        .build());
-    matt = save(Customer.builder().name("matt").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now()).build());
-    bob = save(Customer.builder().name("bob").gender(Gender.MALE).createdTime(LocalDateTime.now())
-        .build());
-    save(Customer.builder().name("mary").gender(Gender.FEMALE).createdTime(LocalDateTime.now())
-        .build());
+    save(
+        Customer.builder()
+            .name("matt")
+            .gender(Gender.MALE)
+            .createdTime(LocalDateTime.now())
+            .build());
+    save(
+        Customer.builder()
+            .name("matt")
+            .gender(Gender.MALE)
+            .createdTime(LocalDateTime.now())
+            .build());
+    matt =
+        save(
+            Customer.builder()
+                .name("matt")
+                .gender(Gender.MALE)
+                .createdTime(LocalDateTime.now())
+                .build());
+    save(
+        Customer.builder()
+            .name("bob")
+            .gender(Gender.MALE)
+            .createdTime(LocalDateTime.now())
+            .build());
+    bob =
+        save(
+            Customer.builder()
+                .name("bob")
+                .gender(Gender.MALE)
+                .createdTime(LocalDateTime.now())
+                .build());
+    save(
+        Customer.builder()
+            .name("mary")
+            .gender(Gender.FEMALE)
+            .createdTime(LocalDateTime.now())
+            .build());
   }
 
   @SneakyThrows
@@ -96,8 +122,7 @@ class CustomizeSimpleSpecTest {
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
-    verify(simpleResolver, times(2))
-        .buildSpecification(any(Context.class), any(Databind.class));
+    verify(simpleResolver, times(2)).buildSpecification(any(Context.class), any(Databind.class));
   }
 
   public static class MaxCustomerCreatedTime extends SimpleSpecification<Customer> {
@@ -107,13 +132,12 @@ class CustomizeSimpleSpecTest {
     }
 
     @Override
-    public Predicate toPredicate(Root<Customer> root,
-        CriteriaQuery<?> query,
-        CriteriaBuilder builder) {
+    public Predicate toPredicate(
+        Root<Customer> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
       var subquery = query.subquery(LocalDateTime.class);
       var subroot = subquery.from(Customer.class);
-      subquery.select(
-          builder.greatest(subroot.get("createdTime").as(LocalDateTime.class)))
+      subquery
+          .select(builder.greatest(subroot.get("createdTime").as(LocalDateTime.class)))
           .where(builder.equal(root.get((String) value), subroot.get((String) value)));
       return builder.equal(root.get("createdTime"), subquery);
     }
@@ -123,8 +147,7 @@ class CustomizeSimpleSpecTest {
   @Data
   public static class MyCriteria {
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
 
     @Spec(MaxCustomerCreatedTime.class)
     String simpleMaxBy;

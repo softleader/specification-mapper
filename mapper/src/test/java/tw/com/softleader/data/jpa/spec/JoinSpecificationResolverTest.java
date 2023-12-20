@@ -24,15 +24,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
 import java.util.Collection;
-
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -45,8 +43,7 @@ import tw.com.softleader.data.jpa.spec.usecase.Tag;
 @IntegrationTest
 class JoinSpecificationResolverTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   SpecMapper mapper;
   JoinSpecificationResolver joinResolver;
@@ -54,35 +51,32 @@ class JoinSpecificationResolverTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-        .resolver(joinResolver = spy(new JoinSpecificationResolver()))
-        .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
-        .build();
+    mapper =
+        SpecMapper.builder()
+            .resolver(joinResolver = spy(new JoinSpecificationResolver()))
+            .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
+            .build();
   }
 
   @DisplayName("單一層級的 Join")
   @Test
   void join() {
-    var matt = repository.save(Customer.builder().name("matt")
-        .order(Order.builder()
-            .itemName("Pizza")
-            .build())
-        .build());
-    var mary = repository.save(Customer.builder().name("mary")
-        .order(Order.builder()
-            .itemName("Hamburger")
-            .build())
-        .build());
-    repository.save(Customer.builder().name("bob")
-        .order(Order.builder()
-            .itemName("Coke")
-            .build())
-        .build());
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(Order.builder().itemName("Pizza").build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(Order.builder().itemName("Hamburger").build())
+                .build());
+    repository.save(
+        Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
 
-    var criteria = CustomerOrder.builder()
-        .item("Pizza")
-        .item("Hamburger")
-        .build();
+    var criteria = CustomerOrder.builder().item("Pizza").item("Hamburger").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
@@ -93,33 +87,37 @@ class JoinSpecificationResolverTest {
   @DisplayName("多層級的 Join")
   @Test
   void joins() {
-    var matt = repository.save(Customer.builder().name("matt")
-        .order(Order.builder()
-            .itemName("Pizza").tag(Tag.builder()
-                .name("Food")
-                .build())
-            .build())
-        .build());
-    var mary = repository.save(Customer.builder().name("mary")
-        .order(Order.builder()
-            .itemName("Hamburger")
-            .tag(Tag.builder()
-                .name("Food")
-                .build())
-            .build())
-        .build());
-    repository.save(Customer.builder().name("bob")
-        .order(Order.builder()
-            .itemName("Coke")
-            .tag(Tag.builder()
-                .name("Beverage")
-                .build())
-            .build())
-        .build());
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(
+                    Order.builder()
+                        .itemName("Pizza")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(
+                    Order.builder()
+                        .itemName("Hamburger")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .order(
+                Order.builder()
+                    .itemName("Coke")
+                    .tag(Tag.builder().name("Beverage").build())
+                    .build())
+            .build());
 
-    var criteria = CustomerOrder.builder()
-        .tag("Food")
-        .build();
+    var criteria = CustomerOrder.builder().tag("Food").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
@@ -137,12 +135,8 @@ class JoinSpecificationResolverTest {
     Collection<String> items;
 
     @Singular
-    @Joins({
-        @Join(path = "orders", alias = "o"),
-        @Join(path = "o.tags", alias = "t")
-    })
+    @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
     @Spec(path = "t.name", value = In.class)
     Collection<String> tags;
   }
-
 }

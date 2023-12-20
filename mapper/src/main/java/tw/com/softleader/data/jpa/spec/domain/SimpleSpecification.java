@@ -21,18 +21,15 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
 import static java.util.Optional.ofNullable;
-
 import static org.springframework.util.ReflectionUtils.accessibleConstructor;
-
-import java.util.StringJoiner;
-
-import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import java.util.StringJoiner;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * To constraint the constructor, the implementations must provide accessible constructor.
@@ -45,8 +42,8 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
   protected final String path;
   protected final transient Object value;
 
-  protected SimpleSpecification(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  protected SimpleSpecification(
+      @NonNull Context context, @NonNull String path, @NonNull Object value) {
     this.context = context;
     this.path = path;
     this.value = value;
@@ -71,9 +68,10 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
     Path<?> expr = null;
     for (String field : split) {
       if (expr == null) {
-        expr = ofNullable(context.join().get(field, root))
-            .map(joined -> (Path<T>) joined)
-            .orElseGet(() -> root.get(field));
+        expr =
+            ofNullable(context.join().get(field, root))
+                .map(joined -> (Path<T>) joined)
+                .orElseGet(() -> root.get(field));
         continue;
       }
       expr = expr.get(field);

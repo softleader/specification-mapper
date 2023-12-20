@@ -24,10 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 import java.time.LocalDate;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
@@ -35,8 +33,7 @@ import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 @IntegrationTest
 class AfterTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   @Test
   void test() {

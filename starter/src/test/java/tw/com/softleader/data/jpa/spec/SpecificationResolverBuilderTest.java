@@ -25,6 +25,8 @@ import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,9 +38,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
@@ -50,8 +49,7 @@ class SpecificationResolverBuilderTest {
   static SpecificationResolverBuilder myBuilder;
   static SpecificationResolver myResolver;
 
-  @Autowired
-  SpecMapper mapper;
+  @Autowired SpecMapper mapper;
 
   @BeforeAll
   static void setup() {

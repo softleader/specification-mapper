@@ -20,10 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
-
-import lombok.NonNull;
 
 /**
  * @author Matt Ho
@@ -31,19 +30,23 @@ import lombok.NonNull;
 public interface ASTNode {
 
   default void preVisit(@NonNull SpecInvocation node) {
-    node.getAst().add(node.getDepth(), "|  +-[%s.%s]: %s (%s)",
-        node.getTargetType().getSimpleName(),
-        node.getFieldName(),
-        node.getFieldType().getName(),
-        node.getResolverType().getSimpleName());
+    node.getAst()
+        .add(
+            node.getDepth(),
+            "|  +-[%s.%s]: %s (%s)",
+            node.getTargetType().getSimpleName(),
+            node.getFieldName(),
+            node.getFieldType().getName(),
+            node.getResolverType().getSimpleName());
   }
 
-  default void postVisit(
-      @NonNull SpecInvocation node,
-      @Nullable Specification<Object> resolved) {
-    node.getAst().add(node.getDepth(), "|  \\-[%s.%s]: %s",
-        node.getTargetType().getSimpleName(),
-        node.getFieldName(),
-        resolved);
+  default void postVisit(@NonNull SpecInvocation node, @Nullable Specification<Object> resolved) {
+    node.getAst()
+        .add(
+            node.getDepth(),
+            "|  \\-[%s.%s]: %s",
+            node.getTargetType().getSimpleName(),
+            node.getFieldName(),
+            resolved);
   }
 }

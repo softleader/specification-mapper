@@ -20,10 +20,9 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.function.Function;
-
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
+import java.util.function.Function;
 
 /**
  * Share data between specifications
@@ -32,7 +31,7 @@ import jakarta.persistence.criteria.Root;
  */
 public interface JoinContext {
 
-  @SuppressWarnings({ "rawtypes" })
+  @SuppressWarnings({"rawtypes"})
   Join get(String key, Root<?> root);
 
   void putLazy(String key, Function<Root<?>, Join<?, ?>> function);

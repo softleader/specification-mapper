@@ -20,15 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.repository.support;
 
-import java.io.Serializable;
-
-import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-
 import jakarta.persistence.EntityManager;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.data.jpa.repository.support.JpaEntityInformation;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 
 /**
@@ -39,13 +37,10 @@ import tw.com.softleader.data.jpa.spec.SpecMapper;
 public class QueryBySpecExecutorImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
     implements QueryBySpecExecutorAdapter<T> {
 
-  @Setter
-  @Getter
-  private SpecMapper specMapper;
+  @Setter @Getter private SpecMapper specMapper;
 
   public QueryBySpecExecutorImpl(
-      @NonNull JpaEntityInformation<T, ?> entityInformation,
-      @NonNull EntityManager entityManager) {
+      @NonNull JpaEntityInformation<T, ?> entityInformation, @NonNull EntityManager entityManager) {
     super(entityInformation, entityManager);
   }
 

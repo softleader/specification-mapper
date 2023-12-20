@@ -38,12 +38,11 @@ public class HasText<T> extends BooleanSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
-    var predicate = builder.and(
-        builder.isNotNull(getPath(root)),
-        builder.greaterThan(builder.length(builder.trim(getPath(root))), 0));
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    var predicate =
+        builder.and(
+            builder.isNotNull(getPath(root)),
+            builder.greaterThan(builder.length(builder.trim(getPath(root))), 0));
     if (getValue()) {
       return predicate;
     }

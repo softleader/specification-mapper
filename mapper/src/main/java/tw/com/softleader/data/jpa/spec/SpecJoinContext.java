@@ -22,15 +22,13 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Collections.synchronizedMap;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.data.util.Pair;
-
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
 import lombok.Synchronized;
+import org.springframework.data.util.Pair;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
@@ -39,8 +37,8 @@ import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 class SpecJoinContext implements JoinContext {
 
   private final Map<Pair<String, Root<?>>, Join<?, ?>> joins = synchronizedMap(new HashMap<>());
-  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins = synchronizedMap(
-      new HashMap<>());
+  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins =
+      synchronizedMap(new HashMap<>());
 
   @Override
   @Synchronized

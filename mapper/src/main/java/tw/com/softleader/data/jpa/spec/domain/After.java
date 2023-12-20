@@ -29,8 +29,7 @@ import lombok.NonNull;
  */
 public class After<T> extends GreaterThan<T> {
 
-  public After(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  public After(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 }

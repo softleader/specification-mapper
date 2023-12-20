@@ -31,7 +31,5 @@ import java.lang.annotation.Target;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
-public @interface NestedSpec {
-
-}
+@Target({ElementType.FIELD})
+public @interface NestedSpec {}
