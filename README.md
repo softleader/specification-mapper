@@ -27,6 +27,7 @@ The current version is implemented using Jakarta. If you are using Javax, please
 ### Java
 
 - 17
+- 21
 
 ### Spring
 
@@ -34,6 +35,7 @@ The following shows versions with compatible [Spring Boot](https://spring.io/pro
 
 - 3.0.x
 - 3.1.x
+- 3.2.x
 
 ## License
 
