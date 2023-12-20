@@ -26,16 +26,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.Set;
-
+import lombok.Builder;
+import lombok.Data;
+import lombok.Singular;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
@@ -50,8 +48,7 @@ import tw.com.softleader.data.jpa.spec.usecase.School;
 @IntegrationTest
 class JoinFetchElementCollectionTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   SpecMapper mapper;
   NestedSpecificationResolver nestedResolver;
@@ -60,31 +57,33 @@ class JoinFetchElementCollectionTest {
 
   @BeforeEach
   void setup() {
-    mapper = SpecMapper.builder()
-        .resolver(codec -> nestedResolver = spy(new NestedSpecificationResolver(codec)))
-        .resolver(joinFetchResolver = spy(new JoinFetchSpecificationResolver()))
-        .resolver(spy(new JoinSpecificationResolver()))
-        .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
-        .build();
+    mapper =
+        SpecMapper.builder()
+            .resolver(codec -> nestedResolver = spy(new NestedSpecificationResolver(codec)))
+            .resolver(joinFetchResolver = spy(new JoinFetchSpecificationResolver()))
+            .resolver(spy(new JoinSpecificationResolver()))
+            .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
+            .build();
   }
 
   @DisplayName("@JoinFetch 遇上 @ElementCollection")
   @Test
   void joinFetchWithElementCollection() {
-    var matt = repository.save(Customer.builder().name("matt")
-        .phone("taiwanmobile", "0911222333")
-        .phone("cht", "0944555666")
-        .build());
-    repository.save(Customer.builder().name("mary")
-        .phone("cht", "0955666777")
-        .phone("fetnet", "0966777888")
-        .build());
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .phone("taiwanmobile", "0911222333")
+                .phone("cht", "0944555666")
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .phone("cht", "0955666777")
+            .phone("fetnet", "0966777888")
+            .build());
 
-    var spec = mapper.toSpec(
-        CustomerFetchPhone.builder()
-            .name("matt")
-            .build(),
-        Customer.class);
+    var spec = mapper.toSpec(CustomerFetchPhone.builder().name("matt").build(), Customer.class);
     assertThat(spec)
         .isNotNull()
         .extracting("specs", LIST)
@@ -101,44 +100,36 @@ class JoinFetchElementCollectionTest {
   @DisplayName("巢狀的 @JoinFetch")
   @Test
   void nestedJoinFetch() {
-    var matt = repository.save(Customer.builder().name("matt")
-        .phone("taiwanmobile", "0911222333")
-        .phone("cht", "0944555666")
-        .school(School.builder()
-            .city("Taipei")
-            .name("A")
-            .build())
-        .build());
-    repository.save(Customer.builder().name("mary")
-        .phone("cht", "0955666777")
-        .phone("fetnet", "0966777888")
-        .school(School.builder()
-            .city("Taipei")
-            .name("B")
-            .build())
-        .build());
-    repository.save(Customer.builder().name("bob")
-        .phone("cht", "0955666777")
-        .phone("taiwanmobile", "0977888999")
-        .school(School.builder()
-            .city("Taichung")
-            .name("B")
-            .build())
-        .build());
-    var criteria = CustomerFetchPhone.builder()
-        .school(CustomerFetchSchool.builder()
-            .name("A")
-            .city("Taipei")
-            .build())
-        .build();
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .phone("taiwanmobile", "0911222333")
+                .phone("cht", "0944555666")
+                .school(School.builder().city("Taipei").name("A").build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .phone("cht", "0955666777")
+            .phone("fetnet", "0966777888")
+            .school(School.builder().city("Taipei").name("B").build())
+            .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .phone("cht", "0955666777")
+            .phone("taiwanmobile", "0977888999")
+            .school(School.builder().city("Taichung").name("B").build())
+            .build());
+    var criteria =
+        CustomerFetchPhone.builder()
+            .school(CustomerFetchSchool.builder().name("A").city("Taipei").build())
+            .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    var specs = assertThat(spec)
-        .isNotNull()
-        .extracting("specs", LIST)
-        .map(Specification.class::cast);
-    specs
-        .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
-        .hasSize(1);
+    var specs =
+        assertThat(spec).isNotNull().extracting("specs", LIST).map(Specification.class::cast);
+    specs.filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance).hasSize(1);
     specs
         .filteredOn(Conjunction.class::isInstance)
         .hasSize(1)
@@ -146,8 +137,9 @@ class JoinFetchElementCollectionTest {
         .extracting("specs", LIST)
         .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
         .hasSize(1);
-    var totalFields = CustomerFetchPhone.class.getDeclaredFields().length
-        + CustomerFetchSchool.class.getDeclaredFields().length;
+    var totalFields =
+        CustomerFetchPhone.class.getDeclaredFields().length
+            + CustomerFetchSchool.class.getDeclaredFields().length;
     verify(joinFetchResolver, times(totalFields)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
     var actual = repository.findAll(spec);
@@ -159,14 +151,11 @@ class JoinFetchElementCollectionTest {
   @JoinFetch(paths = "phones")
   public static class CustomerFetchPhone {
 
-    @Spec
-    String name;
+    @Spec String name;
 
-    @Spec
-    Gender gender;
+    @Spec Gender gender;
 
-    @NestedSpec
-    CustomerFetchSchool school;
+    @NestedSpec CustomerFetchSchool school;
   }
 
   @Data

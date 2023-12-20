@@ -22,11 +22,9 @@ package tw.com.softleader.data.jpa.spec;
 
 import java.lang.annotation.*;
 import java.util.Optional;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 

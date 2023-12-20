@@ -23,6 +23,8 @@ package tw.com.softleader.data.jpa.spec.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -34,9 +36,6 @@ import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.Builder;
-import lombok.Data;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.repository.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
@@ -47,8 +46,7 @@ import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
 @SpringBootTest
 class QueryBySpecExecutorTest {
 
-  @Autowired
-  CustomerRepository repository;
+  @Autowired CustomerRepository repository;
 
   @Test
   void findBySpec() {
@@ -117,11 +115,12 @@ class QueryBySpecExecutorTest {
     repository.save(Customer.builder().name("bob").build());
     repository.save(Customer.builder().name("mary").build());
 
-    assertThat(
-        repository.findOneBySpec(MyCriteria.builder().hello("matt").build())).isNotEmpty().get().isEqualTo(matt);
+    assertThat(repository.findOneBySpec(MyCriteria.builder().hello("matt").build()))
+        .isNotEmpty()
+        .get()
+        .isEqualTo(matt);
 
-    assertThat(
-        repository.findOneBySpec(MyCriteria.builder().hello("no-one").build())).isEmpty();
+    assertThat(repository.findOneBySpec(MyCriteria.builder().hello("no-one").build())).isEmpty();
 
     assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class)
         .isThrownBy(() -> repository.findOneBySpec(MyCriteria.builder().build()));

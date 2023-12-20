@@ -25,7 +25,7 @@ import static org.springframework.util.Assert.notNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,8 +33,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.NonNull;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
 
@@ -43,8 +41,8 @@ import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
  *
  * @author Matt Ho
  */
-public interface QueryBySpecExecutorAdapter<T> extends JpaSpecificationExecutor<T>,
-    QueryBySpecExecutor<T> {
+public interface QueryBySpecExecutorAdapter<T>
+    extends JpaSpecificationExecutor<T>, QueryBySpecExecutor<T> {
 
   @Override
   @Transactional(readOnly = true)
@@ -108,7 +106,8 @@ public interface QueryBySpecExecutorAdapter<T> extends JpaSpecificationExecutor<
 
   @Override
   @Transactional(readOnly = true)
-  default <S extends T, R> R findBySpec(@Nullable Object spec,
+  default <S extends T, R> R findBySpec(
+      @Nullable Object spec,
       @NonNull Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
     var mapper = getSpecMapper();
     var domainClass = getDomainClass();

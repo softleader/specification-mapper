@@ -20,9 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec.usecase;
 
-import java.util.Set;
-
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 
 @Builder
@@ -33,9 +32,7 @@ import lombok.*;
 @Table(name = "orders")
 public class Order {
 
-  @Id
-  @GeneratedValue
-  Long id;
+  @Id @GeneratedValue Long id;
 
   String itemName;
 

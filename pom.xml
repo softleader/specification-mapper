@@ -47,13 +47,12 @@
     <!-- Plugins -->
     <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-    <formatter-maven-plugin.version>2.16.0</formatter-maven-plugin.version>
+    <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
     <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
     <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-    <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
     <spring-boot.version>3.2.0</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
@@ -121,44 +120,24 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>net.revelc.code.formatter</groupId>
-          <artifactId>formatter-maven-plugin</artifactId>
-          <version>${formatter-maven-plugin.version}</version>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless-maven-plugin.version}</version>
           <configuration>
-            <configFile>${maven.multiModuleProjectDirectory}/ide-config/eclipse-format.xml
-            </configFile>
-            <skip>${format.skip}</skip>
+            <applySkip>${format.skip}</applySkip>
+            <java>
+              <googleJavaFormat/>
+            </java>
+            <pom>
+              <sortPom/>
+            </pom>
           </configuration>
           <executions>
             <execution>
-              <phase>process-sources</phase>
+              <id>apply</id>
+              <phase>validate</phase>
               <goals>
-                <goal>format</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>net.revelc.code</groupId>
-          <artifactId>impsort-maven-plugin</artifactId>
-          <version>${impsort-maven-plugin.version}</version>
-          <configuration>
-            <lineEnding>LF</lineEnding>
-            <groups>java.,javax.,org.,com.</groups>
-            <staticGroups>java,*</staticGroups>
-            <removeUnused>true</removeUnused>
-            <skip>${skip.formatting}</skip>
-          </configuration>
-          <executions>
-            <execution>
-              <id>sort-imports</id>
-              <goals>
-                <goal>sort</goal>
+                <goal>apply</goal>
               </goals>
             </execution>
           </executions>

@@ -33,8 +33,7 @@ import lombok.NonNull;
  */
 public class GreaterThanEqual<T> extends ComparableSpecification<T> {
 
-  public GreaterThanEqual(@NonNull Context context, @NonNull String path,
-      @NonNull Object value) {
+  public GreaterThanEqual(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
   }
 

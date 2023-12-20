@@ -36,14 +36,12 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.junit.ArchTests;
 import com.tngtech.archunit.lang.ArchRule;
-
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
-@AnalyzeClasses(packagesOf = SpecCodec.class, importOptions = {
-    DoNotIncludeTests.class,
-    DoNotIncludeJars.class
-})
+@AnalyzeClasses(
+    packagesOf = SpecCodec.class,
+    importOptions = {DoNotIncludeTests.class, DoNotIncludeJars.class})
 class ArchitectureCheckTest {
 
   static final DescribedPredicate<JavaClass> BUILDER = simpleNameEndingWith("Builder");
@@ -57,47 +55,59 @@ class ArchitectureCheckTest {
   static final String ANNOTATION_PACKAGE = Spec.class.getPackage().getName();
 
   @ArchTest
-  static final ArchRule layerDependency = layeredArchitecture()
-      .consideringAllDependencies()
-      .layer(DOMAIN).definedBy(DOMAIN_PACKAGE)
-      .layer(INFRA).definedBy(INFRA_PACKAGE)
-      .layer(ANNOTATION).definedBy(ANNOTATION_PACKAGE)
-      .whereLayer(ANNOTATION).mayOnlyBeAccessedByLayers(INFRA)
-      .whereLayer(DOMAIN).mayOnlyBeAccessedByLayers(INFRA, ANNOTATION)
-      .whereLayer(INFRA).mayNotBeAccessedByAnyLayer();
+  static final ArchRule layerDependency =
+      layeredArchitecture()
+          .consideringAllDependencies()
+          .layer(DOMAIN)
+          .definedBy(DOMAIN_PACKAGE)
+          .layer(INFRA)
+          .definedBy(INFRA_PACKAGE)
+          .layer(ANNOTATION)
+          .definedBy(ANNOTATION_PACKAGE)
+          .whereLayer(ANNOTATION)
+          .mayOnlyBeAccessedByLayers(INFRA)
+          .whereLayer(DOMAIN)
+          .mayOnlyBeAccessedByLayers(INFRA, ANNOTATION)
+          .whereLayer(INFRA)
+          .mayNotBeAccessedByAnyLayer();
 
   @ArchTest
-  static final ArchRule domainClassesShouldBePublic = classes()
-      .that().resideInAPackage(DOMAIN_PACKAGE)
-      .and(doNot(modifier(ABSTRACT)))
-      .should().bePublic();
+  static final ArchRule domainClassesShouldBePublic =
+      classes()
+          .that()
+          .resideInAPackage(DOMAIN_PACKAGE)
+          .and(doNot(modifier(ABSTRACT)))
+          .should()
+          .bePublic();
 
   @ArchTest
-  static final ArchRule annotationClassesShouldBePublic = classes()
-      .that().resideInAPackage(ANNOTATION_PACKAGE)
-      .should().bePublic();
+  static final ArchRule annotationClassesShouldBePublic =
+      classes().that().resideInAPackage(ANNOTATION_PACKAGE).should().bePublic();
 
   @ArchTest
-  static final ArchRule classesExceptSpecMapperShouldNotBePublicResideInInfra = classes()
-      .that().resideInAPackage(INFRA_PACKAGE)
-      .and(doNot(INTERFACES.or(BUILDER).or(assignableTo(SpecMapper.class))))
-      .should().notBePublic();
+  static final ArchRule classesExceptSpecMapperShouldNotBePublicResideInInfra =
+      classes()
+          .that()
+          .resideInAPackage(INFRA_PACKAGE)
+          .and(doNot(INTERFACES.or(BUILDER).or(assignableTo(SpecMapper.class))))
+          .should()
+          .notBePublic();
 
-  @ArchTest
-  static final ArchTests generalCodingRules = ArchTests.in(GeneralCodingRules.class);
+  @ArchTest static final ArchTests generalCodingRules = ArchTests.in(GeneralCodingRules.class);
 
   static class GeneralCodingRules {
 
     @ArchTest
-    static final ArchRule noClassesShouldThrowGenericExceptions = NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
+    static final ArchRule noClassesShouldThrowGenericExceptions =
+        NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
 
-    @ArchTest
-    static final ArchRule noClassesShouldUseJodaTime = NO_CLASSES_SHOULD_USE_JODATIME;
+    @ArchTest static final ArchRule noClassesShouldUseJodaTime = NO_CLASSES_SHOULD_USE_JODATIME;
 
     @ArchTest
     static final ArchRule noClassesShouldUseFieldInjection = NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
 
     @ArchTest
-    static final ArchRule noClassesShouldUseJavaUtilLogging = NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
+    static final ArchRule noClassesShouldUseJavaUtilLogging =
+        NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
   }
 }

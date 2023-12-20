@@ -23,7 +23,6 @@ package tw.com.softleader.data.jpa.spec.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +33,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 
 /**
@@ -46,7 +44,8 @@ import tw.com.softleader.data.jpa.spec.SpecMapper;
 public interface QueryBySpecExecutor<T> {
 
   /**
-   * Returns a single entity matching the given {@code spec} or {@link Optional#empty()} if none found.
+   * Returns a single entity matching the given {@code spec} or {@link Optional#empty()} if none
+   * found.
    *
    * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
    * @return never {@literal null}.
@@ -95,20 +94,22 @@ public interface QueryBySpecExecutor<T> {
    * Checks whether the data store contains elements that match the given {@code spec}.
    *
    * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
-   * @return {@code true} if the data store contains elements that match the given {@link Specification} otherwise
-   *         {@code false}.
+   * @return {@code true} if the data store contains elements that match the given {@link
+   *     Specification} otherwise {@code false}.
    * @see JpaSpecificationExecutor#exists(Specification)
    */
   boolean existsBySpec(@Nullable Object spec);
 
   /**
-   * Returns entities matching the given {@code spec} applying the {@code queryFunction} that defines the query
-   * and its result type.
+   * Returns entities matching the given {@code spec} applying the {@code queryFunction} that
+   * defines the query and its result type.
    *
    * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
    * @param queryFunction the query function defining projection, sorting, and the result type
    * @return all entities matching the given Example.
    * @see JpaSpecificationExecutor#findBy(Specification, Function)
    */
-  <S extends T, R> R findBySpec(@Nullable Object spec, @NonNull Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction);
+  <S extends T, R> R findBySpec(
+      @Nullable Object spec,
+      @NonNull Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction);
 }

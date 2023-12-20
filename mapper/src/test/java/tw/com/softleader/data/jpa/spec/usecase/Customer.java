@@ -23,16 +23,14 @@ package tw.com.softleader.data.jpa.spec.usecase;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
-
-import org.springframework.data.annotation.CreatedDate;
-
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 @Builder
 @AllArgsConstructor
@@ -41,9 +39,7 @@ import lombok.*;
 @Entity
 public class Customer {
 
-  @Id
-  @GeneratedValue
-  Long id;
+  @Id @GeneratedValue Long id;
 
   @Enumerated(EnumType.STRING)
   Gender gender;
@@ -52,8 +48,7 @@ public class Customer {
 
   LocalDate birthday;
 
-  @CreatedDate
-  LocalDateTime createdTime;
+  @CreatedDate LocalDateTime createdTime;
 
   Integer weight;
   int weightInt;
@@ -83,16 +78,12 @@ public class Customer {
   Map<String, String> phones;
 
   @Singular
-  @ManyToMany(cascade = {
-      CascadeType.PERSIST,
-      CascadeType.MERGE,
-      CascadeType.DETACH,
-      CascadeType.REFRESH
-  }, fetch = FetchType.EAGER)
-  @JoinTable(name = "CCUSTOMER_SCHOOL_MAPPING", joinColumns = {
-      @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-  }, inverseJoinColumns = {
-      @JoinColumn(name = "SCHOOL_ID", nullable = false)
-  })
+  @ManyToMany(
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
+      fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "CCUSTOMER_SCHOOL_MAPPING",
+      joinColumns = {@JoinColumn(name = "CUSTOMER_ID", nullable = false)},
+      inverseJoinColumns = {@JoinColumn(name = "SCHOOL_ID", nullable = false)})
   Set<School> schools;
 }

@@ -38,9 +38,7 @@ public class Equals<T> extends SimpleSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
     return builder.equal(getPath(root), value);
   }
 }

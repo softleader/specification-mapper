@@ -25,7 +25,9 @@ import static java.util.stream.Stream.concat;
 
 import java.util.List;
 import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -36,10 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import tw.com.softleader.data.jpa.spec.SkippingStrategy;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver;
@@ -80,12 +78,8 @@ public class SpecMapperAutoConfiguration {
       }
     }
     if (log.isDebugEnabled()) {
-      concat(
-          resolvers.orderedStream(),
-          concat(
-              builders.stream(),
-              codecBuilders.stream()))
-                  .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
+      concat(resolvers.orderedStream(), concat(builders.stream(), codecBuilders.stream()))
+          .forEach(detected -> log.debug("Detected {}", detected.getClass().getName()));
     }
     var mapper = SpecMapper.builder().defaultResolvers();
     resolvers.orderedStream().forEach(mapper::resolver);
@@ -107,20 +101,23 @@ public class SpecMapperAutoConfiguration {
 
     @Bean
     RepositoryFactoryCustomizer repositoryBaseClassCustomizer(SpecMapperProperties properties) {
-      log.debug("Configuring repository-base-class with '{}'",
+      log.debug(
+          "Configuring repository-base-class with '{}'",
           properties.getRepositoryBaseClass().getName());
       return factory -> factory.setRepositoryBaseClass(properties.getRepositoryBaseClass());
     }
 
     @Bean
     RepositoryFactoryCustomizer specMapperCustomizer(SpecMapper specMapper) {
-      return factory -> factory.addRepositoryProxyPostProcessor(
-          (proxyFactory, repositoryInformation) -> getQueryBySpecExecutorAdapter(proxyFactory)
-              .ifPresent(target -> target.setSpecMapper(specMapper)));
+      return factory ->
+          factory.addRepositoryProxyPostProcessor(
+              (proxyFactory, repositoryInformation) ->
+                  getQueryBySpecExecutorAdapter(proxyFactory)
+                      .ifPresent(target -> target.setSpecMapper(specMapper)));
     }
 
     @SneakyThrows
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     private Optional<QueryBySpecExecutorAdapter> getQueryBySpecExecutorAdapter(
         ProxyFactory factory) {
       return ofNullable(factory.getTargetSource().getTarget())

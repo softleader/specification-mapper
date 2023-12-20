@@ -19,7 +19,7 @@ help: ## Display this help.
 ##@ Develop
 
 format: ## Format the source code.
-	mvn process-sources -e
+	mvn validate -e
 
 clean: ## Remove files generated at build-time.
 	mvn clean -e

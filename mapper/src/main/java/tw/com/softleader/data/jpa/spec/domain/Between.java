@@ -46,12 +46,11 @@ public class Between<T> extends SimpleSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root,
-      CriteriaQuery<?> query,
-      CriteriaBuilder builder) {
-    var args = stream(((Iterable<?>) value).spliterator(), false)
-        .map(arg -> (Comparable<?>) arg)
-        .toArray(Comparable[]::new);
+  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+    var args =
+        stream(((Iterable<?>) value).spliterator(), false)
+            .map(arg -> (Comparable<?>) arg)
+            .toArray(Comparable[]::new);
     return builder.between(getPath(root), args[0], args[1]);
   }
 }

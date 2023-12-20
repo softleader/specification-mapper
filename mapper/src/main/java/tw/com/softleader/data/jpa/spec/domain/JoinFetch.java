@@ -20,14 +20,12 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import jakarta.persistence.criteria.*;
 import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-
-import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.ToString;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
@@ -39,10 +37,7 @@ public class JoinFetch<T> implements Specification<T> {
   private final JoinType joinType;
   private final boolean distinct;
 
-  public JoinFetch(
-      @NonNull String[] pathsToFetch,
-      @NonNull JoinType joinType,
-      boolean distinct) {
+  public JoinFetch(@NonNull String[] pathsToFetch, @NonNull JoinType joinType, boolean distinct) {
     this.pathsToFetch = Arrays.asList(pathsToFetch);
     this.joinType = joinType;
     this.distinct = distinct;

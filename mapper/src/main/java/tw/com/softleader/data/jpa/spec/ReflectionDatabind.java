@@ -23,7 +23,6 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
-
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
@@ -33,13 +32,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.springframework.util.ReflectionUtils;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Databind implementation using Spring's {@code ReflectionUtils}
@@ -49,16 +46,11 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 class ReflectionDatabind implements Databind {
 
-  @Getter
-  @NonNull
-  private final Object target;
+  @Getter @NonNull private final Object target;
 
-  @Getter
-  @NonNull
-  private final Field field;
+  @Getter @NonNull private final Field field;
 
-  @NonNull
-  private final SkippingStrategy skippingStrategy;
+  @NonNull private final SkippingStrategy skippingStrategy;
 
   private final AtomicBoolean loaded = new AtomicBoolean();
   private final CountDownLatch latch = new CountDownLatch(1);
@@ -68,12 +60,13 @@ class ReflectionDatabind implements Databind {
     return of(target, skippingStrategy, ReflectionDatabind::new);
   }
 
-  static List<Databind> of(@NonNull Object target,
+  static List<Databind> of(
+      @NonNull Object target,
       @NonNull SkippingStrategy skippingStrategy,
       @NonNull ReflectionDatabindFactory<Object, Field, SkippingStrategy, Databind> factory) {
     var lookup = new ArrayList<Databind>();
-    doWithLocalFields(target.getClass(),
-        field -> lookup.add(factory.apply(target, field, skippingStrategy)));
+    doWithLocalFields(
+        target.getClass(), field -> lookup.add(factory.apply(target, field, skippingStrategy)));
     return unmodifiableList(lookup);
   }
 

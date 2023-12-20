@@ -21,7 +21,6 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.stream.Collectors.toList;
-
 import static lombok.AccessLevel.PACKAGE;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
@@ -34,14 +33,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
-
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
@@ -54,8 +51,7 @@ import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 @RequiredArgsConstructor(access = PACKAGE)
 public class SpecMapper implements SpecCodec {
 
-  @NonNull
-  private final SkippingStrategy skippingStrategy;
+  @NonNull private final SkippingStrategy skippingStrategy;
   private Collection<SpecificationResolver> resolvers; // Order matters
 
   public static SpecMapperBuilder builder() {
@@ -72,13 +68,13 @@ public class SpecMapper implements SpecCodec {
     var depth = 0;
     context.put(CTX_AST, ast);
     context.put(CTX_DEPTH, depth);
-    ast.add(depth, "+-[%s]: %s",
+    ast.add(
+        depth,
+        "+-[%s]: %s",
         rootObject.getClass().getSimpleName(),
         rootObject.getClass().getName());
     var spec = toSpec(context, rootObject);
-    ast.add(depth, "\\-[%s]: %s",
-        rootObject.getClass().getSimpleName(),
-        spec);
+    ast.add(depth, "\\-[%s]: %s", rootObject.getClass().getSimpleName(), spec);
     log.debug("--- Spec AST ---\n{}", ast.print());
     return spec;
   }
@@ -88,11 +84,11 @@ public class SpecMapper implements SpecCodec {
     if (rootObject == null) {
       return null;
     }
-    var specs = ReflectionDatabind.of(rootObject, skippingStrategy)
-        .stream()
-        .flatMap(databind -> resolveSpec(context, databind))
-        .filter(Objects::nonNull)
-        .collect(toList());
+    var specs =
+        ReflectionDatabind.of(rootObject, skippingStrategy).stream()
+            .flatMap(databind -> resolveSpec(context, databind))
+            .filter(Objects::nonNull)
+            .collect(toList());
     if (specs.isEmpty()) {
       return null;
     }
@@ -108,13 +104,16 @@ public class SpecMapper implements SpecCodec {
         .map(resolver -> resolveSpec(context, databind, resolver));
   }
 
-  Specification<Object> resolveSpec(@NonNull Context context, @NonNull Databind databind,
+  Specification<Object> resolveSpec(
+      @NonNull Context context,
+      @NonNull Databind databind,
       @NonNull SpecificationResolver resolver) {
-    var node = new ReflectionSpecInvocation(
-        context.get(CTX_AST).map(AST.class::cast).get(),
-        (int) context.get(CTX_DEPTH).get(),
-        resolver,
-        databind);
+    var node =
+        new ReflectionSpecInvocation(
+            context.get(CTX_AST).map(AST.class::cast).get(),
+            (int) context.get(CTX_DEPTH).get(),
+            resolver,
+            databind);
     resolver.preVisit(node);
     var resolved = resolver.buildSpecification(context, databind);
     resolver.postVisit(node, resolved);
@@ -124,7 +123,8 @@ public class SpecMapper implements SpecCodec {
   @NoArgsConstructor(access = PACKAGE)
   public static class SpecMapperBuilder {
 
-    private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers = new LinkedList<>();
+    private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers =
+        new LinkedList<>();
     private SkippingStrategy strategy = new DefaultSkippingStrategy();
 
     public SpecMapperBuilder skippingStrategy(@NonNull SkippingStrategy strategy) {
@@ -163,11 +163,11 @@ public class SpecMapper implements SpecCodec {
         defaultResolvers();
       }
       var mapper = new SpecMapper(strategy);
-      mapper.resolvers = this.resolvers.stream()
-          .map(resolver -> resolver.apply(mapper))
-          .collect(Collectors.collectingAndThen(
-              Collectors.toList(),
-              Collections::unmodifiableList));
+      mapper.resolvers =
+          this.resolvers.stream()
+              .map(resolver -> resolver.apply(mapper))
+              .collect(
+                  Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
       return mapper;
     }
   }

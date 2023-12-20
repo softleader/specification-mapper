@@ -20,12 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import org.springframework.data.jpa.domain.Specification;
-
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Delegate;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * @author Matt Ho
@@ -34,7 +33,5 @@ import lombok.experimental.Delegate;
 @AllArgsConstructor
 public class And<T> implements Specification<T> {
 
-  @NonNull
-  @Delegate
-  Specification<T> spec;
+  @NonNull @Delegate Specification<T> spec;
 }

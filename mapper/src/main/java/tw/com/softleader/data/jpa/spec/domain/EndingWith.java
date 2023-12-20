@@ -20,12 +20,11 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Objects;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.Objects;
 import lombok.NonNull;
 
 /**
