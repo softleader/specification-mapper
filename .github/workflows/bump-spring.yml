@@ -67,6 +67,7 @@ jobs:
       - name: Bump version
         run: make bump-spring-boot BOOT=${{ needs.latest-version.outputs.spring-boot }}
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: "chore: bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
@@ -79,3 +80,8 @@ jobs:
           labels: "type: dependency-upgrade"
           branch: "bot/${{ github.ref_name }}/spring-boot-${{ needs.current-version.outputs.spring-boot }}-${{ needs.latest-version.outputs.spring-boot }}"
           delete-branch: true
+      - name: Enable Auto-merge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
