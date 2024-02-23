@@ -4,7 +4,7 @@
   <parent>
     <groupId>tw.com.softleader.data.jakarta</groupId>
     <artifactId>specification-mapper-parent</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
   </parent>
 
   <artifactId>specification-mapper</artifactId>
