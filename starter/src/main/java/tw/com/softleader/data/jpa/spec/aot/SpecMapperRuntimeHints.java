@@ -22,7 +22,6 @@ package tw.com.softleader.data.jpa.spec.aot;
 
 import static java.util.Arrays.stream;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -44,21 +43,12 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 record SpecMapperRuntimeHints() implements RuntimeHintsRegistrar {
 
-  private static final String REFLECT_CONFIG = "META-INF/spec-mapper/reflect-config.idx";
-  private static final String REFLECT_CONFIG_LOCATION = "classpath*:/" + REFLECT_CONFIG;
+  private static final String REFLECT_CONFIG_LOCATION =
+      "classpath*:/META-INF/spec-mapper/reflect-config.idx";
 
   @Override
   @SneakyThrows
   public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-    registerMetaInfHints(hints);
-    registerSourceHints(hints);
-  }
-
-  private void registerMetaInfHints(RuntimeHints hints) {
-    hints.resources().registerPattern(REFLECT_CONFIG);
-  }
-
-  private void registerSourceHints(RuntimeHints hints) throws IOException {
     stream(new PathMatchingResourcePatternResolver().getResources(REFLECT_CONFIG_LOCATION))
         .map(this::loadJandex)
         .flatMap(this::typeReferenceStream)
