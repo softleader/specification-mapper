@@ -53,11 +53,13 @@
     <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+    <jandex-maven-plugin.version>3.1.6</jandex-maven-plugin.version>
 
     <spring-boot.version>3.2.3</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
     <format.skip>false</format.skip>
     <archunit-junit5.version>1.0.0</archunit-junit5.version>
+    <jandex.version>3.1.6</jandex.version>
   </properties>
 
   <modules>
@@ -191,6 +193,23 @@
       <id>release</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>io.smallrye</groupId>
+            <artifactId>jandex-maven-plugin</artifactId>
+            <version>${jandex-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>make-index</id>
+                <goals>
+                  <goal>jandex</goal>
+                </goals>
+                <configuration>
+                  <indexDir>${project.build.outputDirectory}/META-INF/spec-mapper</indexDir>
+                  <indexName>reflect-config.idx</indexName>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
