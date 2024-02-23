@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
-def java17_springBootVersions = ['3.0.13', '3.1.6'] // 只需要放 "非最新" 的中版號的最後一版
-def java21_springBootVersions = [] // 只需要放 "非最新" 的中版號的最後一版
+def java17_springBootVersions = ['3.0.13', '3.1.9'] // 只需要放 "非最新" 的中版號的最後一版
+def java21_springBootVersions = [] // 只需要放 "非最新" 的中版號的最後一版 ( 3.2.x 之後的版本 )
 
 pipeline {
   agent {
