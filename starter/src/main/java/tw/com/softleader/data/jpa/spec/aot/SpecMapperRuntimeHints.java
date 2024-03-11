@@ -22,9 +22,11 @@ package tw.com.softleader.data.jpa.spec.aot;
 
 import static java.util.Arrays.stream;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
@@ -41,6 +43,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  *
  * @author Matt Ho
  */
+@Slf4j
 record SpecMapperRuntimeHints() implements RuntimeHintsRegistrar {
 
   private static final String REFLECT_CONFIG_LOCATION =
@@ -64,6 +67,17 @@ record SpecMapperRuntimeHints() implements RuntimeHintsRegistrar {
     return index.getKnownClasses().stream()
         .map(ClassInfo::name)
         .map(DotName::toString)
-        .map(TypeReference::of);
+        .map(this::toTypeReferenceSafely)
+        .filter(Objects::nonNull);
+  }
+
+  private TypeReference toTypeReferenceSafely(String type) {
+    try {
+      // 如果轉換失敗, 代表這個 type name 不是合法的, 例如 package-info 等, 就直接忽略
+      return TypeReference.of(type);
+    } catch (Exception e) {
+      log.debug("Failed to create TypeReference for '{}', skipping", type, e);
+      return null;
+    }
   }
 }
