@@ -198,7 +198,7 @@ class MyConfig {
 }
 ```
 
-### Customize WriterFactory
+### Customize ASTWriterFactory
 
 Through the `spec.mapper.impersonate-logger` property, you can set whether the [Logging](../mapper#logging) process should impersonate the logger of the actual object being processed. It is turned off by default. To enable it, see the example below:
 

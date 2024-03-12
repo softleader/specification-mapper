@@ -193,7 +193,7 @@ class MyConfig {
 }
 ```
 
-### Customize WriterFactory
+### Customize ASTWriterFactory
 
 透過 properties 中的 `spec.mapper.impersonate-logger`, 可以設定 [Logging](../mapper#logging) 過程中, 是否要偽裝成實際處理的 object logger, 預設是關閉的, 若要開啟範例如下:
 
