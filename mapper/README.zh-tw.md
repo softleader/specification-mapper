@@ -698,12 +698,12 @@ DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : ---
 \-[CustomerCriteria]: Conjunction[specs=[Equals[path=name, value=matt], Conjunction[specs=[Equals[path=city, value=Taipei]]]]]
 ```
 
-如果你喜歡根據轉換的物件來控制和設定 Logging, 我們提供了另一種策略, 通過設定 `WriterStrategy`, 可以改成使用目標物件的 Logger 來輸出:
+如果你喜歡根據轉換的物件來控制和設定 Logging, 我們提供了另一種策略, 通過設定 `WriterFactory`, 可以改成使用目標物件的 Logger 來輸出:
 
 ```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
-      .writerStrategy(WriterStrategy.impersonateWriterStrategy())
+      .writerFactory(WriterFactory.impersonateWriterFactory())
       .build();
 ```
 

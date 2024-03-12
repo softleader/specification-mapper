@@ -20,6 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.lang.String.copyValueOf;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.Writer;
@@ -30,25 +31,25 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * This is an interface for defining strategies to get writer for AST.
+ * This interface is used to create writer for AST.
  *
  * @author Matt Ho
  */
-public interface WriterStrategy {
+public interface WriterFactory {
 
   /**
-   * This method is used to get writer for AST.
+   * Create a writer for the given root object and specification.
    *
    * @param rootObject The target object to be mapped, never null
    * @param spec The specification to be mapped, cloud be null
    */
-  Writer getWriter(@NonNull Object rootObject, @Nullable Specification<Object> spec);
+  Writer createWriter(@NonNull Object rootObject, @Nullable Specification<Object> spec);
 
-  static WriterStrategy domainWriterStrategy() {
+  static WriterFactory domainWriterFactory() {
     return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(SpecMapper.class));
   }
 
-  static WriterStrategy impersonateWriterStrategy() {
+  static WriterFactory impersonateWriterFactory() {
     return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(rootObject.getClass()));
   }
 }
@@ -56,28 +57,27 @@ public interface WriterStrategy {
 @RequiredArgsConstructor
 class Slf4jDebugWriter extends Writer {
 
-  @NonNull private final Logger logger;
-  private final StringBuilder buffer = new StringBuilder();
+  @NonNull public final Logger logger;
 
-  public void write(char ch) {
-    if (ch == '\n' && !buffer.isEmpty()) {
-      logger.debug(this.buffer.toString());
-      buffer.setLength(0);
+  @Override
+  public void write(char[] cbuf, int off, int len) {
+    if (!logger.isDebugEnabled()) {
       return;
     }
-    buffer.append(ch);
-  }
-
-  @Override
-  public void write(char[] buffer, int offset, int length) {
-    for (int i = 0; i < length; i++) {
-      write(buffer[offset + i]);
+    // Remove the end of line chars
+    while (len > 0 && (cbuf[len - 1] == '\n' || cbuf[len - 1] == '\r')) {
+      len--;
     }
+    logger.debug(copyValueOf(cbuf, off, len));
   }
 
   @Override
-  public void flush() {}
+  public void flush() {
+    // no-op
+  }
 
   @Override
-  public void close() {}
+  public void close() {
+    // no-op
+  }
 }

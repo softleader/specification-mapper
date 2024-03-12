@@ -64,7 +64,7 @@ public class SpecMapperAutoConfiguration {
       ObjectProvider<SpecificationResolverBuilder> builders,
       ObjectProvider<SpecificationResolverCodecBuilder> codecBuilders,
       ObjectProvider<SkippingStrategy> skippingStrategy,
-      ObjectProvider<WriterStrategy> writerStrategy) {
+      ObjectProvider<WriterFactory> writerFactory) {
     if (log.isTraceEnabled()) {
       if (!resolvers.iterator().hasNext()) {
         log.trace("No SpecificationResolver declared");
@@ -78,8 +78,8 @@ public class SpecMapperAutoConfiguration {
       if (!skippingStrategy.iterator().hasNext()) {
         log.trace("No SkippingStrategy declared");
       }
-      if (!writerStrategy.iterator().hasNext()) {
-        log.trace("No WriterStrategy declared");
+      if (!writerFactory.iterator().hasNext()) {
+        log.trace("No WriterFactory declared");
       }
     }
     if (log.isDebugEnabled()) {
@@ -91,15 +91,15 @@ public class SpecMapperAutoConfiguration {
     builders.orderedStream().forEach(builder -> mapper.resolver(builder::build));
     codecBuilders.orderedStream().forEach(mapper::resolver);
     skippingStrategy.ifAvailable(mapper::skippingStrategy);
-    writerStrategy.ifAvailable(mapper::writerStrategy);
+    writerFactory.ifAvailable(mapper::writerFactory);
     return mapper.build();
   }
 
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnProperty(prefix = PREFIX_SPEC_MAPPER, value = "impersonate-logger")
-  WriterStrategy impersonateWriterStrategy() {
-    return WriterStrategy.impersonateWriterStrategy();
+  WriterFactory impersonateWriterFactory() {
+    return WriterFactory.impersonateWriterFactory();
   }
 
   @Role(ROLE_INFRASTRUCTURE)

@@ -193,7 +193,7 @@ class MyConfig {
 }
 ```
 
-### Customize WriterStrategy
+### Customize WriterFactory
 
 透過 properties 中的 `spec.mapper.impersonate-logger`, 可以設定 [Logging](../mapper#logging) 過程中, 是否要偽裝成實際處理的 object logger, 預設是關閉的, 若要開啟範例如下:
 
@@ -204,7 +204,7 @@ spec:
     impersonate-logger: true
 ```
 
-若你需要完整的客製化, 只要將你自定義的 `WriterStrategy ` 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
+若你需要完整的客製化, 只要將你自定義的 `WriterFactory` 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
 
 配置範例如下:
 
@@ -213,7 +213,7 @@ spec:
 class MyConfig {
 
   @Bean
-  WriterStrategy myWriterStrategy() {
+  WriterFactory myWriterFactory() {
     return ...
   }
 }

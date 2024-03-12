@@ -45,7 +45,7 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 class ArchitectureCheckTest {
 
   static final DescribedPredicate<JavaClass> BUILDER = simpleNameEndingWith("Builder");
-  static final DescribedPredicate<JavaClass> WRITER = simpleNameEndingWith("Writer");
+  static final DescribedPredicate<JavaClass> FACTORY = simpleNameEndingWith("Factory");
 
   static final String DOMAIN = "Domain";
   static final String INFRA = "Infra";
@@ -90,7 +90,7 @@ class ArchitectureCheckTest {
       classes()
           .that()
           .resideInAPackage(INFRA_PACKAGE)
-          .and(doNot(INTERFACES.or(BUILDER).or(WRITER).or(assignableTo(SpecMapper.class))))
+          .and(doNot(INTERFACES.or(BUILDER).or(FACTORY).or(assignableTo(SpecMapper.class))))
           .should()
           .notBePublic();
 

@@ -198,7 +198,7 @@ class MyConfig {
 }
 ```
 
-### Customize WriterStrategy
+### Customize WriterFactory
 
 Through the `spec.mapper.impersonate-logger` property, you can set whether the [Logging](../mapper#logging) process should impersonate the logger of the actual object being processed. It is turned off by default. To enable it, see the example below:
 
@@ -209,7 +209,7 @@ spec:
     impersonate-logger: true
 ```
 
-If you need full customization, simply register your custom `WriterStrategy` as a *Spring @Bean*. It will automatically be detected and added to the *Default SpecMapper* during the app startup!
+If you need full customization, simply register your custom `WriterFactory` as a *Spring @Bean*. It will automatically be detected and added to the *Default SpecMapper* during the app startup!
 
 Here's how to configure it:
 
@@ -218,7 +218,7 @@ Here's how to configure it:
 class MyConfig {
 
   @Bean
-  WriterStrategy myWriterStrategy() {
+  WriterFactory myWriterFactory() {
     return ...
   }
 }
