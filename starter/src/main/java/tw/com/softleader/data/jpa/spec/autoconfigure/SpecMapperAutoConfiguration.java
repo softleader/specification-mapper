@@ -24,6 +24,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Stream.concat;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.util.Assert.notNull;
+import static tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperProperties.PREFIX_SPEC_MAPPER;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,11 +42,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
-import tw.com.softleader.data.jpa.spec.SkippingStrategy;
-import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.SpecificationResolver;
+import tw.com.softleader.data.jpa.spec.*;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
-import tw.com.softleader.data.jpa.spec.SpecificationResolverCodecBuilder;
 import tw.com.softleader.data.jpa.spec.repository.support.JpaRepositoryFactoryBeanPostProcessor;
 import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAdapter;
 
@@ -56,7 +54,7 @@ import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAda
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SpecMapperProperties.class)
-@ConditionalOnProperty(value = "spec.mapper.enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = PREFIX_SPEC_MAPPER, value = "enabled", matchIfMissing = true)
 public class SpecMapperAutoConfiguration {
 
   @Bean
@@ -65,7 +63,8 @@ public class SpecMapperAutoConfiguration {
       ObjectProvider<SpecificationResolver> resolvers,
       ObjectProvider<SpecificationResolverBuilder> builders,
       ObjectProvider<SpecificationResolverCodecBuilder> codecBuilders,
-      ObjectProvider<SkippingStrategy> skippingStrategy) {
+      ObjectProvider<SkippingStrategy> skippingStrategy,
+      ObjectProvider<WriterStrategy> writerStrategy) {
     if (log.isTraceEnabled()) {
       if (!resolvers.iterator().hasNext()) {
         log.trace("No SpecificationResolver declared");
@@ -79,6 +78,9 @@ public class SpecMapperAutoConfiguration {
       if (!skippingStrategy.iterator().hasNext()) {
         log.trace("No SkippingStrategy declared");
       }
+      if (!writerStrategy.iterator().hasNext()) {
+        log.trace("No WriterStrategy declared");
+      }
     }
     if (log.isDebugEnabled()) {
       concat(resolvers.orderedStream(), concat(builders.stream(), codecBuilders.stream()))
@@ -89,7 +91,15 @@ public class SpecMapperAutoConfiguration {
     builders.orderedStream().forEach(builder -> mapper.resolver(builder::build));
     codecBuilders.orderedStream().forEach(mapper::resolver);
     skippingStrategy.ifAvailable(mapper::skippingStrategy);
+    writerStrategy.ifAvailable(mapper::writerStrategy);
     return mapper.build();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnProperty(prefix = PREFIX_SPEC_MAPPER, value = "impersonate-logger")
+  WriterStrategy impersonateWriterStrategy() {
+    return WriterStrategy.impersonateWriterStrategy();
   }
 
   @Role(ROLE_INFRASTRUCTURE)

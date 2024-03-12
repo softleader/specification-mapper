@@ -24,6 +24,8 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Collections.nCopies;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
@@ -54,5 +56,9 @@ class SpecAST implements AST {
   @Override
   public String print() {
     return join("\n", nodes);
+  }
+
+  public void write(@NonNull Writer writer) throws IOException {
+    writer.write("--- Spec AST ---\n" + print());
   }
 }

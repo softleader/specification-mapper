@@ -28,7 +28,10 @@ compile: clean  ## Clean and compile the source code.
 	mvn compile -e $(call java_version) $(call spring_boot_version)
 
 test: clean ## Clean and test the compiled code.
-	mvn test -e $(call java_version) $(call spring_boot_version)
+	mvn process-classes test -e $(call java_version) $(call spring_boot_version)
+
+test-native: clean ## Clean and native test the compiled code.
+	mvn -PnativeTest process-classes test -e $(call java_version) $(call spring_boot_version)
 
 install: clean ## Install project to local repository w/o unit testing.
 	mvn install -e -DskipTests -Prelease $(call java_version) $(call spring_boot_version)

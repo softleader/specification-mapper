@@ -24,6 +24,11 @@
       <artifactId>annotations</artifactId>
       <version>${findbugs.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.smallrye</groupId>
+      <artifactId>jandex</artifactId>
+      <version>${jandex.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -56,6 +61,23 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>io.smallrye</groupId>
+        <artifactId>jandex-maven-plugin</artifactId>
+        <version>${jandex-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>make-index</id>
+            <goals>
+              <goal>jandex</goal>
+            </goals>
+            <configuration>
+              <indexDir>${project.build.outputDirectory}/META-INF/spec-mapper</indexDir>
+              <indexName>reflect-config.idx</indexName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

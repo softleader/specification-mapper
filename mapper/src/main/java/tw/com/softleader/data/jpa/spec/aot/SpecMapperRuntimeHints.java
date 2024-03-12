@@ -44,7 +44,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  * @author Matt Ho
  */
 @Slf4j
-record SpecMapperRuntimeHints() implements RuntimeHintsRegistrar {
+public record SpecMapperRuntimeHints() implements RuntimeHintsRegistrar {
 
   private static final String REFLECT_CONFIG_LOCATION =
       "classpath*:/META-INF/spec-mapper/reflect-config.idx";
@@ -73,7 +73,7 @@ record SpecMapperRuntimeHints() implements RuntimeHintsRegistrar {
 
   private TypeReference toTypeReferenceSafely(String type) {
     try {
-      // 如果轉換失敗, 代表這個 type name 不是合法的, 例如 package-info 等, 就直接忽略
+      // If the type name is invalid, such as "package-info," etc., simply ignore it.
       return TypeReference.of(type);
     } catch (Exception e) {
       log.debug("Failed to create TypeReference for '{}', skipping", type, e);

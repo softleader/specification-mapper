@@ -20,12 +20,6 @@
       <artifactId>spring-boot-configuration-metadata</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.smallrye</groupId>
-      <artifactId>jandex</artifactId>
-      <version>${jandex.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>tw.com.softleader.data.jakarta</groupId>
       <artifactId>specification-mapper</artifactId>
       <version>${project.version}</version>

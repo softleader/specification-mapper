@@ -29,8 +29,10 @@ import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImp
  * @author Matt Ho
  */
 @Data
-@ConfigurationProperties(prefix = "spec.mapper")
+@ConfigurationProperties(prefix = SpecMapperProperties.PREFIX_SPEC_MAPPER)
 public class SpecMapperProperties {
+
+  public static final String PREFIX_SPEC_MAPPER = "spec.mapper";
 
   /** Whether to enable the spec mapper */
   boolean enabled = true;
@@ -42,4 +44,10 @@ public class SpecMapperProperties {
    * @see QueryBySpecExecutorImpl
    */
   Class<? extends QueryBySpecExecutorAdapter> repositoryBaseClass = QueryBySpecExecutorImpl.class;
+
+  /**
+   * Whether to impersonate the logger, if enabled, the actual logger of the changed object will be
+   * used, otherwise the SpecMapper logger will be used
+   */
+  boolean impersonateLogger;
 }

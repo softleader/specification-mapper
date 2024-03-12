@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
+import static tw.com.softleader.data.jpa.spec.WriterStrategy.domainWriterStrategy;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +37,7 @@ import java.util.stream.Stream;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.SneakyThrows;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
@@ -47,11 +48,11 @@ import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 /**
  * @author Matt Ho
  */
-@Slf4j
 @RequiredArgsConstructor(access = PACKAGE)
 public class SpecMapper implements SpecCodec {
 
   @NonNull private final SkippingStrategy skippingStrategy;
+  @NonNull private final WriterStrategy writerStrategy;
   private Collection<SpecificationResolver> resolvers; // Order matters
 
   public static SpecMapperBuilder builder() {
@@ -59,6 +60,7 @@ public class SpecMapper implements SpecCodec {
   }
 
   @Override
+  @SneakyThrows
   public Specification<Object> toSpec(Object rootObject) {
     if (rootObject == null) {
       return null;
@@ -75,7 +77,7 @@ public class SpecMapper implements SpecCodec {
         rootObject.getClass().getName());
     var spec = toSpec(context, rootObject);
     ast.add(depth, "\\-[%s]: %s", rootObject.getClass().getSimpleName(), spec);
-    log.debug("--- Spec AST ---\n{}", ast.print());
+    ast.write(writerStrategy.getWriter(rootObject, spec));
     return spec;
   }
 
@@ -125,10 +127,16 @@ public class SpecMapper implements SpecCodec {
 
     private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers =
         new LinkedList<>();
-    private SkippingStrategy strategy = new DefaultSkippingStrategy();
+    private SkippingStrategy skippingStrategy = new DefaultSkippingStrategy();
+    private WriterStrategy writerStrategy = domainWriterStrategy();
+
+    public SpecMapperBuilder writerStrategy(@NonNull WriterStrategy strategy) {
+      this.writerStrategy = strategy;
+      return this;
+    }
 
     public SpecMapperBuilder skippingStrategy(@NonNull SkippingStrategy strategy) {
-      this.strategy = strategy;
+      this.skippingStrategy = strategy;
       return this;
     }
 
@@ -162,7 +170,7 @@ public class SpecMapper implements SpecCodec {
       if (this.resolvers.isEmpty()) {
         defaultResolvers();
       }
-      var mapper = new SpecMapper(strategy);
+      var mapper = new SpecMapper(skippingStrategy, writerStrategy);
       mapper.resolvers =
           this.resolvers.stream()
               .map(resolver -> resolver.apply(mapper))
