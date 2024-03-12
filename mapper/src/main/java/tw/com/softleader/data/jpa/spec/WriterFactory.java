@@ -49,7 +49,7 @@ public interface WriterFactory {
     return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(SpecMapper.class));
   }
 
-  static WriterFactory impersonateWriterFactory() {
+  static WriterFactory impersonationWriterFactory() {
     return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(rootObject.getClass()));
   }
 }

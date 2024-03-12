@@ -703,7 +703,7 @@ DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : ---
 ```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
-      .writerFactory(WriterFactory.impersonateWriterFactory())
+      .writerFactory(WriterFactory.impersonationWriterFactory())
       .build();
 ```
 

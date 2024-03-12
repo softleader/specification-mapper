@@ -697,7 +697,7 @@ If you prefer to control and set the Logger based on the converted objects, we o
 ```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
-      .writerFactory(WriterFactory.impersonateWriterFactory())
+      .writerFactory(WriterFactory.impersonationWriterFactory())
       .build();
 ```
 

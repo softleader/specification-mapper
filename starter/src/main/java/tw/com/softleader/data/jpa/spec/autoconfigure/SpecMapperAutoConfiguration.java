@@ -99,7 +99,7 @@ public class SpecMapperAutoConfiguration {
   @ConditionalOnMissingBean
   @ConditionalOnProperty(prefix = PREFIX_SPEC_MAPPER, value = "impersonate-logger")
   WriterFactory impersonateWriterFactory() {
-    return WriterFactory.impersonateWriterFactory();
+    return WriterFactory.impersonationWriterFactory();
   }
 
   @Role(ROLE_INFRASTRUCTURE)
