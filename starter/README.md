@@ -209,7 +209,7 @@ spec:
     impersonate-logger: true
 ```
 
-If you need full customization, simply register your custom `WriterFactory` as a *Spring @Bean*. It will automatically be detected and added to the *Default SpecMapper* during the app startup!
+If you need full customization, simply register your custom `ASTWriterFactory` as a *Spring @Bean*. It will automatically be detected and added to the *Default SpecMapper* during the app startup!
 
 Here's how to configure it:
 
@@ -218,7 +218,7 @@ Here's how to configure it:
 class MyConfig {
 
   @Bean
-  WriterFactory myWriterFactory() {
+  ASTWriterFactory myASTWriterFactory() {
     return ...
   }
 }

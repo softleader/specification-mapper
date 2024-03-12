@@ -35,7 +35,7 @@ import org.springframework.lang.Nullable;
  *
  * @author Matt Ho
  */
-public interface WriterFactory {
+public interface ASTWriterFactory {
 
   /**
    * Create a writer for the given root object and specification.
@@ -45,11 +45,13 @@ public interface WriterFactory {
    */
   Writer createWriter(@NonNull Object rootObject, @Nullable Specification<Object> spec);
 
-  static WriterFactory domainWriterFactory() {
+  /** Create a writer that using {@link SpecMapper}'s logger */
+  static ASTWriterFactory domain() {
     return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(SpecMapper.class));
   }
 
-  static WriterFactory impersonationWriterFactory() {
+  /** Create a writer that using the mapped object's logger */
+  static ASTWriterFactory impersonation() {
     return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(rootObject.getClass()));
   }
 }

@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
-import static tw.com.softleader.data.jpa.spec.WriterFactory.domainWriterFactory;
+import static tw.com.softleader.data.jpa.spec.ASTWriterFactory.domain;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -52,7 +52,7 @@ import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 public class SpecMapper implements SpecCodec {
 
   @NonNull private final SkippingStrategy skippingStrategy;
-  @NonNull private final WriterFactory writerFactory;
+  @NonNull private final ASTWriterFactory astWriterFactory;
   private Collection<SpecificationResolver> resolvers; // Order matters
 
   public static SpecMapperBuilder builder() {
@@ -77,7 +77,7 @@ public class SpecMapper implements SpecCodec {
         rootObject.getClass().getName());
     var spec = toSpec(context, rootObject);
     ast.add(depth, "\\-[%s]: %s", rootObject.getClass().getSimpleName(), spec);
-    try (var writer = writerFactory.createWriter(rootObject, spec)) {
+    try (var writer = astWriterFactory.createWriter(rootObject, spec)) {
       ast.write(writer);
     }
     return spec;
@@ -130,10 +130,10 @@ public class SpecMapper implements SpecCodec {
     private final Collection<Function<SpecCodec, SpecificationResolver>> resolvers =
         new LinkedList<>();
     private SkippingStrategy skippingStrategy = new DefaultSkippingStrategy();
-    private WriterFactory writerFactory = domainWriterFactory();
+    private ASTWriterFactory astWriterFactory = domain();
 
-    public SpecMapperBuilder writerFactory(@NonNull WriterFactory factory) {
-      this.writerFactory = factory;
+    public SpecMapperBuilder astWriterFactory(@NonNull ASTWriterFactory factory) {
+      this.astWriterFactory = factory;
       return this;
     }
 
@@ -172,7 +172,7 @@ public class SpecMapper implements SpecCodec {
       if (this.resolvers.isEmpty()) {
         defaultResolvers();
       }
-      var mapper = new SpecMapper(skippingStrategy, writerFactory);
+      var mapper = new SpecMapper(skippingStrategy, astWriterFactory);
       mapper.resolvers =
           this.resolvers.stream()
               .map(resolver -> resolver.apply(mapper))

@@ -24,6 +24,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Stream.concat;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.util.Assert.notNull;
+import static tw.com.softleader.data.jpa.spec.ASTWriterFactory.impersonation;
 import static tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperProperties.PREFIX_SPEC_MAPPER;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class SpecMapperAutoConfiguration {
       ObjectProvider<SpecificationResolverBuilder> builders,
       ObjectProvider<SpecificationResolverCodecBuilder> codecBuilders,
       ObjectProvider<SkippingStrategy> skippingStrategy,
-      ObjectProvider<WriterFactory> writerFactory) {
+      ObjectProvider<ASTWriterFactory> astWriterFactory) {
     if (log.isTraceEnabled()) {
       if (!resolvers.iterator().hasNext()) {
         log.trace("No SpecificationResolver declared");
@@ -78,7 +79,7 @@ public class SpecMapperAutoConfiguration {
       if (!skippingStrategy.iterator().hasNext()) {
         log.trace("No SkippingStrategy declared");
       }
-      if (!writerFactory.iterator().hasNext()) {
+      if (!astWriterFactory.iterator().hasNext()) {
         log.trace("No WriterFactory declared");
       }
     }
@@ -91,15 +92,15 @@ public class SpecMapperAutoConfiguration {
     builders.orderedStream().forEach(builder -> mapper.resolver(builder::build));
     codecBuilders.orderedStream().forEach(mapper::resolver);
     skippingStrategy.ifAvailable(mapper::skippingStrategy);
-    writerFactory.ifAvailable(mapper::writerFactory);
+    astWriterFactory.ifAvailable(mapper::astWriterFactory);
     return mapper.build();
   }
 
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnProperty(prefix = PREFIX_SPEC_MAPPER, value = "impersonate-logger")
-  WriterFactory impersonateWriterFactory() {
-    return WriterFactory.impersonationWriterFactory();
+  ASTWriterFactory impersonationASTWriterFactory() {
+    return impersonation();
   }
 
   @Role(ROLE_INFRASTRUCTURE)

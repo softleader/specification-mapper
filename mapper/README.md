@@ -692,12 +692,12 @@ DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : ---
 \-[CustomerCriteria]: Conjunction[specs=[Equals[path=name, value=matt], Conjunction[specs=[Equals[path=city, value=Taipei]]]]]
 ```
 
-If you prefer to control and set the Logger based on the converted objects, we offer another strategy. By setting the `WriterFactory`, you can switch to using the Logger of the target object:
+If you prefer to control and set the Logger based on the converted objects, we offer another strategy. By setting the `ASTWriterFactory`, you can switch to using the Logger of the target object:
 
 ```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
-      .writerFactory(WriterFactory.impersonationWriterFactory())
+      .astWriterFactory(ASTWriterFactory.impersonation())
       .build();
 ```
 
