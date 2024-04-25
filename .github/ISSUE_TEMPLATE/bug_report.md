@@ -8,7 +8,17 @@ assignees: ''
 ---
 
 **Describe the bug**
-請提供問題的詳細資訊，包括你所使用的版本。
+A clear and concise description of what the bug is.
+
+**To Reproduce**
+Steps to reproduce the behavior.
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
 
 **Sample**
-如果可能的話，請提供一個測試案例或樣本應用程式來重現該問題。這樣可以更容易地診斷問題並驗證我們是否已修復該問題。
+
+A link to a GitHub repository with a [minimal, reproducible sample](https://stackoverflow.com/help/minimal-reproducible-example).
+
+Reports that include a sample will take priority over reports that do not.
+At times, we may require a sample, so it is good to try and include a sample up front.
