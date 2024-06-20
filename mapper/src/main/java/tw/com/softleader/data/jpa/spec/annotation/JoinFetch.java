@@ -32,7 +32,7 @@ public @interface JoinFetch {
 
   String[] paths();
 
-  JoinType joinType() default JoinType.LEFT;
+  JoinType joinType() default JoinType.INNER;
 
   boolean distinct() default true;
 
