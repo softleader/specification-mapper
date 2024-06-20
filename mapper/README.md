@@ -525,11 +525,11 @@ select distinct
   customer0_.* ...,
   orders1_.* ...
 from customer customer0_ 
-left outer join orders orders1_ on customer0_.id=orders1_.order_id 
+inner outer join orders orders1_ on customer0_.id=orders1_.order_id 
 where customer0_.name=?
 ```
 
-To align with most use cases, the default join type is `LEFT`, and the result is made distinct. You can modify this behavior by setting `@FetchJoin#joinType` or `@FetchJoin#distinct`. For example:
+To align with most use cases, the default join type is `INNER`, and the result is made distinct. You can modify this behavior by setting `@FetchJoin#joinType` or `@FetchJoin#distinct`. For example:
 
 ```java
 @FetchJoin(joinType = JoinType.RIGHT, distinct = false)

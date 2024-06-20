@@ -530,11 +530,11 @@ select distinct
   customer0_.* ...,
   orders1_.* ...
 from customer customer0_ 
-left outer join orders orders1_ on customer0_.id=orders1_.order_id 
+inner outer join orders orders1_ on customer0_.id=orders1_.order_id 
 where customer0_.name=?
 ```
 
-為了比較符合大部分的使用情境, 預設的 Join type 是 `LEFT`, 也會將結果排除重複 (*distinct*), 你可以設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 來改變, 如:
+為了比較符合大部分的使用情境, 預設的 Join type 是 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 來改變, 如:
 
 ```java
 @FetchJoin(joinType = JoinType.RIGHT, distinct = false)
