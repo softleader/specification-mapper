@@ -21,7 +21,7 @@ jobs:
           cache: 'maven'
       - id: get-current-version
         run: echo "version=$(make spring-boot-version)" >> "$GITHUB_OUTPUT"
-      - uses: gautamkrishnar/keepalive-workflow@v1
+      - uses: gautamkrishnar/keepalive-workflow@v2
     outputs:
       spring-boot: ${{ steps.get-current-version.outputs.version }}
 
