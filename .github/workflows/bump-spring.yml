@@ -14,14 +14,14 @@ jobs:
         with:
           ref: "${{ github.ref_name }}"
           fetch-depth: 0
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
       - id: get-current-version
         run: echo "version=$(make spring-boot-version)" >> "$GITHUB_OUTPUT"
-      - uses: gautamkrishnar/keepalive-workflow@v1
+      - uses: gautamkrishnar/keepalive-workflow@v2
     outputs:
       spring-boot: ${{ steps.get-current-version.outputs.version }}
 
@@ -59,7 +59,7 @@ jobs:
         with:
           ref: "${{ github.ref_name }}"
           fetch-depth: 0
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
