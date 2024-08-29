@@ -127,7 +127,10 @@ class PersonService {
   List<Person> getPersonByCriteria(PersonCriteria criteria) {
     var spec = specMapper.toSpec(criteria);
     
-    // do more to spec
+    // Perform additional operations on the spec, ex:
+    // spec = spec.and((root, query, criteriaBuilder) ->  {
+    //     ...
+    // });
     
     return personRepository.findAll(spec);
   }
@@ -237,4 +240,3 @@ class MyConfig {
   }
 }
 ```
-
