@@ -1,6 +1,6 @@
-# SLKE Website
+# Specification Mapper Site
 
-The [SLKE](https://slke.cloud.softleader.com.tw/) site, built using [Hugo](https://gohugo.io/).
+The [Specification Mapper](https://softleader.github.io/specification-mapper) site, built using [Hugo](https://gohugo.io/).
 
 ## Build prerequisites
 
