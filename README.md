@@ -23,6 +23,8 @@ Read the full [documentation](https://softleader.github.io/specification-mapper)
 
 ## Compatibility
 
+The versions listed below have been tested for compatibility.
+
 ### Java
 
 - 17
@@ -30,7 +32,7 @@ Read the full [documentation](https://softleader.github.io/specification-mapper)
 
 ### Spring
 
-The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases. The versions listed below have been tested for compatibility.
+The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
 
 - 3.0.x
 - 3.1.x
