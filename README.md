@@ -30,7 +30,7 @@ Read the full [documentation](https://softleader.github.io/specification-mapper)
 
 ### Spring
 
-The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
+The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases. The versions listed below have been tested for compatibility.
 
 - 3.0.x
 - 3.1.x
