@@ -1,2 +1,0 @@
-org.springframework.aot.hint.RuntimeHintsRegistrar=\
-	tw.com.softleader.data.jpa.spec.aot.SpecMapperRuntimeHints
