@@ -2,7 +2,7 @@
 title: Starter
 weight: 20
 description: > 
-  Spring Starter for Specification Mapper
+  Spring Starter
 ---
 
 ```xml

@@ -20,6 +20,14 @@ title: Specification Mapper
 Specification binding API for Spring Data JPA
 {{% /blocks/lead %}}
 
+<div class="container">
+  <section>
+    <p class="lead mt-5"><h2>What is Specification Mapper?</h2></p>
+    <p>Specification Mapper 是一個協助構建 <a href='https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications'>Specifications</a> 的工具, 它會讀取 POJO 的欄位, 並透過簡單且易記的註解, 將這些欄位的值轉換成 Specifications, 此外, Specification Mapper 提供多個擴展點, 以可以輕鬆擴展並實現自定義邏輯</p>
+    <p>在 Clean Architecture 架構, Specification Mapper 提供了一種方便的方式, 可以在任一 Layer 中轉換 POJO, 例如, 在 infrastructure layer 中, 即可以使用 Specification Mapper 將 domain object 轉換為 Specifications, 透過使用 Specification Mapper, 可以有效地管理層之間的依賴性, 實現清晰且有條理的程式架構, 增強代碼的可讀性和可維護性</p>
+  </section>
+</div>
+
 {{< blocks/section color="white" type="row" >}}
 
 {{% blocks/feature icon="fa fa-magic" title="Dynamic Query Generation" %}}

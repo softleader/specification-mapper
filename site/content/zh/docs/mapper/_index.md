@@ -2,7 +2,7 @@
 title: Mapper
 weight: 10
 description: > 
-  Specification Mapper 核心邏輯
+  Core Domain
 ---
 
 ```xml

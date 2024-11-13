@@ -2,7 +2,7 @@
 title: Mapper
 weight: 10
 description: > 
-  Specification Mapper Core Domain
+  Core Domain
 ---
 
 ```xml
