@@ -9,7 +9,7 @@ description: >
 <dependency>
   <groupId>tw.com.softleader.data.jakarta</groupId>
   <artifactId>specification-mapper-starter</artifactId>
-  <version>last-release-version</version>
+  <version>${specification-mapper.version}</version>
 </dependency>
 ```
 
