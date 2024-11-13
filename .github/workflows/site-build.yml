@@ -37,6 +37,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - run: npm ci
+        working-directory: site
       - run: hugo --baseURL https://${REPO_OWNER}.github.io/${REPO_NAME} --environment production --minify
         working-directory: site
       - name: Deploy
@@ -44,3 +45,4 @@ jobs:
         if: ${{ github.ref == 'refs/heads/jakarta' }}
         with:
           github_token: ${{ github.token }}
+          publish_dir: ./site/public
