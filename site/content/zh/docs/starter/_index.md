@@ -1,6 +1,9 @@
-[English](./README.md)
-
-# specification-mapper-starter
+---
+title: Starter
+weight: 20
+description: > 
+  Specification Mapper 的 Spring Starter
+---
 
 ```xml
 <dependency>
@@ -181,7 +184,7 @@ class MySpecificationResolver implements SpecificationResolver {
 
 ### Customize SkippingStrategy
 
-只要將你自定義的 [`SkippingStrategy`](../mapper#skipping-strategy) 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
+只要將你自定義的 [`SkippingStrategy`](/docs/mapper#skipping-strategy) 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
 
 配置範例如下:
 

@@ -36,3 +36,7 @@ build/
 
 ### Project ###
 **/bin/
+
+### Hugo ###
+public/
+resources/

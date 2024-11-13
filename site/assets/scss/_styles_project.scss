@@ -1,0 +1,49 @@
+@import 'td/code-dark';
+
+.td-navbar {
+
+  .navbar-brand {
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .navbar-logo {
+      svg {
+        height: 40px;
+        width: 40px;
+      }
+    }
+  }
+
+  .navbar-brand__name {
+    display: none; // 這專案名字太長了, logo 那邊就不顯示吧
+    color: #224BA2;
+    padding-right: 15px;
+  }
+}
+
+.highlight {
+  border-radius: 5px;
+}
+
+// Style alert boxes.
+.alert {
+  font-weight: $font-weight-medium;
+  background: inherit;
+  color: inherit;
+  border-radius: 0px;
+
+  @each $type, $value in $theme-colors {
+    &-#{$type} {
+      & .alert-heading {
+        color: $value;
+      }
+
+      border-style: solid;
+      border-color: $value;
+      border-width: 0 0 0 4px;
+    }
+  }
+}
