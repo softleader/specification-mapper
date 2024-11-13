@@ -23,7 +23,7 @@ Specification binding API for Spring Data JPA
 <div class="container">
   <section>
     <p class="lead mt-5"><h2>What is Specification Mapper?</h2></p>
-    <p>Specification Mapper is a tool that facilitates the construction of <a href='https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications'>Specifications</a>. It reads the fields of a POJO and, through simple and memorable annotations, converts the values of these fields into Specifications. Specification Mapper also provides many extension points, allowing you to easily expand and implement your own logic.</p>
+    <p>Specification Mapper is a tool that facilitates the construction of <a href='https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html'>Specifications</a>. It reads the fields of a POJO and, through simple and memorable annotations, converts the values of these fields into Specifications. Specification Mapper also provides many extension points, allowing you to easily expand and implement your own logic.</p>
     <p>In the Clean Architecture, Specification Mapper provides a convenient way to convert and use any POJO in any layer. For example, in the infrastructure layer, Specification mapper can be used to convert domain objects into specifications. By using Specification Mapper, we can effectively manage dependencies between layers and achieve a clear and structured code architecture, enhancing code readability and maintainability.</p>
   </section>
 </div>
