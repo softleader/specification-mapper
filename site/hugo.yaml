@@ -175,7 +175,7 @@ params:
     # Developer relevant links. These will show up on right side of footer and in the community page if you have one.
     developer:
       - name: "Specification Mapper on GitHub"
-        url: "https://softleader.github.io/specification-mapper"
+        url: "https://github.com/softleader/specification-mapper"
         icon: "fab fa-github-square"
 
 # Hugo module configuration
