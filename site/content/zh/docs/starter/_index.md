@@ -13,7 +13,7 @@ description: >
 </dependency>
 ```
 
-specification-mapper-starter 整合了 [specification-mapper](../mapper) 及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa), 並提供了 Query by Spec 的查詢方式等
+specification-mapper-starter 整合了 [specification-mapper](/docs/mapper) 及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa), 並提供了 Query by Spec 的查詢方式等
 
 Query by Spec (QBS) 是一個  user-friendly 的查詢方式, 可以動態的建立查詢條件 ([Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications)), 透過 QBS interface 就可以執行查詢語句!
 
@@ -144,7 +144,7 @@ class PersonService {
 
 只要將你自定義的 `SpecificationResolver` 註冊成 *Spring @Bean*, 在 App 啟動的過程中就會自動的偵測並加入到 *Default SpecMapper* 中!
 
-例如, 我想要[增加自定義的 Spec Annotation](../mapper#customize-spec-annotation), 配置範例如下:
+例如, 我想要[增加自定義的 Spec Annotation](/docs/mapper#customize-spec-annotation), 配置範例如下:
 
 ```java
 @Configuration
@@ -201,7 +201,7 @@ class MyConfig {
 
 ### Customize ASTWriterFactory
 
-透過 properties 中的 `spec.mapper.impersonate-logger`, 可以設定 [Logging](../mapper#logging) 過程中, 是否要偽裝成實際處理的 object logger, 預設是關閉的, 若要開啟範例如下:
+透過 properties 中的 `spec.mapper.impersonate-logger`, 可以設定 [Logging](/docs/mapper#logging) 過程中, 是否要偽裝成實際處理的 object logger, 預設是關閉的, 若要開啟範例如下:
 
 ```yaml
 spec:

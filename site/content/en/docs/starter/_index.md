@@ -13,7 +13,7 @@ description: >
 </dependency>
 ```
 
-The `specification-mapper-starter` integrates [specification-mapper](../mapper) with [Spring Data JPA](https://spring.io/projects/spring-data-jpa) and provides a way to query by specifications.
+The `specification-mapper-starter` integrates [specification-mapper](/docs/mapper) with [Spring Data JPA](https://spring.io/projects/spring-data-jpa) and provides a way to query by specifications.
 
 Query by Spec (QBS) is a user-friendly querying approach that allows you to dynamically build query conditions using specifications. With the QBS interface, you can execute query statements easily.
 
@@ -147,7 +147,7 @@ In the above example, the SpecMapper is injected into the `PersonService`, allow
 
 By registering your custom `SpecificationResolver` as a Spring `@Bean`, it will be automatically detected and added to the *Default SpecMapper* during the application startup process.
 
-For example, if you want to add your custom spec annotation as mentioned in [Customize Spec Annotation](../mapper#customize-spec-annotation), you can configure it as follows:
+For example, if you want to add your custom spec annotation as mentioned in [Customize Spec Annotation](/docs/mapper#customize-spec-annotation), you can configure it as follows:
 
 ```java
 @Configuration
@@ -189,7 +189,7 @@ In the above example, the `MySpecificationResolver` is constructed with the `Spe
 
 ### Customize SkippingStrategy
 
-As long as you register your custom [`SkippingStrategy`](../mapper#skipping-strategy) as a *Spring @Bean*, it will automatically be detected and added to the *Default SpecMapper* during the application startup process!
+As long as you register your custom [`SkippingStrategy`](/docs/mapper#skipping-strategy) as a *Spring @Bean*, it will automatically be detected and added to the *Default SpecMapper* during the application startup process!
 
 Here's a configuration example:
 
@@ -206,7 +206,7 @@ class MyConfig {
 
 ### Customize ASTWriterFactory
 
-Through the `spec.mapper.impersonate-logger` property, you can set whether the [Logging](../mapper#logging) process should impersonate the logger of the actual object being processed. It is turned off by default. To enable it, see the example below:
+Through the `spec.mapper.impersonate-logger` property, you can set whether the [Logging](/docs/mapper#logging) process should impersonate the logger of the actual object being processed. It is turned off by default. To enable it, see the example below:
 
 ```yaml
 spec:
