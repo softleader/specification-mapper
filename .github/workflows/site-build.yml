@@ -41,5 +41,6 @@ jobs:
         working-directory: site
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.ref == 'refs/heads/jakarta' }}
         with:
           github_token: ${{ github.token }}
