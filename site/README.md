@@ -40,4 +40,4 @@ $ hugo serve
 
 ## Site Build
 
-任何針對 main 的 push 或 merge 事件, 都會觸發 [action](https://github.com/softleader/slke/actions/workflows/site-build.yml), 自動包版並部署到 [SLKE](https://github.com/softleader/slke) 中
+任何針對 main 的 push 或 merge 事件, 都會觸發 [action](https://github.com/softleader/specification-mapper/actions/workflows/site-build.yml), 自動包版並部署到 [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages) 中
