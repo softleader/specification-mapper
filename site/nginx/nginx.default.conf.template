@@ -1,0 +1,21 @@
+server {
+  listen 8080;
+  listen [::]:8080;
+  server_name localhost;
+
+  add_header Set-Cookie "Path=/; Secure; HttpOnly; SameSite=Strict" always;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+  add_header X-Content-Type-Options "nosniff";
+  add_header X-Frame-Options "SAMEORIGIN";
+  add_header X-XSS-Protection "1; mode=block";
+
+  location /ready {
+    return 200 'no content';
+  }
+
+  location / {
+    root      /usr/share/nginx/html;
+    index     index.html;
+    try_files $uri $uri/index.html /index.html =404;
+  }
+}

@@ -1,0 +1,37 @@
+/* This file is provided by Docsy as an extension point for styling.
+Override variables from the theme here. */
+
+
+// Theme colors
+$primary: #255276;
+$primary-light: lighten($primary, 75%) !default;
+$secondary: #FFA630 !default;
+$success: #17752C !default;
+$info: #0D5ED3 !default;
+$warning: #7749DA !default;
+$danger: #CA1F27 !default;
+$white: #fff !default;
+$light: #D3F3EE !default;
+
+$dark: #403F4C !default;
+$blue: #72A1E5 !default;
+$orange: #BA5A31 !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #eee !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ccc !default;
+$gray-500: #adb5bd !default;
+$gray-600: #797676 !default;
+$gray-700: #495057 !default;
+$gray-800: #333 !default;
+$gray-900: #222 !default;
+$black: #000 !default;
+
+$code-color: darken($secondary, 20%) !default;
+$link-color: #1C5D8C;
+
+// Font weights
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-bold: 700 !default;

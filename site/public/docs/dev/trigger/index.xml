@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Api Trigger on SLKE</title>
+    <link>http://localhost:1313/docs/dev/trigger/</link>
+    <description>Recent content in Api Trigger on SLKE</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="http://localhost:1313/docs/dev/trigger/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

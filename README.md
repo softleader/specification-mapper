@@ -5,7 +5,7 @@
 
 # specification-mapper
 
-An alternative Specification API for Spring Data JPA, Jakarta EE 9. 
+Specification binding API for Spring Data JPA, Jakarta EE 9. 
 
 ## What is Specification Mapper
 
@@ -19,8 +19,7 @@ The current version is implemented using Jakarta. If you are using Javax, please
 
 ## Getting Started
 
-- **Spec Mapper API:** See documentation for [specification-mapper](./mapper).
-- **Spring Starter:** See documentation for [specification-mapper-starter](./starter).
+Read the full [documentation](https://softleader.github.io/specification-mapper).
 
 ## Compatibility
 
