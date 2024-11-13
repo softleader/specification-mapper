@@ -117,6 +117,8 @@ params:
   # Specify a value here if your content directory is not in your repo's root directory
   github_subdir: "site"
 
+  github_branch: "jakarta"
+
   # Google Custom Search Engine ID. Remove or comment out to disable search.
   # https://programmablesearchengine.google.com/controlpanel/overview?cx=973c35c5d9c0040dc
   gcs_engine_id: "973c35c5d9c0040dc"
