@@ -46,6 +46,10 @@ endif
 	mvn versions:set-property -Dproperty=spring-boot.version -DnewVersion=$(BOOT)
 	mvn versions:commit
 
+bump-deps: ## Bump dependencies to the latest version.
+	mvn versions:update-properties -DexcludeProperties=spring-boot.version
+	mvn versions:commit
+
 ##@ Delivery
 
 version: ## Get current project version

@@ -45,21 +45,22 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- Plugins -->
-    <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-    <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+    <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
     <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
     <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
-    <license-maven-plugin.version>4.1</license-maven-plugin.version>
+    <maven.version.ignore>(?i).*(?:-|\.)(alpha|beta|m|rc|cr)(-?\d+)?$</maven.version.ignore>
+    <license-maven-plugin.version>4.6</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <jandex-maven-plugin.version>3.1.6</jandex-maven-plugin.version>
 
     <spring-boot.version>3.4.0</spring-boot.version>
     <findbugs.version>3.0.1</findbugs.version>
-    <format.skip>false</format.skip>
-    <archunit-junit5.version>1.0.0</archunit-junit5.version>
-    <jandex.version>3.1.6</jandex.version>
+    <skip.formatting>false</skip.formatting>
+    <archunit-junit5.version>1.3.0</archunit-junit5.version>
+    <jandex.version>3.2.3</jandex.version>
   </properties>
 
   <modules>
@@ -126,7 +127,7 @@
           <artifactId>spotless-maven-plugin</artifactId>
           <version>${spotless-maven-plugin.version}</version>
           <configuration>
-            <applySkip>${format.skip}</applySkip>
+            <applySkip>${skip.formatting}</applySkip>
             <java>
               <googleJavaFormat/>
             </java>
