@@ -19,24 +19,8 @@ The current version is implemented using Jakarta. If you are using Javax, please
 
 ## Getting Started
 
-Read the full [documentation](https://softleader.github.io/specification-mapper).
-
-## Compatibility
-
-The versions listed below have been tested for compatibility.
-
-### Java
-
-- 17
-- 21
-
-### Spring
-
-The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
-
-- 3.0.x
-- 3.1.x
-- 3.2.x
+- [Documentation](https://softleader.github.io/specification-mapper).
+- [Compatibility](https://softleader.github.io/specification-mapper/docs/compatibility/)
 
 ## License
 
