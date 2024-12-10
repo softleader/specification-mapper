@@ -19,7 +19,7 @@ The current version is implemented using Jakarta. If you are using Javax, please
 
 ## Getting Started
 
-- [Documentation](https://softleader.github.io/specification-mapper).
+- [Documentation](https://softleader.github.io/specification-mapper)
 - [Compatibility](https://softleader.github.io/specification-mapper/docs/compatibility/)
 
 ## License
