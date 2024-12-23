@@ -2,9 +2,9 @@
 
 // 版號查詢: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
 // 包含 3.0.x 之後, 每個次要版本 (minor) 下的最後一個補丁版本 (patch), 但不需包含最新的次要版本
-def java17_springBootVersions = ['3.0.13', '3.1.12', '3.2.12', '3.3.6']
+def java17_springBootVersions = ['3.0.13', '3.1.12', '3.2.12', '3.3.7']
 // 包含 3.2.x 之後, 每個次要版本 (minor) 下的最後一個補丁版本 (patch), 但不需包含最新的次要版本
-def java21_springBootVersions = ['3.2.12', '3.3.6']
+def java21_springBootVersions = ['3.2.12', '3.3.7']
 
 pipeline {
   agent {
