@@ -72,7 +72,7 @@ jobs:
     needs: ensure-version-not-exists
     steps:
       - id: specification-mapper-bump-version
-        uses: shihyuho/go-jenkins-trigger@v1
+        uses: shihyuho/go-jenkins-trigger@v2
         with:
           jenkins-url: "${{ secrets.JENKINS_URL }}"
           jenkins-user: "${{ secrets.JENKINS_USER }}"

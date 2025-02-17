@@ -30,7 +30,7 @@ jobs:
     needs: get-version
     steps:
       - id: specification-mapper-release
-        uses: shihyuho/go-jenkins-trigger@v1
+        uses: shihyuho/go-jenkins-trigger@v2
         with:
           jenkins-url: "${{ secrets.JENKINS_URL }}"
           jenkins-user: "${{ secrets.JENKINS_USER }}"
