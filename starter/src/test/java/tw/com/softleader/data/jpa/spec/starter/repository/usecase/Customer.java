@@ -18,25 +18,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec;
+package tw.com.softleader.data.jpa.spec.starter.repository.usecase;
 
-import java.util.function.Function;
-import org.springframework.core.Ordered;
-import tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperAutoConfiguration;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * Represents a builder that accepts {@code SpecCodec} and produces a {@code SpecificationResolver},
- * for autoconfigure to scan.
- *
- * @author Matt Ho
- * @see SpecCodec
- * @see SpecificationResolver
- * @see SpecMapperAutoConfiguration
- */
-public interface SpecificationResolverCodecBuilder
-    extends Function<SpecCodec, SpecificationResolver>, Ordered {
-  @Override
-  default int getOrder() {
-    return 0;
-  }
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Entity
+public class Customer {
+
+  @Id @GeneratedValue Long id;
+
+  String name;
+
+  Integer age;
 }

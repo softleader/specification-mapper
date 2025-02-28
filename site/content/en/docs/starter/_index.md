@@ -5,13 +5,31 @@ description: >
   Spring Starter
 ---
 
-```xml
-<dependency>
-  <groupId>tw.com.softleader.data.jakarta</groupId>
-  <artifactId>specification-mapper-starter</artifactId>
-  <version>${specification-mapper.version}</version>
-</dependency>
-```
+{{< tabpane text=true >}}
+  {{% tab "Maven" %}}
+  ```xml
+  <dependency>
+    <groupId>tw.com.softleader.data.jakarta</groupId>
+    <artifactId>specification-mapper-starter</artifactId>
+    <version>${specification-mapper.version}</version>
+  </dependency>
+  ```
+  {{% /tab %}}
+  {{% tab "Java Module" %}}
+  ```java
+  requires specification.mapper;
+  requires specification.mapper.starter;
+  requires jakarta.persistence;
+  ```
+  {{% /tab %}}
+  {{% tab "Logging" %}}
+  ```yaml
+  logging:
+    level:
+      tw.com.softleader.data.jpa.spec.starter: info
+  ```
+  {{% /tab %}}
+{{< /tabpane >}}
 
 The `specification-mapper-starter` integrates [specification-mapper](/docs/mapper) with [Spring Data JPA](https://spring.io/projects/spring-data-jpa) and provides a way to query by specifications.
 

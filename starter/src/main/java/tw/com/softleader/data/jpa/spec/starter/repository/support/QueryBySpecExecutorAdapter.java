@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.repository.support;
+package tw.com.softleader.data.jpa.spec.starter.repository.support;
 
 import static org.springframework.util.Assert.notNull;
 
@@ -34,7 +34,7 @@ import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
-import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
+import tw.com.softleader.data.jpa.spec.starter.repository.QueryBySpecExecutor;
 
 /**
  * Default implementation of {@code QueryBySpecExecutor}

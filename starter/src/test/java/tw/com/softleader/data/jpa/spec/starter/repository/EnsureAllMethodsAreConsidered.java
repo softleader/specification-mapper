@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.repository;
+package tw.com.softleader.data.jpa.spec.starter.repository;
 
 import java.util.List;
 import java.util.Optional;

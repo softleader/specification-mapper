@@ -18,17 +18,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec;
+package tw.com.softleader.data.jpa.spec.starter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,43 +34,39 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
+import tw.com.softleader.data.jpa.spec.Databind;
+import tw.com.softleader.data.jpa.spec.SpecCodec;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.SpecificationResolver;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 @EnableAutoConfiguration
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest
-class SpecificationResolverBuilderTest {
-
-  static SpecificationResolverBuilder myBuilder;
-  static SpecificationResolver myResolver;
+class SpecificationResolverCodecBuilderTest {
 
   @Autowired SpecMapper mapper;
-
-  @BeforeAll
-  static void setup() {
-    myBuilder = mock(SpecificationResolverBuilder.class);
-    when(myBuilder.build()).thenReturn(myResolver = new MySpecificationResolver());
-  }
 
   @Test
   void customizeCodecBuilder() {
     assertThat(mapper)
         .extracting("resolvers", LIST)
-        .areAtLeastOne(new Condition<>(myResolver::equals, "equals to my-resolver"));
+        .hasAtLeastOneElementOfType(MySpecificationResolver.class);
   }
 
   @Configuration
   static class MySpecConfig {
 
     @Bean
-    SpecificationResolverBuilder myBuilder() {
-      return myBuilder;
+    SpecificationResolverCodecBuilder myCodecBuilder() {
+      return MySpecificationResolver::new;
     }
   }
 
   @AllArgsConstructor
   public static class MySpecificationResolver implements SpecificationResolver {
+
+    final SpecCodec codec;
 
     @Override
     public boolean supports(@NonNull Databind databind) {

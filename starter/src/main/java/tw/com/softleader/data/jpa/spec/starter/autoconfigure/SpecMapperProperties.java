@@ -18,12 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.autoconfigure;
+package tw.com.softleader.data.jpa.spec.starter.autoconfigure;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAdapter;
-import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorImpl;
+import tw.com.softleader.data.jpa.spec.starter.repository.support.QueryBySpecExecutorAdapter;
+import tw.com.softleader.data.jpa.spec.starter.repository.support.QueryBySpecExecutorImpl;
 
 /**
  * @author Matt Ho

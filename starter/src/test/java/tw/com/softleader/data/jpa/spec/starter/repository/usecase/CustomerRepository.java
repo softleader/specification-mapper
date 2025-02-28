@@ -18,11 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.repository.usecase;
+package tw.com.softleader.data.jpa.spec.starter.repository.usecase;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import tw.com.softleader.data.jpa.spec.repository.QueryBySpecExecutor;
+import tw.com.softleader.data.jpa.spec.starter.repository.QueryBySpecExecutor;
 
 @Repository
 public interface CustomerRepository

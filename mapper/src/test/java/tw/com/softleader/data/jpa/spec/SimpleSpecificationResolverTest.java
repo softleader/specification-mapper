@@ -30,9 +30,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.annotation.Nonnull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -266,7 +266,7 @@ class SimpleSpecificationResolverTest {
         .buildSpecification(any(Context.class), any(Databind.class));
   }
 
-  int numberOfLocalField(@Nonnull Class<?> clazz) {
+  int numberOfLocalField(@NonNull Class<?> clazz) {
     var i = new AtomicInteger();
     doWithLocalFields(clazz, f -> i.getAndIncrement());
     return i.intValue();
