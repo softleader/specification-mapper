@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.repository;
+package tw.com.softleader.data.jpa.spec.starter.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -37,8 +37,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.repository.usecase.Customer;
-import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.starter.repository.usecase.Customer;
+import tw.com.softleader.data.jpa.spec.starter.repository.usecase.CustomerRepository;
 
 @Transactional
 @EnableAutoConfiguration

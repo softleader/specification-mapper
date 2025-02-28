@@ -18,14 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.autoconfigure;
+package tw.com.softleader.data.jpa.spec.starter.autoconfigure;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Stream.concat;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.util.Assert.notNull;
 import static tw.com.softleader.data.jpa.spec.ASTWriterFactory.impersonation;
-import static tw.com.softleader.data.jpa.spec.autoconfigure.SpecMapperProperties.PREFIX_SPEC_MAPPER;
+import static tw.com.softleader.data.jpa.spec.starter.autoconfigure.SpecMapperProperties.PREFIX_SPEC_MAPPER;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,8 +45,9 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
 import tw.com.softleader.data.jpa.spec.*;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver.SpecificationResolverBuilder;
-import tw.com.softleader.data.jpa.spec.repository.support.JpaRepositoryFactoryBeanPostProcessor;
-import tw.com.softleader.data.jpa.spec.repository.support.QueryBySpecExecutorAdapter;
+import tw.com.softleader.data.jpa.spec.starter.SpecificationResolverCodecBuilder;
+import tw.com.softleader.data.jpa.spec.starter.repository.support.JpaRepositoryFactoryBeanPostProcessor;
+import tw.com.softleader.data.jpa.spec.starter.repository.support.QueryBySpecExecutorAdapter;
 
 /**
  * @author Matt Ho

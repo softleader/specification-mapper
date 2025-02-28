@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.repository;
+package tw.com.softleader.data.jpa.spec.starter.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,8 +52,8 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 import tw.com.softleader.data.jpa.spec.domain.GreaterThanEqual;
 import tw.com.softleader.data.jpa.spec.domain.StartingWith;
-import tw.com.softleader.data.jpa.spec.repository.usecase.Customer;
-import tw.com.softleader.data.jpa.spec.repository.usecase.CustomerRepository;
+import tw.com.softleader.data.jpa.spec.starter.repository.usecase.Customer;
+import tw.com.softleader.data.jpa.spec.starter.repository.usecase.CustomerRepository;
 
 @Transactional
 @EnableAutoConfiguration

@@ -5,13 +5,31 @@ description: >
   Spring Starter
 ---
 
-```xml
-<dependency>
-  <groupId>tw.com.softleader.data.jakarta</groupId>
-  <artifactId>specification-mapper-starter</artifactId>
-  <version>${specification-mapper.version}</version>
-</dependency>
-```
+{{< tabpane text=true >}}
+  {{% tab "Maven" %}}
+  ```xml
+  <dependency>
+    <groupId>tw.com.softleader.data.jakarta</groupId>
+    <artifactId>specification-mapper-starter</artifactId>
+    <version>${specification-mapper.version}</version>
+  </dependency>
+  ```
+  {{% /tab %}}
+  {{% tab "Java Module" %}}
+  ```java
+  requires specification.mapper;
+  requires specification.mapper.starter;
+  requires jakarta.persistence;
+  ```
+  {{% /tab %}}
+  {{% tab "Logging" %}}
+  ```yaml
+  logging:
+    level:
+      tw.com.softleader.data.jpa.spec.starter: info
+  ```
+  {{% /tab %}}
+{{< /tabpane >}}
 
 specification-mapper-starter 整合了 [specification-mapper](/docs/mapper) 及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa), 並提供了 Query by Spec 的查詢方式等
 

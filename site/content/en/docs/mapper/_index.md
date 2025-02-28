@@ -5,13 +5,30 @@ description: >
   Core Domain
 ---
 
-```xml
-<dependency>
-  <groupId>tw.com.softleader.data.jakarta</groupId>
-  <artifactId>specification-mapper</artifactId>
-  <version>${specification-mapper.version}</version>
-</dependency>
-```
+{{< tabpane text=true >}}
+  {{% tab "Maven" %}}
+  ```xml
+  <dependency>
+    <groupId>tw.com.softleader.data.jakarta</groupId>
+    <artifactId>specification-mapper</artifactId>
+    <version>${specification-mapper.version}</version>
+  </dependency>
+  ```
+  {{% /tab %}}
+  {{% tab "Java Module" %}}
+  ```java
+  requires specification.mapper;
+  requires jakarta.persistence;
+  ```
+  {{% /tab %}}
+  {{% tab "Logging" %}}
+  ```yaml
+  logging:
+    level:
+      tw.com.softleader.data.jpa.spec: info
+  ```
+  {{% /tab %}}
+{{< /tabpane >}}
 
 specification-mapper is a generator for [Specifications](https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html). It reads the fields from an object and dynamically creates query conditions based on the definitions of the fields' annotations.
 

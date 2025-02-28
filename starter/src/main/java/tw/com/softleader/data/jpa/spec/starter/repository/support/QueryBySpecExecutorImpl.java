@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package tw.com.softleader.data.jpa.spec.repository.support;
+package tw.com.softleader.data.jpa.spec.starter.repository.support;
 
 import jakarta.persistence.EntityManager;
 import java.io.Serializable;
