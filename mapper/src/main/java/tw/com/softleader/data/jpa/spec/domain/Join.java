@@ -20,6 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
+
 import jakarta.persistence.criteria.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -48,14 +50,15 @@ public class Join<T> implements Specification<T> {
   }
 
   private void join(Root<T> root) {
+    var join = context.getAs(CTX_JOIN, JoinContext.class);
     if (!pathToJoinOn.contains(".")) {
-      context.join().putLazy(alias, r -> r.join(pathToJoinOn, joinType));
+      join.putLazy(alias, r -> r.join(pathToJoinOn, joinType));
       return;
     }
     var byDot = pathToJoinOn.split("\\.");
 
     var extractedAlias = byDot[0];
-    var joined = context.join().get(extractedAlias, root);
+    var joined = join.get(extractedAlias, root);
     if (joined == null) {
       throw new IllegalArgumentException(
           "Join definition with alias: '"
@@ -69,6 +72,6 @@ public class Join<T> implements Specification<T> {
     }
 
     var extractedPathToJoin = byDot[1];
-    context.join().putLazy(alias, r -> joined.join(extractedPathToJoin, joinType));
+    join.putLazy(alias, r -> joined.join(extractedPathToJoin, joinType));
   }
 }

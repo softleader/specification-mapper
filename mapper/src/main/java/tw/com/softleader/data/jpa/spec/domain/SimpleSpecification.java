@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec.domain;
 
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.ReflectionUtils.accessibleConstructor;
+import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
@@ -69,7 +70,7 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
     for (String field : split) {
       if (expr == null) {
         expr =
-            ofNullable(context.join().get(field, root))
+            ofNullable(context.getAs(CTX_JOIN, JoinContext.class).get(field, root))
                 .map(joined -> (Path<T>) joined)
                 .orElseGet(() -> root.get(field));
         continue;

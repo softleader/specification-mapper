@@ -86,11 +86,16 @@ class ArchitectureCheckTest {
       classes().that().resideInAPackage(ANNOTATION_PACKAGE).should().bePublic();
 
   @ArchTest
-  static final ArchRule classesExceptSpecMapperShouldNotBePublicResideInInfra =
+  static final ArchRule classesExceptSpecMapperOrSpecContextShouldNotBePublicResideInInfra =
       classes()
           .that()
           .resideInAPackage(INFRA_PACKAGE)
-          .and(doNot(INTERFACES.or(BUILDER).or(FACTORY).or(assignableTo(SpecMapper.class))))
+          .and(
+              doNot(
+                  INTERFACES
+                      .or(BUILDER)
+                      .or(FACTORY)
+                      .or(assignableTo(SpecMapper.class).or(assignableTo(SpecContext.class)))))
           .should()
           .notBePublic();
 

@@ -29,20 +29,15 @@ import java.util.Optional;
 import lombok.NonNull;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
+ * Default {@code Context} implementation by using a synchronized {@code Map}
+ *
  * @author Matt Ho
  */
-class SpecContext implements Context {
+public class SpecContext implements Context {
 
   private final Map<Object, Object> bag = synchronizedMap(new HashMap<>());
-  private final JoinContext join = new SpecJoinContext();
-
-  @Override
-  public JoinContext join() {
-    return join;
-  }
 
   @Override
   public int size() {

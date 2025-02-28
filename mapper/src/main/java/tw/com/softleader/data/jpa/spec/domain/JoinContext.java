@@ -25,11 +25,13 @@ import jakarta.persistence.criteria.Root;
 import java.util.function.Function;
 
 /**
- * Share data between specifications
+ * Share data between join specifications
  *
  * @author Matt Ho
  */
 public interface JoinContext {
+
+  String CTX_JOIN = "JOIN";
 
   @SuppressWarnings({"rawtypes"})
   Join get(String key, Root<?> root);

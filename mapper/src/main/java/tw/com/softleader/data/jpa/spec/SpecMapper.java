@@ -25,6 +25,7 @@ import static lombok.AccessLevel.PACKAGE;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_AST;
 import static tw.com.softleader.data.jpa.spec.AST.CTX_DEPTH;
 import static tw.com.softleader.data.jpa.spec.ASTWriterFactory.domain;
+import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -66,6 +67,7 @@ public class SpecMapper implements SpecCodec {
       return null;
     }
     var context = new SpecContext();
+    context.put(CTX_JOIN, new SpecJoinContext());
     var ast = new SpecAST();
     var depth = 0;
     context.put(CTX_AST, ast);
@@ -114,8 +116,8 @@ public class SpecMapper implements SpecCodec {
       @NonNull SpecificationResolver resolver) {
     var node =
         new ReflectionSpecInvocation(
-            context.get(CTX_AST).map(AST.class::cast).get(),
-            (int) context.get(CTX_DEPTH).get(),
+            context.getAs(CTX_AST, AST.class),
+            context.getAs(CTX_DEPTH, Integer.class),
             resolver,
             databind);
     resolver.preVisit(node);

@@ -50,22 +50,22 @@ class SimpleSpecificationResolver implements SpecificationResolver {
   public Specification<Object> buildSpecification(
       @NonNull Context context, @NonNull Databind databind) {
     var def = databind.getField().getAnnotation(Spec.class);
-    var ast = context.get(CTX_AST).map(AST.class::cast).get();
-    var depth = (int) context.get(CTX_DEPTH).get();
     var built =
         databind
             .getFieldValue()
             .map(value -> buildSpecification(context, databind, def, value))
             .orElse(null);
-    ast.add(
-        depth,
-        "|  +-[%s.%s]: @Spec(value=%s, path=%s, not=%s) -> %s",
-        databind.getTarget().getClass().getSimpleName(),
-        databind.getField().getName(),
-        def.value().getSimpleName(),
-        def.path(),
-        def.not(),
-        built);
+    context
+        .getAs(CTX_AST, AST.class)
+        .add(
+            context.getAs(CTX_DEPTH, Integer.class),
+            "|  +-[%s.%s]: @Spec(value=%s, path=%s, not=%s) -> %s",
+            databind.getTarget().getClass().getSimpleName(),
+            databind.getField().getName(),
+            def.value().getSimpleName(),
+            def.path(),
+            def.not(),
+            built);
     return built;
   }
 

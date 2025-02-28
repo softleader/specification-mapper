@@ -52,8 +52,7 @@ class NestedSpecificationResolver implements SpecificationResolver {
         .getFieldValue()
         .map(
             nested -> {
-              var depth = (int) context.get(CTX_DEPTH).get();
-              context.put(CTX_DEPTH, depth + 1);
+              context.put(CTX_DEPTH, context.getAs(CTX_DEPTH, Integer.class) + 1);
               var spec = codec.toSpec(context, nested);
               if (spec == null) {
                 return null;
