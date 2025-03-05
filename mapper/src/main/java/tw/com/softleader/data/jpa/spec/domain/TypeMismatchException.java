@@ -28,6 +28,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 /**
+ * Exception indicating a failure to convert a value to the required type.
+ *
+ * <p>This exception is thrown when a given value does not match the expected type.
+ *
  * @author Matt Ho
  */
 @Getter

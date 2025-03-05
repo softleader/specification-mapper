@@ -36,6 +36,9 @@ import tw.com.softleader.data.jpa.spec.domain.Not;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
+ * A simple implementation of {@link SpecificationResolver} that processes fields annotated with
+ * {@link Spec}.
+ *
  * @author Matt Ho
  */
 @Slf4j

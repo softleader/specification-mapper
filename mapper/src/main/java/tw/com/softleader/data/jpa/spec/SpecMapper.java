@@ -47,6 +47,15 @@ import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.Disjunction;
 
 /**
+ * Implementation of {@link SpecCodec} that maps objects to {@link Specification} instances using a
+ * collection of {@link SpecificationResolver}.
+ *
+ * <p>This class processes the given object by traversing its properties, resolving applicable
+ * specifications, and combining them into a logical conjunction or disjunction based on annotations
+ * present on the object.
+ *
+ * <p>Order of resolvers matters; for example, join resolvers must precede simple resolvers.
+ *
  * @author Matt Ho
  */
 @RequiredArgsConstructor(access = PACKAGE)
@@ -56,6 +65,11 @@ public class SpecMapper implements SpecCodec {
   @NonNull private final ASTWriterFactory astWriterFactory;
   private Collection<SpecificationResolver> resolvers; // Order matters
 
+  /**
+   * Creates a new builder for constructing a {@link SpecMapper} instance.
+   *
+   * @return a new {@link SpecMapperBuilder}
+   */
   public static SpecMapperBuilder builder() {
     return new SpecMapperBuilder();
   }
@@ -126,6 +140,11 @@ public class SpecMapper implements SpecCodec {
     return resolved;
   }
 
+  /**
+   * Builder for {@link SpecMapper} instances.
+   *
+   * @author Matt Ho
+   */
   @NoArgsConstructor(access = PACKAGE)
   public static class SpecMapperBuilder {
 
@@ -134,35 +153,76 @@ public class SpecMapper implements SpecCodec {
     private SkippingStrategy skippingStrategy = new DefaultSkippingStrategy();
     private ASTWriterFactory astWriterFactory = domain();
 
+    /**
+     * Sets the AST writer factory.
+     *
+     * @param factory the {@link ASTWriterFactory} to use
+     * @return this builder instance
+     */
     public SpecMapperBuilder astWriterFactory(@NonNull ASTWriterFactory factory) {
       this.astWriterFactory = factory;
       return this;
     }
 
+    /**
+     * Sets the skipping strategy.
+     *
+     * @param strategy the {@link SkippingStrategy} to use
+     * @return this builder instance
+     */
     public SpecMapperBuilder skippingStrategy(@NonNull SkippingStrategy strategy) {
       this.skippingStrategy = strategy;
       return this;
     }
 
+    /**
+     * Adds a resolver function.
+     *
+     * @param resolver the resolver function
+     * @return this builder instance
+     */
     public SpecMapperBuilder resolver(
         @NonNull Function<SpecCodec, SpecificationResolver> resolver) {
       this.resolvers.add(resolver);
       return this;
     }
 
+    /**
+     * Adds a resolver supplier.
+     *
+     * @param resolver the resolver supplier
+     * @return this builder instance
+     */
     public SpecMapperBuilder resolver(@NonNull Supplier<SpecificationResolver> resolver) {
       return resolver(codec -> resolver.get());
     }
 
+    /**
+     * Adds a specific resolver instance.
+     *
+     * @param resolver the resolver instance
+     * @return this builder instance
+     */
     public SpecMapperBuilder resolver(@NonNull SpecificationResolver resolver) {
       return resolver(codec -> resolver);
     }
 
+    /**
+     * Adds multiple resolvers.
+     *
+     * @param resolvers the resolvers to add
+     * @return this builder instance
+     */
     public SpecMapperBuilder resolvers(@NonNull Iterable<SpecificationResolver> resolvers) {
       resolvers.forEach(this::resolver);
       return this;
     }
 
+    /**
+     * Adds default resolvers in the appropriate order.
+     *
+     * @return this builder instance
+     */
     public SpecMapperBuilder defaultResolvers() { // 順序是重要的, ex: Join 需要比 Simple 還早
       return resolver(NestedSpecificationResolver::new)
           .resolver(JoinFetchSpecificationResolver::new)
@@ -170,6 +230,11 @@ public class SpecMapper implements SpecCodec {
           .resolver(SimpleSpecificationResolver::new);
     }
 
+    /**
+     * Builds and returns a {@link SpecMapper} instance.
+     *
+     * @return the constructed {@link SpecMapper}
+     */
     public SpecMapper build() {
       if (this.resolvers.isEmpty()) {
         defaultResolvers();

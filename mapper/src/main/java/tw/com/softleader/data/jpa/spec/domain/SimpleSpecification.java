@@ -33,8 +33,11 @@ import lombok.SneakyThrows;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- * To constraint the constructor, the implementations must provide accessible constructor.
+ * Abstract class representing a simple specification used for querying or filtering data.
  *
+ * <p>The implementations must provide accessible constructor.
+ *
+ * @param <T> The type of the entity this specification applies to
  * @author Matt Ho
  */
 public abstract class SimpleSpecification<T> implements Specification<T> {

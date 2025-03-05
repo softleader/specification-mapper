@@ -30,6 +30,8 @@ import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
+ * Annotation for specifying query filter on entity fields.
+ *
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,18 +39,28 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 public @interface Spec {
 
   /**
-   * Name of the attribute to create {@code Path}
+   * The attribute name used to construct a {@code Path} for querying.
    *
+   * <p>If left empty, the field name will be used by default.
+   *
+   * @return the attribute name for the query path
    * @see Path
    */
   String path() default "";
 
-  /** {@code Specification} domain class */
+  /**
+   * The {@link SimpleSpecification} implementation to be applied.
+   *
+   * @return the specification class
+   */
   Class<? extends SimpleSpecification> value() default Equals.class;
 
   /**
-   * Negates the {@code Specification}.
+   * Whether to negate the specified {@link Specification}.
    *
+   * <p>If set to {@code true}, the generated query condition will be negated.
+   *
+   * @return {@code true} to negate the specification, otherwise {@code false}
    * @see Specification#not(Specification)
    */
   boolean not() default false;

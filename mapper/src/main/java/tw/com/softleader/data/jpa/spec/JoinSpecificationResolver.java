@@ -35,6 +35,9 @@ import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
+ * A {@link SpecificationResolver} that processes fields annotated with {@link Join} or {@link
+ * Joins}.
+ *
  * @author Matt Ho
  */
 @Slf4j

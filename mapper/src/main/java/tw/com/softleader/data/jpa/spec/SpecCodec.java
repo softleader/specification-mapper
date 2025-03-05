@@ -29,19 +29,30 @@ import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
+ * A codec interface for mapping objects to JPA {@link Specification} instances.
+ *
+ * <p>Implementations provide mechanisms to convert domain objects into query specifications.
+ *
  * @author Matt Ho
  */
 public interface SpecCodec {
 
   /**
-   * @return null if non any {@code Specification} was mapped
+   * Converts the given root object into a {@link Specification}.
+   *
+   * @param rootObject the root object to be mapped
+   * @return a {@code Specification} instance, or {@code null} if no mapping was found
    */
-  @SuppressWarnings("unchecked")
   @Nullable
   Specification<Object> toSpec(@Nullable Object rootObject);
 
   /**
-   * @return null if non any {@code Specification} was mapped
+   * Converts the given root object into a typed {@link Specification}.
+   *
+   * @param rootObject the root object to be mapped
+   * @param rootType the target type of the specification
+   * @param <T> the type parameter for the specification
+   * @return a typed {@code Specification} instance, or {@code null} if no mapping was found
    */
   @Nullable
   @SuppressWarnings("unchecked")
@@ -50,7 +61,12 @@ public interface SpecCodec {
   }
 
   /**
-   * @return empty if non any {@code Specification} was mapped
+   * Attempts to map the given root object into a {@link Specification}, returning an {@code
+   * Optional}.
+   *
+   * @param rootObject the root object to be mapped
+   * @return an {@code Optional} containing the mapped {@code Specification}, or empty if no mapping
+   *     was found
    */
   @NonNull
   default Optional<Specification<Object>> trySpec(@Nullable Object rootObject) {
@@ -58,7 +74,14 @@ public interface SpecCodec {
   }
 
   /**
-   * @return empty if non any {@code Specification} was mapped
+   * Attempts to map the given root object into a typed {@link Specification}, returning an {@code
+   * Optional}.
+   *
+   * @param rootObject the root object to be mapped
+   * @param rootType the target type of the specification
+   * @param <T> the type parameter for the specification
+   * @return an {@code Optional} containing the mapped {@code Specification}, or empty if no mapping
+   *     was found
    */
   @NonNull
   default <T> Optional<Specification<T>> trySpec(
@@ -67,7 +90,12 @@ public interface SpecCodec {
   }
 
   /**
-   * @return empty if non any {@code Specification} was mapped
+   * Attempts to map the given root object into a {@link Specification} using the provided context.
+   *
+   * @param context the processing context
+   * @param rootObject the root object to be mapped
+   * @return an {@code Optional} containing the mapped {@code Specification}, or empty if no mapping
+   *     was found
    */
   @NonNull
   default Optional<Specification<Object>> trySpec(
@@ -76,7 +104,15 @@ public interface SpecCodec {
   }
 
   /**
-   * @return empty if non any {@code Specification} was mapped
+   * Attempts to map the given root object into a typed {@link Specification} using the provided
+   * context.
+   *
+   * @param context the processing context
+   * @param rootObject the root object to be mapped
+   * @param rootType the target type of the specification
+   * @param <T> the type parameter for the specification
+   * @return an {@code Optional} containing the mapped {@code Specification}, or empty if no mapping
+   *     was found
    */
   @NonNull
   default <T> Optional<Specification<T>> trySpec(
@@ -85,13 +121,23 @@ public interface SpecCodec {
   }
 
   /**
-   * @return null if non any {@code Specification} was mapped
+   * Converts the given root object into a {@link Specification} using the provided context.
+   *
+   * @param context the processing context
+   * @param rootObject the root object to be mapped
+   * @return a {@code Specification} instance, or {@code null} if no mapping was found
    */
   @Nullable
   Specification<Object> toSpec(@NonNull Context context, @Nullable Object rootObject);
 
   /**
-   * @return null if non any {@code Specification} was mapped
+   * Converts the given root object into a typed {@link Specification} using the provided context.
+   *
+   * @param context the processing context
+   * @param rootObject the root object to be mapped
+   * @param rootType the target type of the specification
+   * @param <T> the type parameter for the specification
+   * @return a typed {@code Specification} instance, or {@code null} if no mapping was found
    */
   @Nullable
   @SuppressWarnings("unchecked")

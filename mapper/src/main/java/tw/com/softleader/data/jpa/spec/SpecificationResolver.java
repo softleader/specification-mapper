@@ -33,23 +33,63 @@ import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
+ * A resolver that processes {@link Databind} and constructs the corresponding {@link
+ * Specification}.
+ *
+ * <p>Implementations of this interface determine whether they support a given databind instance and
+ * generate the appropriate specification accordingly.
+ *
+ * <p>Implementations can define the order in which they should be applied by implementing the
+ * {@link Ordered} interface.
+ *
  * @author Matt Ho
  */
 public interface SpecificationResolver extends ASTNode, Ordered {
 
+  /**
+   * Determines whether this resolver supports the given {@link Databind}.
+   *
+   * @param databind the target databind object
+   * @return {@code true} if this resolver supports the given databind, {@code false} otherwise
+   */
   boolean supports(@NonNull Databind databind);
 
+  /**
+   * Builds the corresponding {@link Specification}, or returns {@code null} if it cannot be
+   * constructed.
+   *
+   * @param context the current processing context
+   * @param databind the target databind object
+   * @return the constructed {@link Specification}, or {@code null} if not applicable
+   */
   @Nullable
   Specification<Object> buildSpecification(@NonNull Context context, @NonNull Databind databind);
 
+  /**
+   * Gets the order of this resolver. Lower values indicate higher priority.
+   *
+   * @return the order value of this resolver
+   */
   default int getOrder() {
     return 0;
   }
 
+  /**
+   * Creates a new {@link SpecificationResolverBuilder} for constructing instances of {@link
+   * SpecificationResolver}.
+   *
+   * @return a new {@link SpecificationResolverBuilder} instance
+   */
   static SpecificationResolverBuilder builder() {
     return new SpecificationResolverBuilder();
   }
 
+  /**
+   * A builder for constructing instances of {@link SpecificationResolver}.
+   *
+   * <p>This builder allows setting the conditions for supporting a databind, the function for
+   * building specifications, and the order of the resolver.
+   */
   @NoArgsConstructor(access = PACKAGE)
   class SpecificationResolverBuilder implements Ordered {
 
@@ -57,22 +97,49 @@ public interface SpecificationResolver extends ASTNode, Ordered {
     BiFunction<Context, Databind, Specification<Object>> buildSpecification;
     int order = 0;
 
+    /**
+     * Specifies the predicate used to determine if the resolver supports a given {@link Databind}.
+     *
+     * @param supports a predicate that tests whether the databind is supported
+     * @return this builder instance for method chaining
+     */
     public SpecificationResolverBuilder supports(@NonNull Predicate<Databind> supports) {
       this.supports = supports;
       return this;
     }
 
+    /**
+     * Defines the function used to build the corresponding {@link Specification}.
+     *
+     * @param buildSpecification a function that constructs the specification from the given context
+     *     and databind
+     * @return this builder instance for method chaining
+     */
     public SpecificationResolverBuilder buildSpecification(
         @NonNull BiFunction<Context, Databind, Specification<Object>> buildSpecification) {
       this.buildSpecification = buildSpecification;
       return this;
     }
 
+    /**
+     * Sets the order of this resolver.
+     *
+     * @param order the order value, where lower values indicate higher priority
+     * @return this builder instance for method chaining
+     */
     public SpecificationResolverBuilder order(int order) {
       this.order = order;
       return this;
     }
 
+    /**
+     * Builds and returns a new instance of {@link SpecificationResolver} based on the configured
+     * parameters.
+     *
+     * @return a new {@link SpecificationResolver} instance
+     * @throws NullPointerException if either the supports predicate or buildSpecification function
+     *     is not set
+     */
     public SpecificationResolver build() {
       requireNonNull(supports, "'supports' must not be null");
       requireNonNull(buildSpecification, "'buildSpecification' must not be null");

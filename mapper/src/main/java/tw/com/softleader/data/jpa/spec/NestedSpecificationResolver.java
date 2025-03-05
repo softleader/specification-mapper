@@ -32,6 +32,8 @@ import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
+ * A {@link SpecificationResolver} that processes fields annotated with {@link NestedSpec}.
+ *
  * @author Matt Ho
  */
 @Slf4j
