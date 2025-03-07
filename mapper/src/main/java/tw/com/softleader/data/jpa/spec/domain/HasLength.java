@@ -27,7 +27,21 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.firstname is not null and character_length(x.firstname)>0}
+ * A {@code Specification} that filters entities where a field has a specific length.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.and(
+ *    cb.isNotNull(root.get(path)),
+ *    cb.greaterThan(cb.length(root.get(path)), 0));
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
+ *  {@code ... where x.firstname is not null and character_length(x.firstname)>0}
+ * </pre>
  *
  * @author Matt Ho
  */

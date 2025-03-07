@@ -27,7 +27,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.age is null}
+ * A {@code Specification} that filters entities where a field is {@code NULL}.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.isNotNull(root.get(path));
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>{@code
+ * ... where x.age is null
+ * }</pre>
  *
  * @author Matt Ho
  */

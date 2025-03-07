@@ -28,6 +28,20 @@ import java.util.Objects;
 import lombok.NonNull;
 
 /**
+ * A {@code Specification} that filters entities ending with a specific value.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.like(root.get(path), "%" + value);
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
+ * {@code ... where x.firstname like %?}
+ * </pre>
+ *
  * @author Matt Ho
  */
 public class EndingWith<T> extends SimpleSpecification<T> {

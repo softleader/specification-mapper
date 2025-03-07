@@ -27,7 +27,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.active = true} or {@code ... where x.active = false}
+ * A {@code Specification} that filters entities where a boolean field is {@code true}.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * criteriaBuilder.isTrue(root.get(path), value);
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
+ * {@code ... where x.active = true}
+ * </pre>
  *
  * @author Matt Ho
  */

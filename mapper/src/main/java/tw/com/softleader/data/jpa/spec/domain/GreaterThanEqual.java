@@ -27,7 +27,20 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.age >= ?}
+ * A {@code Specification} that filters entities where a field is greater than or equal to a given
+ * value.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.greaterThanOrEqualTo(root.get(path), value);
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
+ *  {@code ... where x.age >= ?}
+ * </pre>
  *
  * @author Matt Ho
  */

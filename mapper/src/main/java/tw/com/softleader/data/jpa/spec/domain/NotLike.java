@@ -28,7 +28,20 @@ import java.util.Objects;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.firstname not like %?%}
+ * A {@code Specification} that filters entities where a field matches a pattern using not {@code
+ * LIKE}.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.notLike(root.get(path), "%" + value + "%");
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>{@code
+ * ... where x.firstname not like %?%
+ * }</pre>
  *
  * @author Matt Ho
  */
