@@ -157,7 +157,7 @@ inner join tag tag3_ on tags2_.tags_id=tag3_.id
 where tag3_.name in (?)
 ```
 
-`@JoinFetches` 也是可以用在 class 層級, 在同一個物件內的欄位就都可以使用 `alias` 來對 Join 的對象增加條件, 例如:
+`@JoinFetches` 也是可以用在 class 層級, 在同一個物件內的欄位就都可以使用 [`alias`](#alias) 來對 Join 的對象增加條件, 例如:
 
 ```java
 @Data

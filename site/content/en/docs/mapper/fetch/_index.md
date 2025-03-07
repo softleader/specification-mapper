@@ -157,7 +157,7 @@ inner join tag tag3_ on tags2_.tags_id=tag3_.id
 where tag3_.name in (?)
 ```
 
-`@JoinFetches` can also be used at the class level, making the `aliases` available across fields in the same object. For example:
+`@JoinFetches` can also be used at the class level, making the [`aliases`](#alias) available across fields in the same object. For example:
 
 ```java
 @Data

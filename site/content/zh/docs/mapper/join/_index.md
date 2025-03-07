@@ -45,7 +45,7 @@ inner join orders orders1_ on customer0_.id=orders1_.order_id
 where orders1_.item_name in (? , ?)
 ```
 
-`@Join` 也可以用在 class 層級, 在同一個物件內的欄位就都可以使用 `alias` 來對 Join 的對象增加條件, 例如:
+`@Join` 也可以用在 class 層級, 在同一個物件內的欄位就都可以使用 [`alias`](#alias)  來對 Join 的對象增加條件, 例如:
 
 ```java
 @Data
@@ -120,7 +120,7 @@ inner join tag tag3_ on tags2_.tags_id=tag3_.id
 where tag3_.name in (?)
 ```
 
-`@Joins` 也是可以用在 class 層級, 在同一個物件內的欄位就都可以使用 `alias` 來對 Join 的對象增加條件, 例如:
+`@Joins` 也是可以用在 class 層級, 在同一個物件內的欄位就都可以使用 [`alias`](#alias) 來對 Join 的對象增加條件, 例如:
 
 ```java
 @Data

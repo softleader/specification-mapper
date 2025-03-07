@@ -120,7 +120,7 @@ inner join tag tag3_ on tags2_.tags_id=tag3_.id
 where tag3_.name in (?)
 ```
 
-`@Joins` can also be used at the class level, allowing all fields within the same object to use the `alias` for additional conditions on the joined entity, for example:
+`@Joins` can also be used at the class level, allowing all fields within the same object to use the [`alias`](#alias) for additional conditions on the joined entity, for example:
 
 ```java
 @Data
