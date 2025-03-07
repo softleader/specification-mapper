@@ -42,12 +42,13 @@ class SpecJoinContext implements JoinContext {
   private final Map<JoinKey, Join<?, ?>> joined = synchronizedMap(new HashMap<>());
 
   @Override
-  public boolean hasHandled(Annotation def, Object target, Field field) {
+  public boolean hasHandled(
+      @NonNull Annotation def, @NonNull Object target, @Nullable Field field) {
     return handled.containsKey(new HandleKey(def, target, field));
   }
 
   @Override
-  public void markHandled(Annotation def, Object target, Field field) {
+  public void markHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field) {
     handled.put(new HandleKey(def, target, field), null);
   }
 
