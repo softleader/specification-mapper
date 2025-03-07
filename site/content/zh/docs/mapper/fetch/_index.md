@@ -149,7 +149,7 @@ class CustomerOrderTagCriteria {
 select distinct 
   customer0_.* ...,
   orders1_.* ...,
-  tag3_.* ...,
+  tag3_.* ...
 from customer customer0_ 
 inner join orders orders1_ on customer0_.id=orders1_.order_id 
 inner join orders_tags tags2_ on orders1_.id=tags2_.order_id 
