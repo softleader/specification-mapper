@@ -40,6 +40,7 @@ class SpecJoinContext implements JoinContext {
 
   private final Map<HandleKey, Object> handled = synchronizedMap(new HashMap<>());
   private final Map<JoinKey, Join<?, ?>> joined = synchronizedMap(new HashMap<>());
+  private final Map<FetchKey, FetchRef> fetched = synchronizedMap(new HashMap<>());
 
   @Override
   public boolean hasHandled(
@@ -58,8 +59,19 @@ class SpecJoinContext implements JoinContext {
   }
 
   @Override
-  public Join<?, ?> get(@NonNull Root<?> root, @NonNull String alias) {
+  public void putIfAbsent(
+      @NonNull Root<?> root, @NonNull String alias, @NonNull JoinContext.FetchRef fetch) {
+    fetched.putIfAbsent(new FetchKey(root, alias), fetch);
+  }
+
+  @Override
+  public Join<?, ?> getJoin(@NonNull Root<?> root, @NonNull String alias) {
     return joined.get(new JoinKey(root, alias));
+  }
+
+  @Override
+  public FetchRef getFetch(@NonNull Root<?> root, @NonNull String alias) {
+    return fetched.get(new FetchKey(root, alias));
   }
 
   record HandleKey(Annotation def, int target, @Nullable String field) {
@@ -72,4 +84,6 @@ class SpecJoinContext implements JoinContext {
   }
 
   record JoinKey(@NonNull Root<?> root, @NonNull String alias) {}
+
+  record FetchKey(@NonNull Root<?> root, @NonNull String alias) {}
 }

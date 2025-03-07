@@ -20,14 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Optional.ofNullable;
 import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
 import jakarta.persistence.criteria.*;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 /**
  * A {@code Specification} that performs an join on a given association.
@@ -47,7 +49,6 @@ import org.springframework.data.jpa.domain.Specification;
  * @author Matt Ho
  */
 @ToString
-@RequiredArgsConstructor
 public class Join<T> implements Specification<T> {
 
   @Exclude @NonNull private final transient Context context;
@@ -56,8 +57,25 @@ public class Join<T> implements Specification<T> {
   @NonNull private final JoinType joinType;
   private final boolean distinct;
 
+  public Join(
+      @NonNull Context context,
+      @NonNull String pathToJoinOn,
+      @Nullable String alias,
+      @NonNull JoinType joinType,
+      boolean distinct) {
+    this.context = context;
+    this.pathToJoinOn = pathToJoinOn;
+    this.alias =
+        ofNullable(alias)
+            .filter(StringUtils::hasText)
+            .orElseGet(() -> pathToJoinOn.replace(".", "_"));
+    this.joinType = joinType;
+    this.distinct = distinct;
+  }
+
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     if (query != null) {
       query.distinct(distinct);
     }
@@ -74,17 +92,11 @@ public class Join<T> implements Specification<T> {
     var byDot = pathToJoinOn.split("\\.");
 
     var extractedAlias = byDot[0];
-    var joined = jc.get(root, extractedAlias);
+    var joined = jc.getJoin(root, extractedAlias);
     if (joined == null) {
       throw new IllegalArgumentException(
-          "Join definition with alias: '"
-              + extractedAlias
-              + "' not found! "
-              + "Make sure that join with the alias '"
-              + extractedAlias
-              + "' is defined before the jc with path: '"
-              + pathToJoinOn
-              + "'");
+          "Join definition with alias: '%s' not found! Make sure that join with the alias '%s' is defined before the join with path: '%s'"
+              .formatted(extractedAlias, extractedAlias, pathToJoinOn));
     }
 
     var extractedPathToJoin = byDot[1];

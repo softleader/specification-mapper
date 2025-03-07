@@ -32,17 +32,25 @@ import java.lang.annotation.Target;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface JoinFetch {
 
-  String[] paths();
+  /** Specifies a collection property to join on, e.g. "addresses" */
+  String path();
+
+  /**
+   * Specifies an alias for the joined entity, e.g., “a”. If not specified, the path name will be
+   * used with dots replaced by underscores.
+   */
+  String alias() default "";
+
+  /** Whether the query should return distinct results or not */
+  boolean distinct() default true;
 
   JoinType joinType() default JoinType.INNER;
 
-  boolean distinct() default true;
-
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.TYPE})
+  @Target({ElementType.FIELD, ElementType.TYPE})
   @interface JoinFetches {
 
     JoinFetch[] value();

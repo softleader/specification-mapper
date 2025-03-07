@@ -26,11 +26,13 @@ import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import java.util.Optional;
 import java.util.StringJoiner;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.data.jpa.domain.Specification;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext.FetchRef;
 
 /**
  * Abstract class representing a simple specification used for querying or filtering data.
@@ -66,23 +68,41 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
   }
 
   @SuppressWarnings({"unchecked"})
-  protected <F> Path<F> getPath(Root<T> root) {
+  protected <F> Path<F> getPath(@NonNull Root<T> root) {
     var split = path.split("\\.");
+    // 處理單一層的 path
     if (split.length == 1) {
       return root.get(split[0]);
     }
-    Path<?> expr = null;
-    for (var field : split) {
-      if (expr == null) {
-        expr =
-            ofNullable(context.getAs(CTX_JOIN, JoinContext.class).get(root, field))
-                .map(joined -> (Path<T>) joined)
-                .orElseGet(() -> root.get(field));
-        continue;
-      }
-      expr = expr.get(field);
+    // 處理多層的 path
+    var expr = getExpr(root, split[0]);
+    for (int i = 1; i < split.length; i++) {
+      expr = expr.get(split[i]);
     }
     return (Path<F>) expr;
+  }
+
+  private Path<?> getExpr(@NonNull Root<T> root, @NonNull String field) {
+    return getJoin(root, field).or(() -> getFetch(root, field)).orElseGet(() -> root.get(field));
+  }
+
+  @SuppressWarnings({"unchecked"})
+  private Optional<Path<T>> getJoin(@NonNull Root<T> root, @NonNull String field) {
+    return ofNullable(context.getAs(CTX_JOIN, JoinContext.class).getJoin(root, field))
+        .map(joined -> (Path<T>) joined);
+  }
+
+  private Optional<Path<T>> getFetch(@NonNull Root<T> root, @NonNull String field) {
+    return ofNullable(context.getAs(CTX_JOIN, JoinContext.class).getFetch(root, field))
+        .map(ref -> getFetchPath(root, ref));
+  }
+
+  private Path<T> getFetchPath(@NonNull Root<T> root, @NonNull FetchRef ref) {
+    Path<T> current = root;
+    for (var path : ref.paths()) {
+      current = current.get(path);
+    }
+    return current;
   }
 
   @Override

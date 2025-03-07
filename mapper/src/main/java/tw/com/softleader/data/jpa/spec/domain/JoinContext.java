@@ -20,6 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
@@ -42,6 +43,13 @@ public interface JoinContext {
 
   void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join);
 
+  void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull FetchRef ref);
+
   @Nullable
-  Join<?, ?> get(@NonNull Root<?> root, @NonNull String alias);
+  Join<?, ?> getJoin(@NonNull Root<?> root, @NonNull String alias);
+
+  @Nullable
+  FetchRef getFetch(@NonNull Root<?> root, @NonNull String alias);
+
+  record FetchRef(@NonNull Fetch<?, ?> fetch, @NonNull String... paths) {}
 }

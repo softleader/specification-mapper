@@ -20,13 +20,16 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Optional.ofNullable;
+import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
+
 import jakarta.persistence.criteria.*;
-import java.util.Arrays;
-import java.util.List;
 import lombok.NonNull;
 import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext.FetchRef;
 
 /**
  * A {@code Specification} that performs an inner join and fetches the related entities.
@@ -48,18 +51,26 @@ import org.springframework.lang.Nullable;
 @ToString
 public class JoinFetch<T> implements Specification<T> {
 
-  private final List<String> pathsToFetch;
-  private final JoinType joinType;
+  @ToString.Exclude @NonNull private final transient Context context;
+  @NonNull private final String pathToFetch;
+  @NonNull private final String alias;
+  @NonNull private final JoinType joinType;
   private final boolean distinct;
 
-  public JoinFetch(@NonNull String[] pathsToFetch, @NonNull JoinType joinType, boolean distinct) {
-    this.pathsToFetch = Arrays.asList(pathsToFetch);
+  public JoinFetch(
+      @NonNull Context context,
+      @NonNull String pathToFetch,
+      @Nullable String alias,
+      @NonNull JoinType joinType,
+      boolean distinct) {
+    this.context = context;
+    this.pathToFetch = pathToFetch;
+    this.alias =
+        ofNullable(alias)
+            .filter(StringUtils::hasText)
+            .orElseGet(() -> pathToFetch.replace(".", "_"));
     this.joinType = joinType;
     this.distinct = distinct;
-
-    if (pathsToFetch.length == 0) {
-      throw new IllegalArgumentException("paths must not be empty");
-    }
   }
 
   @Override
@@ -67,29 +78,29 @@ public class JoinFetch<T> implements Specification<T> {
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     if (query != null) {
       query.distinct(distinct);
-      if (Number.class.isAssignableFrom(query.getResultType())) { // do not join in count queries
-        return null;
-      }
     }
-    fetchJoin(root);
+    fetch(root);
     return null;
   }
 
-  private void fetchJoin(Root<T> root) {
-    if (pathsToFetch.size() > 1) {
-      for (String path : pathsToFetch) {
-        root.fetch(path, joinType);
-      }
-      return;
-    }
-    var pathToFetch = pathsToFetch.get(0);
+  private void fetch(Root<T> root) {
+    var jc = context.getAs(CTX_JOIN, JoinContext.class);
     if (!pathToFetch.contains(".")) {
-      root.fetch(pathToFetch, joinType);
+      jc.putIfAbsent(root, alias, new FetchRef(root.fetch(pathToFetch, joinType), pathToFetch));
       return;
     }
     var byDot = pathToFetch.split("\\.");
-    var alias = byDot[0];
-    var path = byDot[1];
-    root.fetch(alias).fetch(path, joinType);
+
+    var extractedAlias = byDot[0];
+    var ref = jc.getFetch(root, extractedAlias);
+    if (ref == null) {
+      throw new IllegalArgumentException(
+          "JoinFetch definition with alias: '%s' not found! Make sure that fetch with the alias '%s' is defined before the fetch with path: '%s'"
+              .formatted(extractedAlias, extractedAlias, pathToFetch));
+    }
+
+    var extractedPathToFetch = byDot[1];
+    jc.putIfAbsent(
+        root, alias, new FetchRef(ref.fetch().fetch(extractedPathToFetch, joinType), byDot));
   }
 }
