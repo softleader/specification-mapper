@@ -27,7 +27,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
+ * {@code Specification} that filters entities where a field is exactly equal to a given value.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.equal(root.get(path), value);
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
  * {@code ... where x.firstname = ?}
+ * </pre>
  *
  * @author Matt Ho
  */

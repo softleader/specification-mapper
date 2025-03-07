@@ -29,7 +29,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.age between ? and ?}
+ * A {@code Specification} that filters entities within a given range.
+ *
+ * <p>In Criteria API, an equivalent expression might be:</p>
+ * <pre>
+ * {@code
+ * cb.between(root.get(path), values[0], values[1]);
+ * }
+ * </pre>
+ *
+ * <p>This typically translates to SQL like:</p>
+ * <pre>
+ * @code ... where x.age between ? and ?}
+ * </pre>
  *
  * @author Matt Ho
  */

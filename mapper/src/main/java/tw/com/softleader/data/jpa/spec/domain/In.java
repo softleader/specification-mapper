@@ -29,7 +29,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.firstname in (?, ?, ...)}
+ * A {@code Specification} that generates a SQL {@code IN} clause in the query.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * root.get(path).in(values);
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>{@code
+ * ... WHERE x.firstname IN (?, ?, ...)
+ * }</pre>
  *
  * @author Matt Ho
  */

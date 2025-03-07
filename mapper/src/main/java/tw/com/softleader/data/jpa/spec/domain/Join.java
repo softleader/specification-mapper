@@ -30,6 +30,20 @@ import lombok.ToString.Exclude;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
+ * A {@code Specification} that performs an join on a given association.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * root.join(root.get(path), joinType)
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
+ * {@code join x on x.id = y.id}
+ * </pre>
+ *
  * @author Matt Ho
  */
 @ToString

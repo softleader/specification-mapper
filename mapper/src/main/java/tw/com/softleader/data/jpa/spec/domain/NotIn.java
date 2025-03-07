@@ -29,7 +29,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * {@code ... where x.firstname not in (?, ?, ...)}
+ * A {@code Specification} that generates a SQL not {@code IN} clause in the query.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * Predicate.not(root.get(path).in(values));
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>{@code
+ * ... where x.firstname not in (?, ?, ...)
+ * }</pre>
  *
  * @author Matt Ho
  */

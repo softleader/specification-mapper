@@ -23,7 +23,19 @@ package tw.com.softleader.data.jpa.spec.domain;
 import lombok.NonNull;
 
 /**
+ * A {@code Specification} that filters entities occurring before a given value.
+ *
+ * <p>In Criteria API, an equivalent expression might be:
+ *
+ * <pre>{@code
+ * cb.lessThan(root.get(path), value);
+ * }</pre>
+ *
+ * <p>This typically translates to SQL like:
+ *
+ * <pre>
  * {@code ... where x.firstname < ?}
+ * </pre>
  *
  * @author Matt Ho
  */
