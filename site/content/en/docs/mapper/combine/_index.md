@@ -22,7 +22,7 @@ public class CustomerCriteria {
 }
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where x.firstname like %?% or x.lastname like %?% 
@@ -48,7 +48,7 @@ public class CustomerCriteria {
 }
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where (x.firstname like ?) and (x.lastname like ?) or x.birthday<=?
@@ -74,7 +74,7 @@ public class CustomerCriteria {
 }
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where (x.firstname like ? or x.birthday<=?) and (x.lastname like ?)

@@ -1,5 +1,5 @@
 ---
-title: Customize Spec Annotation
+title: Customize Specs
 weight: 70
 ---
 
@@ -77,7 +77,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where customer0_.created_time=(

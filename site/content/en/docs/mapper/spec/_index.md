@@ -32,7 +32,7 @@ var specification = mapper.toSpec(criteria);
 customerRepository.findAll(specification);
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where x.firstname like '%Hello%'

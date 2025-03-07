@@ -37,7 +37,7 @@ class CustomerOrderCriteria {
 }
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```sql
 select distinct 
@@ -75,7 +75,7 @@ public class CustomerOrderCriteria {
 }
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```sql
 select distinct 
@@ -143,7 +143,7 @@ class CustomerOrderTagCriteria {
 }
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```sql
 select distinct 

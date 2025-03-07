@@ -37,7 +37,7 @@ class CustomerOrderCriteria {
 }
 ```
 
-執行的 SQL 將會是:
+執行的 SQL 會類似:
 
 ```sql
 select distinct 
@@ -75,7 +75,7 @@ public class CustomerOrderCriteria {
 }
 ```
 
-執行的 SQL 將會是:
+執行的 SQL 會類似:
 
 ```sql
 select distinct 
@@ -143,7 +143,7 @@ class CustomerOrderTagCriteria {
 }
 ```
 
-執行的 SQL 將會是:
+執行的 SQL 會類似:
 
 ```sql
 select distinct 

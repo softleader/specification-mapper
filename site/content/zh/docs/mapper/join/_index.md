@@ -37,10 +37,10 @@ public class CustomerOrderCriteria {
 }
 ```
 
-執行的 SQL 將會是:
+執行的 SQL 會類似:
 
 ```sql
-select distinc ... from customer customer0_ 
+select distinct customer0_.* from customer customer0_ 
 inner join orders orders1_ on customer0_.id=orders1_.order_id 
 where orders1_.item_name in (? , ?)
 ```
@@ -110,10 +110,10 @@ class CustomerOrderTagCriteria {
 }
 ```
 
-執行的 SQL 將會是:
+執行的 SQL 會類似:
 
 ```sql
-select distinct ... from customer customer0_ 
+select distinct customer0_.* from customer customer0_ 
 inner join orders orders1_ on customer0_.id=orders1_.order_id 
 inner join orders_tags tags2_ on orders1_.id=tags2_.order_id 
 inner join tag tag3_ on tags2_.tags_id=tag3_.id 

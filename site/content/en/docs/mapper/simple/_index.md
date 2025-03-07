@@ -59,7 +59,7 @@ For example, if you want to use `Between` to find data **outside** of a certain 
 Collection<Integer> age;
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where x.age not between ? and ?
@@ -114,7 +114,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-The executed SQL will be:
+The executed SQL will be like:
 
 ```
 ... where customer0_.created_time=(

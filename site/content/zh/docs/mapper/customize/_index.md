@@ -77,7 +77,7 @@ var spec = mapper.toSpec(criteria, Customer.class);
 repository.findAll(spec);
 ```
 
-執行的 SQL 將會是:
+執行的 SQL 會類似:
 
 ```
 ... where customer0_.created_time=(
