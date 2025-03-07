@@ -26,6 +26,7 @@ import java.util.List;
 import lombok.NonNull;
 import lombok.ToString;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 
 /**
  * A {@code Specification} that performs an inner join and fetches the related entities.
@@ -62,11 +63,15 @@ public class JoinFetch<T> implements Specification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    query.distinct(distinct);
-    if (!Number.class.isAssignableFrom(query.getResultType())) { // do not join in count queries
-      fetchJoin(root);
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
+    if (query != null) {
+      query.distinct(distinct);
+      if (Number.class.isAssignableFrom(query.getResultType())) { // do not join in count queries
+        return null;
+      }
     }
+    fetchJoin(root);
     return null;
   }
 

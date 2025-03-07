@@ -55,6 +55,7 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
 
   @Builder
   @SneakyThrows
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private static <T> Specification<T> newSpec(
       @NonNull Context context,
       @NonNull Class<? extends SimpleSpecification> domainClass,
@@ -64,16 +65,17 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
         .newInstance(context, path, value);
   }
 
+  @SuppressWarnings({"unchecked"})
   protected <F> Path<F> getPath(Root<T> root) {
     var split = path.split("\\.");
     if (split.length == 1) {
       return root.get(split[0]);
     }
     Path<?> expr = null;
-    for (String field : split) {
+    for (var field : split) {
       if (expr == null) {
         expr =
-            ofNullable(context.getAs(CTX_JOIN, JoinContext.class).get(field, root))
+            ofNullable(context.getAs(CTX_JOIN, JoinContext.class).get(root, field))
                 .map(joined -> (Path<T>) joined)
                 .orElseGet(() -> root.get(field));
         continue;

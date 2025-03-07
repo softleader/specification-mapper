@@ -58,21 +58,23 @@ public class Join<T> implements Specification<T> {
 
   @Override
   public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    query.distinct(distinct);
+    if (query != null) {
+      query.distinct(distinct);
+    }
     join(root);
     return null;
   }
 
   private void join(Root<T> root) {
-    var join = context.getAs(CTX_JOIN, JoinContext.class);
+    var jc = context.getAs(CTX_JOIN, JoinContext.class);
     if (!pathToJoinOn.contains(".")) {
-      join.putLazy(alias, r -> r.join(pathToJoinOn, joinType));
+      jc.putIfAbsent(root, alias, root.join(pathToJoinOn, joinType));
       return;
     }
     var byDot = pathToJoinOn.split("\\.");
 
     var extractedAlias = byDot[0];
-    var joined = join.get(extractedAlias, root);
+    var joined = jc.get(root, extractedAlias);
     if (joined == null) {
       throw new IllegalArgumentException(
           "Join definition with alias: '"
@@ -80,12 +82,12 @@ public class Join<T> implements Specification<T> {
               + "' not found! "
               + "Make sure that join with the alias '"
               + extractedAlias
-              + "' is defined before the join with path: '"
+              + "' is defined before the jc with path: '"
               + pathToJoinOn
               + "'");
     }
 
     var extractedPathToJoin = byDot[1];
-    join.putLazy(alias, r -> joined.join(extractedPathToJoin, joinType));
+    jc.putIfAbsent(root, alias, joined.join(extractedPathToJoin, joinType));
   }
 }

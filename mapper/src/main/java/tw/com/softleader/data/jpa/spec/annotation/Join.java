@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Join {
 
   /** Specifies a collection property to join on, e.g. "addresses" */
@@ -47,7 +47,7 @@ public @interface Join {
   JoinType joinType() default JoinType.INNER;
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.FIELD})
+  @Target({ElementType.FIELD, ElementType.TYPE})
   @interface Joins {
 
     Join[] value();

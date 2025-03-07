@@ -39,7 +39,8 @@ abstract class CompoundSpecification<T> implements Specification<T> {
   @NonNull protected final transient Collection<Specification<T>> specs;
 
   @Override
-  public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     return specs.stream()
         .reduce(this::combine)
         .map(spec -> spec.toPredicate(root, query, builder))

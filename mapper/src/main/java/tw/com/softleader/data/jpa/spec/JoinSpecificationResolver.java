@@ -21,10 +21,10 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
+import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
-import java.lang.reflect.Field;
-import java.util.Objects;
+import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +33,7 @@ import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
  * A {@link SpecificationResolver} that processes fields annotated with {@link Join} or {@link
@@ -45,46 +46,71 @@ class JoinSpecificationResolver implements SpecificationResolver {
 
   @Override
   public boolean supports(@NonNull Databind databind) {
-    return (databind.getField().isAnnotationPresent(Join.class)
-        || databind.getField().isAnnotationPresent(Joins.class));
+    return isAnnotationPresentOnFieldOrTargetClass(databind, Join.class)
+        || isAnnotationPresentOnFieldOrTargetClass(databind, Joins.class);
+  }
+
+  private boolean isAnnotationPresentOnFieldOrTargetClass(
+      @NonNull Databind databind, Class<? extends Annotation> annotation) {
+    return databind.getField().isAnnotationPresent(annotation)
+        || databind.getTarget().getClass().isAnnotationPresent(annotation);
   }
 
   @Override
   public Specification<Object> buildSpecification(
       @NonNull Context context, @NonNull Databind databind) {
-    return databind
-        .getFieldValue()
+    var jc = context.getAs(CTX_JOIN, JoinContext.class);
+    var specs =
+        Stream.concat(
+                joinsDefOnTarget(context, jc, databind), joinsDefOnField(context, jc, databind))
+            .toList();
+    if (specs.isEmpty()) {
+      return null;
+    }
+    if (specs.size() == 1) {
+      return specs.get(0);
+    }
+    return new Conjunction<>(specs);
+  }
+
+  private Stream<Specification<Object>> joinsDefOnField(
+      @NonNull Context context, @NonNull JoinContext jc, @NonNull Databind databind) {
+    if (databind.getFieldValue().isEmpty()) {
+      return Stream.empty();
+    }
+    return Stream.concat(
+            ofNullable(databind.getField().getAnnotation(Join.class)).stream(),
+            ofNullable(databind.getField().getAnnotation(Joins.class)).stream()
+                .flatMap(def -> stream(def.value())))
+        .filter(def -> !jc.hasHandled(def, databind.getTarget(), databind.getField()))
         .map(
-            value -> {
-              var specs =
-                  Stream.concat(
-                          joinDef(context, databind.getField()),
-                          joinsDef(context, databind.getField()))
-                      .filter(Objects::nonNull)
-                      .collect(toList());
-              if (specs.size() == 1) {
-                return specs.get(0);
+            def -> {
+              try {
+                return newJoin(context, def);
+              } finally {
+                jc.markHandled(def, databind.getTarget(), databind.getField());
               }
-              return new Conjunction<>(specs);
-            })
-        .orElse(null);
+            });
   }
 
-  private Stream<Specification<Object>> joinsDef(Context context, Field field) {
-    if (!field.isAnnotationPresent(Joins.class)) {
-      return Stream.empty();
-    }
-    return stream(field.getAnnotation(Joins.class).value()).map(def -> newJoin(context, def));
+  private Stream<Specification<Object>> joinsDefOnTarget(
+      @NonNull Context context, @NonNull JoinContext jc, @NonNull Databind databind) {
+    return Stream.concat(
+            ofNullable(databind.getTarget().getClass().getAnnotation(Join.class)).stream(),
+            ofNullable(databind.getTarget().getClass().getAnnotation(Joins.class)).stream()
+                .flatMap(def -> stream(def.value())))
+        .filter(def -> !jc.hasHandled(def, databind.getTarget(), null))
+        .map(
+            def -> {
+              try {
+                return newJoin(context, def);
+              } finally {
+                jc.markHandled(def, databind.getTarget(), null);
+              }
+            });
   }
 
-  private Stream<Specification<Object>> joinDef(Context context, Field field) {
-    if (!field.isAnnotationPresent(Join.class)) {
-      return Stream.empty();
-    }
-    return Stream.of(newJoin(context, field.getAnnotation(Join.class)));
-  }
-
-  Specification<Object> newJoin(@NonNull Context context, @NonNull Join def) {
+  private Specification<Object> newJoin(@NonNull Context context, @NonNull Join def) {
     return new tw.com.softleader.data.jpa.spec.domain.Join<>(
         context, def.path(), def.alias(), def.joinType(), def.distinct());
   }

@@ -27,8 +27,8 @@ import lombok.NonNull;
  */
 public interface AST {
 
-  String CTX_AST = "AST";
-  String CTX_DEPTH = "DEPTH";
+  String CTX_AST = "_AST";
+  String CTX_DEPTH = "_DEPTH";
 
   void add(int depth, @NonNull String message, Object... args);
 
