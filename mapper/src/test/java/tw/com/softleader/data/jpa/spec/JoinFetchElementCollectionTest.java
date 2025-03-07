@@ -34,7 +34,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
@@ -148,7 +147,7 @@ class JoinFetchElementCollectionTest {
 
   @Data
   @Builder
-  @JoinFetch(paths = "phones")
+  @JoinFetch(path = "phones", alias = "p")
   public static class CustomerFetchPhone {
 
     @Spec String name;
@@ -160,16 +159,14 @@ class JoinFetchElementCollectionTest {
 
   @Data
   @Builder
-  @JoinFetch(paths = "schools")
+  @JoinFetch(path = "schools")
   public static class CustomerFetchSchool {
 
-    @Join(path = "schools", alias = "s")
-    @Spec(path = "s.city")
+    @Spec(path = "schools.city")
     String city;
 
     @Singular
-    @Join(path = "schools", alias = "s")
-    @Spec(path = "s.name", value = In.class)
+    @Spec(path = "schools.name", value = In.class)
     Set<String> names;
   }
 }

@@ -21,9 +21,10 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
+import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
-import java.util.Objects;
+import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,9 +33,10 @@ import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
- * A {@link SpecificationResolver} that processes objects annotated with {@link JoinFetch} or {@link
+ * A {@link SpecificationResolver} that processes fields annotated with {@link JoinFetch} or {@link
  * JoinFetches}.
  *
  * @author Matt Ho
@@ -44,66 +46,97 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
 
   @Override
   public boolean supports(@NonNull Databind databind) {
-    return databind.getTarget().getClass().isAnnotationPresent(JoinFetch.class)
-        || databind.getTarget().getClass().isAnnotationPresent(JoinFetches.class);
+    return isAnnotationPresentOnFieldOrTargetClass(databind, JoinFetch.class)
+        || isAnnotationPresentOnFieldOrTargetClass(databind, JoinFetches.class);
+  }
+
+  private boolean isAnnotationPresentOnFieldOrTargetClass(
+      @NonNull Databind databind, Class<? extends Annotation> annotation) {
+    return databind.getField().isAnnotationPresent(annotation)
+        || databind.getTarget().getClass().isAnnotationPresent(annotation);
   }
 
   @Override
   public Specification<Object> buildSpecification(
       @NonNull Context context, @NonNull Databind databind) {
-    var handled = handledKey(databind);
-    if (context.containsKey(handled)) {
-      log.trace("Already handled [{}], skipping", handled);
+    var jc = context.getAs(CTX_JOIN, JoinContext.class);
+    var specs =
+        Stream.concat(
+                joinsDefOnTarget(context, jc, databind), joinsDefOnField(context, jc, databind))
+            .toList();
+    if (specs.isEmpty()) {
       return null;
     }
-    try {
-      var specs =
-          Stream.concat(joinFetchDef(databind.getTarget()), joinFetchesDef(databind.getTarget()))
-              .filter(Objects::nonNull)
-              .collect(toList());
-      if (specs.size() == 1) {
-        return specs.get(0);
-      }
-      return new Conjunction<>(specs);
-    } finally {
-      context.put(handled, null);
+    if (specs.size() == 1) {
+      return specs.get(0);
     }
+    return new Conjunction<>(specs);
   }
 
-  private Stream<Specification<Object>> joinFetchesDef(Object obj) {
-    if (!obj.getClass().isAnnotationPresent(JoinFetches.class)) {
+  private Stream<Specification<Object>> joinsDefOnField(
+      @NonNull Context context, @NonNull JoinContext jc, @NonNull Databind databind) {
+    if (databind.getFieldValue().isEmpty()) {
       return Stream.empty();
     }
-    return stream(obj.getClass().getAnnotation(JoinFetches.class).value()).map(this::newJoinFetch);
+    return Stream.concat(
+            ofNullable(databind.getField().getAnnotation(JoinFetch.class)).stream(),
+            ofNullable(databind.getField().getAnnotation(JoinFetches.class)).stream()
+                .flatMap(def -> stream(def.value())))
+        .filter(
+            def -> {
+              return !jc.hasHandled(def, databind.getTarget(), databind.getField());
+            })
+        .map(
+            def -> {
+              try {
+                return newFetch(context, def);
+              } finally {
+                jc.markHandled(def, databind.getTarget(), databind.getField());
+              }
+            });
   }
 
-  private Stream<Specification<Object>> joinFetchDef(Object obj) {
-    if (!obj.getClass().isAnnotationPresent(JoinFetch.class)) {
-      return Stream.empty();
-    }
-    return Stream.of(newJoinFetch(obj.getClass().getAnnotation(JoinFetch.class)));
+  private Stream<Specification<Object>> joinsDefOnTarget(
+      @NonNull Context context, @NonNull JoinContext jc, @NonNull Databind databind) {
+    return Stream.concat(
+            ofNullable(databind.getTarget().getClass().getAnnotation(JoinFetch.class)).stream(),
+            ofNullable(databind.getTarget().getClass().getAnnotation(JoinFetches.class)).stream()
+                .flatMap(def -> stream(def.value())))
+        .filter(
+            def -> {
+              return !jc.hasHandled(def, databind.getTarget(), null);
+            })
+        .map(
+            def -> {
+              try {
+                return newFetch(context, def);
+              } finally {
+                jc.markHandled(def, databind.getTarget(), null);
+              }
+            });
   }
 
-  Specification<Object> newJoinFetch(@NonNull JoinFetch def) {
+  private Specification<Object> newFetch(@NonNull Context context, @NonNull JoinFetch def) {
     return new tw.com.softleader.data.jpa.spec.domain.JoinFetch<>(
-        def.paths(), def.joinType(), def.distinct());
-  }
-
-  private String handledKey(Databind databind) {
-    return String.join(
-        "/",
-        JoinFetchSpecificationResolver.class.getName(),
-        databind.getField().getDeclaringClass().getName(),
-        "" + databind.getTarget().hashCode());
+        context, def.path(), def.alias(), def.joinType(), def.distinct());
   }
 
   @Override
   public void preVisit(@lombok.NonNull SpecInvocation node) {
-    // 這隻不印
+    // 這邊不印
   }
 
   @Override
   public void postVisit(@lombok.NonNull SpecInvocation node, Specification<Object> resolved) {
-    // 這隻不印
+    if (resolved == null) {
+      return;
+    }
+    node.getAst()
+        .add(
+            node.getDepth(),
+            "|    [%s.%s]: %s",
+            node.getTargetType().getSimpleName(),
+            node.getFieldName(),
+            resolved);
   }
 }

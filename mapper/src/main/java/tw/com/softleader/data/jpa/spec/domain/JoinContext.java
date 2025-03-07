@@ -20,9 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
-import java.util.function.Function;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * Share data between join specifications
@@ -31,10 +35,21 @@ import java.util.function.Function;
  */
 public interface JoinContext {
 
-  String CTX_JOIN = "JOIN";
+  String CTX_JOIN = "_JOIN";
 
-  @SuppressWarnings({"rawtypes"})
-  Join get(String key, Root<?> root);
+  boolean hasHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field);
 
-  void putLazy(String key, Function<Root<?>, Join<?, ?>> function);
+  void markHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field);
+
+  void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join);
+
+  void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull FetchRef ref);
+
+  @Nullable
+  Join<?, ?> getJoin(@NonNull Root<?> root, @NonNull String alias);
+
+  @Nullable
+  FetchRef getFetch(@NonNull Root<?> root, @NonNull String alias);
+
+  record FetchRef(@NonNull Fetch<?, ?> fetch, @NonNull String... paths) {}
 }

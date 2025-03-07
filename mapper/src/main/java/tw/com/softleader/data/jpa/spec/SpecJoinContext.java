@@ -21,14 +21,16 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static java.util.Collections.synchronizedMap;
+import static java.util.Optional.ofNullable;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import lombok.Synchronized;
-import org.springframework.data.util.Pair;
+import lombok.NonNull;
+import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 
 /**
@@ -36,24 +38,52 @@ import tw.com.softleader.data.jpa.spec.domain.JoinContext;
  */
 class SpecJoinContext implements JoinContext {
 
-  private final Map<Pair<String, Root<?>>, Join<?, ?>> joins = synchronizedMap(new HashMap<>());
-  private final Map<String, Function<Root<?>, Join<?, ?>>> lazyJoins =
-      synchronizedMap(new HashMap<>());
+  private final Map<HandleKey, Object> handled = synchronizedMap(new HashMap<>());
+  private final Map<JoinKey, Join<?, ?>> joined = synchronizedMap(new HashMap<>());
+  private final Map<FetchKey, FetchRef> fetched = synchronizedMap(new HashMap<>());
 
   @Override
-  @Synchronized
-  public Join<?, ?> get(String key, Root<?> root) {
-    var lazyJoin = lazyJoins.get(key);
-    if (lazyJoin == null) {
-      return null;
+  public boolean hasHandled(
+      @NonNull Annotation def, @NonNull Object target, @Nullable Field field) {
+    return handled.containsKey(new HandleKey(def, target, field));
+  }
+
+  @Override
+  public void markHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field) {
+    handled.put(new HandleKey(def, target, field), null);
+  }
+
+  @Override
+  public void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join) {
+    joined.putIfAbsent(new JoinKey(root, alias), join);
+  }
+
+  @Override
+  public void putIfAbsent(
+      @NonNull Root<?> root, @NonNull String alias, @NonNull JoinContext.FetchRef fetch) {
+    fetched.putIfAbsent(new FetchKey(root, alias), fetch);
+  }
+
+  @Override
+  public Join<?, ?> getJoin(@NonNull Root<?> root, @NonNull String alias) {
+    return joined.get(new JoinKey(root, alias));
+  }
+
+  @Override
+  public FetchRef getFetch(@NonNull Root<?> root, @NonNull String alias) {
+    return fetched.get(new FetchKey(root, alias));
+  }
+
+  record HandleKey(Annotation def, int target, @Nullable String field) {
+    HandleKey(Annotation def, Object target, Field field) {
+      this(
+          def,
+          target.hashCode(),
+          ofNullable(field).map(f -> f.getDeclaringClass().getName()).orElse(null));
     }
-    Pair<String, Root<?>> rootKey = Pair.of(key, root);
-    joins.computeIfAbsent(rootKey, k -> lazyJoin.apply(root));
-    return joins.get(rootKey);
   }
 
-  @Override
-  public void putLazy(String key, Function<Root<?>, Join<?, ?>> lazyJoin) {
-    lazyJoins.put(key, lazyJoin);
-  }
+  record JoinKey(@NonNull Root<?> root, @NonNull String alias) {}
+
+  record FetchKey(@NonNull Root<?> root, @NonNull String alias) {}
 }

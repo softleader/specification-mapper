@@ -58,7 +58,7 @@ class JoinSpecificationResolverTest {
             .build();
   }
 
-  @DisplayName("單一層級的 Join")
+  @DisplayName("單一層級的 Join 在 field 上")
   @Test
   void join() {
     var matt =
@@ -76,7 +76,7 @@ class JoinSpecificationResolverTest {
     repository.save(
         Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
 
-    var criteria = CustomerOrder.builder().item("Pizza").item("Hamburger").build();
+    var criteria = CustomerJoinOnField.builder().item("Pizza").item("Hamburger").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
@@ -84,7 +84,33 @@ class JoinSpecificationResolverTest {
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
-  @DisplayName("多層級的 Join")
+  @DisplayName("單一層級的 Join 在 class 上")
+  @Test
+  void joinOnClass() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(Order.builder().itemName("Pizza").build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(Order.builder().itemName("Hamburger").build())
+                .build());
+    repository.save(
+        Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
+
+    var criteria = CustomerJoinOnClass.builder().item("Pizza").item("Hamburger").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+  }
+
+  @DisplayName("多層級的 Join 在 field 上")
   @Test
   void joins() {
     var matt =
@@ -117,7 +143,48 @@ class JoinSpecificationResolverTest {
                     .build())
             .build());
 
-    var criteria = CustomerOrder.builder().tag("Food").build();
+    var criteria = CustomerJoinOnField.builder().tag("Food").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+  }
+
+  @DisplayName("多層級的 Join 在 class 上")
+  @Test
+  void joinsOnClass() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(
+                    Order.builder()
+                        .itemName("Pizza")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(
+                    Order.builder()
+                        .itemName("Hamburger")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .order(
+                Order.builder()
+                    .itemName("Coke")
+                    .tag(Tag.builder().name("Beverage").build())
+                    .build())
+            .build());
+
+    var criteria = CustomerJoinsOnClass.builder().tag("Food").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
     assertThat(spec).isNotNull();
@@ -127,7 +194,7 @@ class JoinSpecificationResolverTest {
 
   @Builder
   @Data
-  public static class CustomerOrder {
+  public static class CustomerJoinOnField {
 
     @Singular
     @Join(path = "orders", alias = "o")
@@ -135,7 +202,31 @@ class JoinSpecificationResolverTest {
     Collection<String> items;
 
     @Singular
-    @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
+    @Joins({@Join(path = "orders"), @Join(path = "orders.tags")})
+    @Spec(path = "orders_tags.name", value = In.class)
+    Collection<String> tags;
+  }
+
+  @Builder
+  @Data
+  @Join(path = "orders")
+  public static class CustomerJoinOnClass {
+
+    @Singular
+    @Spec(path = "orders.itemName", value = In.class)
+    Collection<String> items;
+  }
+
+  @Builder
+  @Data
+  @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
+  public static class CustomerJoinsOnClass {
+
+    @Singular
+    @Spec(path = "o.itemName", value = In.class)
+    Collection<String> items;
+
+    @Singular
     @Spec(path = "t.name", value = In.class)
     Collection<String> tags;
   }

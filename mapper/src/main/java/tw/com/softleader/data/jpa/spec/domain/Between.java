@@ -27,6 +27,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * A {@code Specification} that filters entities within a given range.
@@ -58,7 +59,8 @@ public class Between<T> extends SimpleSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     var args =
         stream(((Iterable<?>) value).spliterator(), false)
             .map(arg -> (Comparable<?>) arg)

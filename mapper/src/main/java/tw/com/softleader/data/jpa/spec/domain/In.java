@@ -27,6 +27,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * A {@code Specification} that generates a SQL {@code IN} clause in the query.
@@ -55,7 +56,8 @@ public class In<T> extends SimpleSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     return getPath(root)
         .in(stream(((Iterable<?>) value).spliterator(), false).toArray(Object[]::new));
   }

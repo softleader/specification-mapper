@@ -27,6 +27,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * A {@code Specification} that generates a SQL not {@code IN} clause in the query.
@@ -52,7 +53,8 @@ public class NotIn<T> extends In<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
   }
 }

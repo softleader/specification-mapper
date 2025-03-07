@@ -27,6 +27,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * A {@code Specification} that filters entities where a field is not {@code NULL}.
@@ -52,7 +53,8 @@ public class NotNull<T> extends IsNull<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     return ofNullable(super.toPredicate(root, query, builder)).map(Predicate::not).orElse(null);
   }
 }

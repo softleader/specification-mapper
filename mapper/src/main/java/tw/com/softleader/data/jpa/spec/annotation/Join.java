@@ -32,14 +32,17 @@ import java.lang.annotation.Target;
  * @author Matt Ho
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Join {
 
   /** Specifies a collection property to join on, e.g. "addresses" */
   String path();
 
-  /** Specifies an alias for the joined part, e.g. "a" */
-  String alias();
+  /**
+   * Specifies an alias for the joined entity, e.g., “a”. If not specified, the path name will be
+   * used with dots replaced by underscores.
+   */
+  String alias() default "";
 
   /** Whether the query should return distinct results or not */
   boolean distinct() default true;
@@ -47,7 +50,7 @@ public @interface Join {
   JoinType joinType() default JoinType.INNER;
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.FIELD})
+  @Target({ElementType.FIELD, ElementType.TYPE})
   @interface Joins {
 
     Join[] value();

@@ -23,8 +23,11 @@ package tw.com.softleader.data.jpa.spec;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
+import java.util.Collection;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
@@ -55,7 +59,7 @@ class JoinFetchSpecificationResolverTest {
             .build();
   }
 
-  @DisplayName("單一層級的 Join Fetch")
+  @DisplayName("單一層級的 Join Fetch 在 class 上")
   @Test
   void joinFetch() {
     var matt =
@@ -72,13 +76,39 @@ class JoinFetchSpecificationResolverTest {
     repository.save(
         Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
 
-    var spec = mapper.toSpec(new CustomerOrder(matt.getName()), Customer.class);
+    var spec = mapper.toSpec(new CustomerJoinFetchOnClass(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
-  @DisplayName("多層級的 Join Fetch")
+  @DisplayName("單一層級的 Join 在 field 上")
+  @Test
+  void join() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(Order.builder().itemName("Pizza").build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(Order.builder().itemName("Hamburger").build())
+                .build());
+    repository.save(
+        Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
+
+    var criteria = CustomerJoinFetchOnField.builder().item("Pizza").item("Hamburger").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+  }
+
+  @DisplayName("多層級的 Join Fetch 在 class 上")
   @Test
   void joinFetches() {
     var matt =
@@ -110,25 +140,81 @@ class JoinFetchSpecificationResolverTest {
                     .build())
             .build());
 
-    var spec = mapper.toSpec(new CustomerOrderTag(matt.getName()), Customer.class);
+    var spec = mapper.toSpec(new CustomerJoinFetchesOnClass(matt.getName()), Customer.class);
     assertThat(spec).isNotNull();
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
 
-  @JoinFetch(paths = "orders")
+  @DisplayName("多層級的 Fetch Join 在 field 上")
+  @Test
+  void joins() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(
+                    Order.builder()
+                        .itemName("Pizza")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(
+                    Order.builder()
+                        .itemName("Hamburger")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .order(
+                Order.builder()
+                    .itemName("Coke")
+                    .tag(Tag.builder().name("Beverage").build())
+                    .build())
+            .build());
+
+    var criteria = CustomerJoinFetchOnField.builder().tag("Food").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+  }
+
+  @JoinFetch(path = "orders")
   @AllArgsConstructor
   @Data
-  public static class CustomerOrder {
+  public static class CustomerJoinFetchOnClass {
 
     @Spec String name;
   }
 
-  @JoinFetches({@JoinFetch(paths = "orders"), @JoinFetch(paths = "orders.tags")})
+  @JoinFetches({@JoinFetch(path = "orders"), @JoinFetch(path = "orders.tags")})
   @Data
   @AllArgsConstructor
-  public static class CustomerOrderTag {
+  public static class CustomerJoinFetchesOnClass {
 
     @Spec String name;
+  }
+
+  @Builder
+  @Data
+  public static class CustomerJoinFetchOnField {
+
+    @Singular
+    @JoinFetch(path = "orders", alias = "o")
+    @Spec(path = "o.itemName", value = In.class)
+    Collection<String> items;
+
+    @Singular
+    @JoinFetches({@JoinFetch(path = "orders"), @JoinFetch(path = "orders.tags")})
+    @Spec(path = "orders_tags.name", value = In.class)
+    Collection<String> tags;
   }
 }

@@ -26,6 +26,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.Objects;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 /**
  * A {@code Specification} that filters entities where a field matches a pattern using not {@code
@@ -52,7 +53,8 @@ public class NotLike<T> extends SimpleSpecification<T> {
   }
 
   @Override
-  public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(
+      @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     return builder.notLike(getPath(root), Objects.toString(value));
   }
 }
