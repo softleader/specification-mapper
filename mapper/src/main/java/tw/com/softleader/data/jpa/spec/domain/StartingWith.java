@@ -27,7 +27,6 @@ import jakarta.persistence.criteria.Root;
 import java.util.Objects;
 import lombok.NonNull;
 
-
 /**
  * A {@code Specification} that filters entities starting with a specific value.
  *

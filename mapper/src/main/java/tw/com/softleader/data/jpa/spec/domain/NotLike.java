@@ -28,7 +28,8 @@ import java.util.Objects;
 import lombok.NonNull;
 
 /**
- * A {@code Specification} that filters entities where a field matches a pattern using not {@code LIKE}.
+ * A {@code Specification} that filters entities where a field matches a pattern using not {@code
+ * LIKE}.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *

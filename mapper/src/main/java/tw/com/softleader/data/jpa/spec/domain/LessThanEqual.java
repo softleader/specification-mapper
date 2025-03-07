@@ -27,7 +27,8 @@ import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 
 /**
- * A {@code Specification} that filters entities where a field is less than or equal to a given value.
+ * A {@code Specification} that filters entities where a field is less than or equal to a given
+ * value.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
