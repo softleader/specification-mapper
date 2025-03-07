@@ -82,7 +82,7 @@ public class Customer {
       cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
       fetch = FetchType.EAGER)
   @JoinTable(
-      name = "CCUSTOMER_SCHOOL_MAPPING",
+      name = "CUSTOMER_SCHOOL_MAPPING",
       joinColumns = {@JoinColumn(name = "CUSTOMER_ID", nullable = false)},
       inverseJoinColumns = {@JoinColumn(name = "SCHOOL_ID", nullable = false)})
   Set<School> schools;
