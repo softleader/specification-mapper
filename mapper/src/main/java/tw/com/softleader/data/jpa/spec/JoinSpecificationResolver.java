@@ -117,11 +117,17 @@ class JoinSpecificationResolver implements SpecificationResolver {
 
   @Override
   public void preVisit(@lombok.NonNull SpecInvocation node) {
-    // 這隻不印
+    // 這邊不印
   }
 
   @Override
   public void postVisit(@lombok.NonNull SpecInvocation node, Specification<Object> resolved) {
-    // 這隻不印
+    node.getAst()
+        .add(
+            node.getDepth(),
+            "|  *-[%s.%s]: %s",
+            node.getTargetType().getSimpleName(),
+            node.getFieldName(),
+            resolved);
   }
 }

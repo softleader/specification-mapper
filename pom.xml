@@ -15,6 +15,7 @@
   <inceptionYear>2022</inceptionYear>
   <licenses>
     <license>
+
       <name>The Apache Software License, Version 2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
@@ -57,7 +58,7 @@
     <license-maven-plugin.version>4.6</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <jandex-maven-plugin.version>3.1.6</jandex-maven-plugin.version>
-    
+
     <spring-boot.version>3.4.3</spring-boot.version>
     <skip.formatting>false</skip.formatting>
     <archunit-junit5.version>1.3.0</archunit-junit5.version>
