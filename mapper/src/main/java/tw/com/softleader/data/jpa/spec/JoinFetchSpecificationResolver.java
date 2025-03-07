@@ -128,10 +128,13 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
 
   @Override
   public void postVisit(@lombok.NonNull SpecInvocation node, Specification<Object> resolved) {
+    if (resolved == null) {
+      return;
+    }
     node.getAst()
         .add(
             node.getDepth(),
-            "|  *-[%s.%s]: %s",
+            "|    [%s.%s]: %s",
             node.getTargetType().getSimpleName(),
             node.getFieldName(),
             resolved);
