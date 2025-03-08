@@ -59,9 +59,8 @@ class SpecJoinContext implements JoinContext {
   }
 
   @Override
-  public void putIfAbsent(
-      @NonNull Root<?> root, @NonNull String alias, @NonNull JoinContext.FetchRef fetch) {
-    fetched.putIfAbsent(new FetchKey(root, alias), fetch);
+  public void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull FetchRef ref) {
+    fetched.putIfAbsent(new FetchKey(root, alias), ref);
   }
 
   @Override
