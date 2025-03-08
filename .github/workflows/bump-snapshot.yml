@@ -1,6 +1,6 @@
 # specification-mapper Snapshot 進版
 # Snapshot 版本釋出於: https://repo.softleader.com.tw/repository/maven-snapshots/
-name: Bump Version
+name: Bump Snapshot
 
 on:
   workflow_dispatch:
