@@ -73,12 +73,12 @@ class SpecJoinContext implements JoinContext {
     return fetched.get(new FetchKey(root, alias));
   }
 
-  record HandleKey(Annotation def, int target, @Nullable String field) {
+  record HandleKey(int target, @Nullable String field, Annotation def) {
     HandleKey(Annotation def, Object target, Field field) {
       this(
-          def,
           target.hashCode(),
-          ofNullable(field).map(f -> f.getDeclaringClass().getName()).orElse(null));
+          ofNullable(field).map(f -> f.getDeclaringClass().getName()).orElse(null),
+          def);
     }
   }
 
