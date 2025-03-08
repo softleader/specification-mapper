@@ -64,3 +64,6 @@ endif
 
 release: ## Pack w/o unit testing, and deploy to remote repository.
 	mvn clean deploy -e -Prelease -DskipTests
+
+snapshot: ## Pack w/o unit testing and signing, and deploy to snapshot repository.
+	mvn clean deploy -e -Prelease -DskipTests -Dskip.signing=true

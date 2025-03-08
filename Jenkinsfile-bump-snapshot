@@ -118,7 +118,7 @@ spec:
       steps {
         sh """
         make new-version VERSION=${tag}
-        make release
+        make snapshot
         """
       }
       post {
