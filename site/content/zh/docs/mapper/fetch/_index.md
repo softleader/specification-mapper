@@ -50,7 +50,7 @@ where customer0_.name=?
 
 > 你可以看到 `orders1_.*` 也被放入了 select 項目內
 
-### Join Type
+### Join Behavior
 
 為了比較符合大部分的使用情境, 預設的 Join type 是 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 來改變, 如:
 

@@ -60,7 +60,7 @@ public class CustomerOrderCriteria {
 }
 ```
 
-### Join Type
+### Join Behavior
 
 為了比較符合大部分的使用情境, Join type 預設為 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@Join#joinType` 或 `@Join#distinct` 來改變, 如:
 
