@@ -44,12 +44,12 @@ class SpecJoinContext implements JoinContext {
 
   @Override
   public boolean hasHandled(
-      @NonNull Annotation def, @NonNull Object target, @Nullable Field field) {
+      @NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
     return handled.containsKey(new HandleKey(def, target, field));
   }
 
   @Override
-  public void markHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field) {
+  public void markHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
     handled.put(new HandleKey(def, target, field), null);
   }
 

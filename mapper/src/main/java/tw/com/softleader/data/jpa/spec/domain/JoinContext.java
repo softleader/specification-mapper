@@ -37,9 +37,9 @@ public interface JoinContext {
 
   String CTX_JOIN = "_JOIN";
 
-  boolean hasHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field);
+  boolean hasHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def);
 
-  void markHandled(@NonNull Annotation def, @NonNull Object target, @Nullable Field field);
+  void markHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def);
 
   void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join);
 

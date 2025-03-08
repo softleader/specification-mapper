@@ -84,14 +84,14 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
                 .flatMap(def -> stream(def.value())))
         .filter(
             def -> {
-              return !jc.hasHandled(def, databind.getTarget(), databind.getField());
+              return !jc.hasHandled(databind.getTarget(), databind.getField(), def);
             })
         .map(
             def -> {
               try {
                 return newFetch(context, def);
               } finally {
-                jc.markHandled(def, databind.getTarget(), databind.getField());
+                jc.markHandled(databind.getTarget(), databind.getField(), def);
               }
             });
   }
@@ -104,14 +104,14 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
                 .flatMap(def -> stream(def.value())))
         .filter(
             def -> {
-              return !jc.hasHandled(def, databind.getTarget(), null);
+              return !jc.hasHandled(databind.getTarget(), null, def);
             })
         .map(
             def -> {
               try {
                 return newFetch(context, def);
               } finally {
-                jc.markHandled(def, databind.getTarget(), null);
+                jc.markHandled(databind.getTarget(), null, def);
               }
             });
   }

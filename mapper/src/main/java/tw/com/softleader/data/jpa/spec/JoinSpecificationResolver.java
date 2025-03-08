@@ -82,13 +82,13 @@ class JoinSpecificationResolver implements SpecificationResolver {
             ofNullable(databind.getField().getAnnotation(Join.class)).stream(),
             ofNullable(databind.getField().getAnnotation(Joins.class)).stream()
                 .flatMap(def -> stream(def.value())))
-        .filter(def -> !jc.hasHandled(def, databind.getTarget(), databind.getField()))
+        .filter(def -> !jc.hasHandled(databind.getTarget(), databind.getField(), def))
         .map(
             def -> {
               try {
                 return newJoin(context, def);
               } finally {
-                jc.markHandled(def, databind.getTarget(), databind.getField());
+                jc.markHandled(databind.getTarget(), databind.getField(), def);
               }
             });
   }
@@ -99,13 +99,13 @@ class JoinSpecificationResolver implements SpecificationResolver {
             ofNullable(databind.getTarget().getClass().getAnnotation(Join.class)).stream(),
             ofNullable(databind.getTarget().getClass().getAnnotation(Joins.class)).stream()
                 .flatMap(def -> stream(def.value())))
-        .filter(def -> !jc.hasHandled(def, databind.getTarget(), null))
+        .filter(def -> !jc.hasHandled(databind.getTarget(), null, def))
         .map(
             def -> {
               try {
                 return newJoin(context, def);
               } finally {
-                jc.markHandled(def, databind.getTarget(), null);
+                jc.markHandled(databind.getTarget(), null, def);
               }
             });
   }
