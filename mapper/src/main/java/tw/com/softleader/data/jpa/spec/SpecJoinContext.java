@@ -45,12 +45,12 @@ class SpecJoinContext implements JoinContext {
   @Override
   public boolean hasHandled(
       @NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
-    return handled.containsKey(new HandleKey(def, target, field));
+    return handled.containsKey(new HandleKey(target, field, def));
   }
 
   @Override
   public void markHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
-    handled.put(new HandleKey(def, target, field), null);
+    handled.put(new HandleKey(target, field, def), null);
   }
 
   @Override
@@ -74,7 +74,7 @@ class SpecJoinContext implements JoinContext {
   }
 
   record HandleKey(int target, @Nullable String field, Annotation def) {
-    HandleKey(Annotation def, Object target, Field field) {
+    HandleKey(Object target, Field field, Annotation def) {
       this(
           target.hashCode(),
           ofNullable(field).map(f -> f.getDeclaringClass().getName()).orElse(null),
