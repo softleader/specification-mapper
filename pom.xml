@@ -15,7 +15,6 @@
   <inceptionYear>2022</inceptionYear>
   <licenses>
     <license>
-
       <name>The Apache Software License, Version 2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
@@ -86,8 +85,9 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+      <id>snapshots</id>
+      <name>SoftLeader Snapshots</name>
+      <url>https://repo.softleader.com.tw/repository/maven-snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>ossrh</id>
