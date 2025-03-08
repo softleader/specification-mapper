@@ -121,6 +121,21 @@ spec:
         make release
         """
       }
+      post {
+        success {
+          script {
+            container('git') {
+              sh """
+              gh release delete ${tag} --cleanup-tag --yes || true
+              gh release create ${tag} --target ${ref} --generate-notes --draft
+              gh release view ${tag} --json body --jq .body > node.md
+              echo '\\n\\n> [!NOTE]\\n> The snapshot version is released at [https://repo.softleader.com.tw/repository/maven-snapshots/](https://repo.softleader.com.tw/repository/maven-snapshots/)' >> node.md
+              gh release edit ${tag} --draft=false --prerelease --notes-file node.md
+              """
+            }
+          }
+        }
+      }
     }
   }
 
