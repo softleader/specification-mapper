@@ -33,6 +33,7 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
  * Annotation for specifying query filter on entity fields.
  *
  * @author Matt Ho
+ * @see NestedSpec
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

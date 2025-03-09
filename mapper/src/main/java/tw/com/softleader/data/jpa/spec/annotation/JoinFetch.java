@@ -27,9 +27,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies a fetch join operation on an entity type.
+ * Specifies a fetch operation on an entity type or fields.
  *
  * @author Matt Ho
+ * @see JoinFetches
+ * @see Join
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE})
@@ -47,12 +49,20 @@ public @interface JoinFetch {
   /** Whether the query should return distinct results or not */
   boolean distinct() default true;
 
+  /** Specifies the type of join to use in the fetch operation. */
   JoinType joinType() default JoinType.INNER;
 
+  /**
+   * Container annotation for defining multiple {@link JoinFetch} annotations on the same element.
+   *
+   * @author Matt Ho
+   * @see JoinFetch
+   */
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.TYPE})
   @interface JoinFetches {
 
+    /** An array of {@link JoinFetch} annotations to apply multiple join fetches. */
     JoinFetch[] value();
   }
 }

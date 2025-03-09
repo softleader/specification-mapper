@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
  * Composite specs with Nested object
  *
  * @author Matt Ho
+ * @see Spec
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

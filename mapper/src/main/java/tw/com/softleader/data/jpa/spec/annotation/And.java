@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
  * The conjunction of the specifications
  *
  * @author Matt Ho
+ * @see Or
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
