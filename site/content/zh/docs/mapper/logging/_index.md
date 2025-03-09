@@ -3,7 +3,7 @@ title: Logging
 weight: 80
 ---
 
-將 `tw.com.softleader.data.jpa.spec.SpecMapper` 設定為 *debug*, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題, 如:
+在 Logging 等級中設定 `tw.com.softleader.data.jpa.spec.SpecMapper=debug`, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題, 輸出類似如:
 
 ```
 DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : --- Spec AST ---
@@ -16,11 +16,23 @@ DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : ---
 \-[CustomerCriteria]: Conjunction[specs=[Equals[path=name, value=matt], Conjunction[specs=[Equals[path=city, value=Taipei]]]]]
 ```
 
-如果你喜歡根據轉換的物件來控制和設定 Logging, 我們提供了另一種策略, 通過設定 `ASTWriterFactory`, 可以改成使用目標物件的 Logger 來輸出:
+### Logger Name
+
+從上面範例的第一行可以看到, 預設的 Logger Name 是使用 `SpecMapper`, 這可以方便你統一的設定, 如果你喜歡根據轉換的物件來控制和設定 Logging, 我們提供了另一種策略, 將 Logger Name 改成使用目標物件的 Logger 來輸出
+
+通過設定 `ASTWriterFactory` 來調整策略, 你可以調整例如:
 
 ```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
-      .astWriterFactory(ASTWriterFactory.impersonation())
+      // 預設為 ASTWriterFactory.domain()
+      .astWriterFactory(ASTWriterFactory.impersonation()) 
       .build();
+```
+
+輸出會類似:
+
+```
+DEBUG 20297 --- [           main] my.package.CustomerCriteria  : --- Spec AST ---
+...
 ```
