@@ -25,14 +25,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.springframework.data.jpa.domain.Specification;
 import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
 /**
- * Annotation for specifying query filter on entity fields.
+ * Defines query filtering on entity fields.
  *
- * @author Matt Ho
  * @see NestedSpec
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -40,29 +38,15 @@ import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 public @interface Spec {
 
   /**
-   * The attribute name used to construct a {@code Path} for querying.
+   * Attribute name for query path, defaults to field name if empty.
    *
-   * <p>If left empty, the field name will be used by default.
-   *
-   * @return the attribute name for the query path
    * @see Path
    */
   String path() default "";
 
-  /**
-   * The {@link SimpleSpecification} implementation to be applied.
-   *
-   * @return the specification class
-   */
+  /** Specification type to apply, defaults to {@link Equals}. */
   Class<? extends SimpleSpecification> value() default Equals.class;
 
-  /**
-   * Whether to negate the specified {@link Specification}.
-   *
-   * <p>If set to {@code true}, the generated query condition will be negated.
-   *
-   * @return {@code true} to negate the specification, otherwise {@code false}
-   * @see Specification#not(Specification)
-   */
+  /** Whether to negate the query condition. */
   boolean not() default false;
 }

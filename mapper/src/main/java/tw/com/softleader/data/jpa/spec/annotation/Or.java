@@ -26,7 +26,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The disjunction of the specifications
+ * Represents a logical disjunction (<code>OR</code>) of multiple specifications.
+ *
+ * <p>This annotation can be applied to a class or a field to specify that the associated {@link
+ * Spec} annotations should be combined using a logical OR operation.
+ *
+ * <p>When applied at the class level, all fields with {@link Spec} annotations are combined with
+ * <code>OR</code>. When applied at the field level, it overrides the default combination strategy
+ * for that specific field.
  *
  * @author Matt Ho
  * @see And

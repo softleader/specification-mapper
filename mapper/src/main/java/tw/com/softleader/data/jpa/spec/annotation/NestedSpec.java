@@ -24,12 +24,32 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
 
 /**
- * Composite specs with Nested object
+ * Marks a field as a nested object for {@link SpecMapper} to recursively combine specifications.
+ * Supports deep nesting with no level limits. Defaults to {@link And} logic unless explicitly
+ * annotated with {@link Or}.
+ *
+ * <p>Example:
+ *
+ * <pre>{@code
+ * public class CustomerCriteria {
+ *   @Spec(Like.class) String firstname;
+ *   @NestedSpec AddressCriteria address;
+ * }
+ *
+ * @Or
+ * public class AddressCriteria {
+ *   @Spec String county;
+ *   @Spec String city;
+ * }
+ * }</pre>
  *
  * @author Matt Ho
  * @see Spec
+ * @see And
+ * @see Or
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

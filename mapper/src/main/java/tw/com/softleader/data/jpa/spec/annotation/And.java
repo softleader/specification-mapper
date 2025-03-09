@@ -26,7 +26,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The conjunction of the specifications
+ * Represents a logical conjunction (<code>AND</code>) of multiple specifications.
+ *
+ * <p>This annotation can be applied to a class or a field to specify that the associated {@link
+ * Spec} annotations should be combined using a logical AND operation.
+ *
+ * <p>When applied at the class level, all fields with {@link Spec} annotations are combined with
+ * <code>AND</code>. When applied at the field level, it overrides the default combination strategy
+ * for that specific field.
+ *
+ * <p>If neither {@code @And} nor {@code @Or} is explicitly declared at the class level, <code>AND
+ * </code> is the default behavior.
  *
  * @author Matt Ho
  * @see Or

@@ -27,7 +27,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies a join operation on an entity type or fields.
+ * Specifies a join operation on an entity type or fields. This annotation allows defining SQL joins
+ * on entity relationships to filter results based on associated entities.
+ *
+ * <p>It can be applied at the class or field level. When used at the class level, all annotated
+ * fields in the class can refer to the defined join alias.
+ *
+ * <p>By default, joins use {@code INNER JOIN} and apply distinct filtering, but these behaviors can
+ * be customized using {@link #joinType()} and {@link #distinct()}.
+ *
+ * <p>Example usage:
+ *
+ * <pre>{@code
+ * @Join(path = "orders", alias = "o")
+ * public class CustomerOrderCriteria {
+ *
+ *   @Spec(path = "o.itemName", value = In.class)
+ *   Collection<String> items;
+ * }
+ * }</pre>
  *
  * @author Matt Ho
  * @see Joins
@@ -37,23 +55,32 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Join {
 
-  /** Specifies a collection property to join on, e.g. "addresses" */
+  /**
+   * Specifies a collection property to join on, e.g., "addresses". This should match an entity
+   * association in the domain model.
+   */
   String path();
 
   /**
-   * Specifies an alias for the joined entity, e.g., “a”. If not specified, the path name will be
-   * used with dots replaced by underscores.
+   * Specifies an alias for the joined entity, e.g., "a". If not specified, the {@link #path()} will
+   * be used with dots replaced by underscores.
    */
   String alias() default "";
 
-  /** Whether the query should return distinct results or not */
+  /**
+   * Whether the query should return distinct results. Defaults to {@code true} to prevent duplicate
+   * records.
+   */
   boolean distinct() default true;
 
-  /** Specifies the type of join to use in the join operation. */
+  /** Specifies the type of join to use in the join operation. Defaults to {@code INNER JOIN}. */
   JoinType joinType() default JoinType.INNER;
 
   /**
    * Container annotation for defining multiple {@link Join} annotations on the same element.
+   *
+   * <p>This is useful when multiple relationships need to be eagerly fetched within the same
+   * entity.
    *
    * @author Matt Ho
    * @see Join
