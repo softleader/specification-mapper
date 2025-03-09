@@ -27,6 +27,7 @@ You can adjust this strategy by configuring `ASTWriterFactory`, for example:
 ```java
 var mapper = SpecMapper.builder()
       .defaultResolvers()
+      // Default is ASTWriterFactory.domain()
       .astWriterFactory(ASTWriterFactory.impersonation())
       .build();
 ```
