@@ -25,10 +25,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities where a field has a specific length.
+ * A {@link Specification} that filters entities where a field has a specific length.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
@@ -45,6 +46,7 @@ import org.springframework.lang.Nullable;
  * </pre>
  *
  * @author Matt Ho
+ * @see HasText
  */
 public class HasLength<T> extends BooleanSpecification<T> {
 

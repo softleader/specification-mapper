@@ -27,10 +27,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities within a given range.
+ * A {@link Specification} that filters entities within a given range.
  *
  * <p>In Criteria API, an equivalent expression might be:</p>
  * <pre>

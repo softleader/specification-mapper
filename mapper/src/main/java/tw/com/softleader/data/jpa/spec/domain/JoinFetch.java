@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext.FetchRef;
 
 /**
- * A {@code Specification} that performs an inner join and fetches the related entities.
+ * A {@link Specification} that performs an inner join and fetches the related entities.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *

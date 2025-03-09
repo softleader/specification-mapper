@@ -25,10 +25,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities where a field is {@code NULL}.
+ * A {@link Specification} that filters entities where a field is {@code NULL}.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
@@ -43,6 +44,7 @@ import org.springframework.lang.Nullable;
  * }</pre>
  *
  * @author Matt Ho
+ * @see NotNull
  */
 public class IsNull<T> extends BooleanSpecification<T> {
 

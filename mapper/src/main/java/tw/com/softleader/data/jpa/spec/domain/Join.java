@@ -32,7 +32,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
- * A {@code Specification} that performs an join on a given association.
+ * A {@link Specification} that performs an join on a given association.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *

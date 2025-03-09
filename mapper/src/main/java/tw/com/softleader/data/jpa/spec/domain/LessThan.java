@@ -25,10 +25,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities where a field is less than a given value.
+ * A {@link Specification} that filters entities where a field is less than a given value.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
@@ -43,6 +44,10 @@ import org.springframework.lang.Nullable;
  * }</pre>
  *
  * @author Matt Ho
+ * @see Before
+ * @see LessThanEqual
+ * @see GreaterThan
+ * @see GreaterThanEqual
  */
 public class LessThan<T> extends ComparableSpecification<T> {
 

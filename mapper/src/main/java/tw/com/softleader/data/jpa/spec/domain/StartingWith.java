@@ -26,10 +26,11 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.Objects;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities starting with a specific value.
+ * A {@link Specification} that filters entities starting with a specific value.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
@@ -44,6 +45,7 @@ import org.springframework.lang.Nullable;
  * </pre>
  *
  * @author Matt Ho
+ * @see EndingWith
  */
 public class StartingWith<T> extends SimpleSpecification<T> {
 

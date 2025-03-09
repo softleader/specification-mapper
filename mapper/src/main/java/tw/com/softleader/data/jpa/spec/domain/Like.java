@@ -26,10 +26,11 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.Objects;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities where a field matches a pattern using {@code LIKE}.
+ * A {@link Specification} that filters entities where a field matches a pattern using {@code LIKE}.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
@@ -44,6 +45,7 @@ import org.springframework.lang.Nullable;
  * }</pre>
  *
  * @author Matt Ho
+ * @see NotLike
  */
 public class Like<T> extends SimpleSpecification<T> {
 

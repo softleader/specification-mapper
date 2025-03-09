@@ -21,23 +21,16 @@
 package tw.com.softleader.data.jpa.spec.domain;
 
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
- * A {@code Specification} that filters entities occurring before a given value.
+ * A {@link Specification} that filters entities occurring after a given value.
  *
- * <p>In Criteria API, an equivalent expression might be:
- *
- * <pre>{@code
- * cb.lessThan(root.get(path), value);
- * }</pre>
- *
- * <p>This typically translates to SQL like:
- *
- * <pre>
- * {@code ... where x.firstname < ?}
- * </pre>
+ * <p>Functionally equivalent to {@link LessThan}, but provides a more natural expression for
+ * time-based comparisons.
  *
  * @author Matt Ho
+ * @see After
  */
 public class Before<T> extends LessThan<T> {
 

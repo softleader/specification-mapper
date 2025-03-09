@@ -27,10 +27,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities where a boolean field is {@code false}.
+ * A {@link Specification} that filters entities where a boolean field is {@code false}.
  *
  * <p>In Criteria API, an equivalent expression might be:
  *
@@ -45,6 +46,7 @@ import org.springframework.lang.Nullable;
  * </pre>
  *
  * @author Matt Ho
+ * @see True
  */
 public class False<T> extends True<T> {
 

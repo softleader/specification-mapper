@@ -25,10 +25,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
- * A {@code Specification} that filters entities where a field is greater than or equal to a given
+ * A {@link Specification} that filters entities where a field is greater than or equal to a given
  * value.
  *
  * <p>In Criteria API, an equivalent expression might be:
@@ -44,6 +45,9 @@ import org.springframework.lang.Nullable;
  * </pre>
  *
  * @author Matt Ho
+ * @see GreaterThan
+ * @see LessThan
+ * @see LessThanEqual
  */
 public class GreaterThanEqual<T> extends ComparableSpecification<T> {
 
