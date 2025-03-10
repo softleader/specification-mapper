@@ -189,3 +189,8 @@ module:
   imports:
     - path: "github.com/google/docsy"
       disable: false
+
+sitemap:
+  changefreq: monthly
+  filename: sitemap.xml
+  priority: 0.5
