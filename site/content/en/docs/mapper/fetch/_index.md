@@ -57,10 +57,10 @@ To better align with most usage scenarios, the default behavior is as follows:
 - The default join type is `INNER`.
 - Duplicate results are removed (`distinct`).
 
-You can modify the default behavior by configuring `@FetchJoin#joinType` or `@FetchJoin#distinct`, for example:
+You can modify the default behavior by configuring `@JoinFetch#joinType` or `@JoinFetch#distinct`, for example:
 
 ```java
-@FetchJoin(joinType = JoinType.RIGHT, distinct = false)
+@JoinFetch(joinType = JoinType.RIGHT, distinct = false)
 ```
 
 ### With Clause
