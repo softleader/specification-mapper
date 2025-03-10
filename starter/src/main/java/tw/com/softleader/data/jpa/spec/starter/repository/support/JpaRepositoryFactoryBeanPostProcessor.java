@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec.starter.repository.support;
 
 import java.util.List;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -39,10 +40,9 @@ public class JpaRepositoryFactoryBeanPostProcessor implements BeanPostProcessor 
   final List<RepositoryFactoryCustomizer> customizers;
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName)
+  public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName)
       throws BeansException {
-    if (bean instanceof JpaRepositoryFactoryBean) {
-      var factoryBean = (JpaRepositoryFactoryBean) bean;
+    if (bean instanceof JpaRepositoryFactoryBean<?, ?, ?> factoryBean) {
       customizers.forEach(factoryBean::addRepositoryFactoryCustomizer);
     }
     return bean;

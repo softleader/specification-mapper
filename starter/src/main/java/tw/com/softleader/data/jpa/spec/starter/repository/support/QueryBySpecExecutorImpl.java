@@ -34,16 +34,19 @@ import tw.com.softleader.data.jpa.spec.SpecMapper;
  *
  * @author Matt Ho
  */
+@Setter
+@Getter
 public class QueryBySpecExecutorImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
     implements QueryBySpecExecutorAdapter<T> {
 
-  @Setter @Getter private SpecMapper specMapper;
+  private SpecMapper specMapper;
 
   public QueryBySpecExecutorImpl(
       @NonNull JpaEntityInformation<T, ?> entityInformation, @NonNull EntityManager entityManager) {
     super(entityInformation, entityManager);
   }
 
+  @NonNull
   @Override
   public Class<T> getDomainClass() {
     return super.getDomainClass();

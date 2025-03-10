@@ -43,6 +43,7 @@ public class SpecMapperProperties {
    * @see QueryBySpecExecutorAdapter
    * @see QueryBySpecExecutorImpl
    */
+  @SuppressWarnings("rawtypes")
   Class<? extends QueryBySpecExecutorAdapter> repositoryBaseClass = QueryBySpecExecutorImpl.class;
 
   /**
