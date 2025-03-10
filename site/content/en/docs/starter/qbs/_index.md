@@ -3,7 +3,7 @@ title: Query by Spec
 weight: 10
 ---
 
-Query by Spec (QBS) provides the [`QueryBySpecExecutor<T>`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/QueryBySpecExecutor.java) interface, which includes several query methods:
+Query by Spec (QBS) provides the `QueryBySpecExecutor<T>` interface, which includes several query methods:
 
 ```java
 public interface QueryBySpecExecutor<T> {
