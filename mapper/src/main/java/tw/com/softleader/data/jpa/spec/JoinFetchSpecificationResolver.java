@@ -82,10 +82,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
             ofNullable(databind.getField().getAnnotation(JoinFetch.class)).stream(),
             ofNullable(databind.getField().getAnnotation(JoinFetches.class)).stream()
                 .flatMap(def -> stream(def.value())))
-        .filter(
-            def -> {
-              return !jc.hasHandled(databind.getTarget(), databind.getField(), def);
-            })
+        .filter(def -> !jc.hasHandled(databind.getTarget(), databind.getField(), def))
         .map(
             def -> {
               try {
@@ -102,10 +99,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
             ofNullable(databind.getTarget().getClass().getAnnotation(JoinFetch.class)).stream(),
             ofNullable(databind.getTarget().getClass().getAnnotation(JoinFetches.class)).stream()
                 .flatMap(def -> stream(def.value())))
-        .filter(
-            def -> {
-              return !jc.hasHandled(databind.getTarget(), null, def);
-            })
+        .filter(def -> !jc.hasHandled(databind.getTarget(), null, def))
         .map(
             def -> {
               try {
