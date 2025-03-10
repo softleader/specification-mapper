@@ -50,9 +50,14 @@ where customer0_.name=?
 
 > You can see that `orders1_.*` is also included in the select fields. 
 
-### Join Type
+### Join Behavior
 
-To fit most use cases, the default join type is `INNER`, and duplicate results are eliminated using `DISTINCT`. You can change this behavior using `@FetchJoin#joinType` or `@FetchJoin#distinct`, for example:
+To better align with most usage scenarios, the default behavior is as follows:
+
+- The default join type is `INNER`.
+- Duplicate results are removed (`distinct`).
+
+You can modify the default behavior by configuring `@FetchJoin#joinType` or `@FetchJoin#distinct`, for example:
 
 ```java
 @FetchJoin(joinType = JoinType.RIGHT, distinct = false)

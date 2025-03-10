@@ -60,9 +60,14 @@ public class CustomerOrderCriteria {
 }
 ```
 
-### Join Type
+### Join Behavior
 
-To match most use cases, the default join type is `INNER`, and duplicate results are removed (*distinct*). You can modify this behavior using `@Join#joinType` or `@Join#distinct`, for example:
+To better align with most usage scenarios, the default behavior is as follows:
+
+- The default join type is `INNER`.
+- Duplicate results are removed (`distinct`).
+
+You can modify the default behavior by configuring `@Join#joinType` or `@Join#distinct`, for example:
 
 ```java
 @Join(joinType = JoinType.RIGHT, distinct = false)

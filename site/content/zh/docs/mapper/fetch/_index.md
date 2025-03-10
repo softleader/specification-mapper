@@ -52,7 +52,12 @@ where customer0_.name=?
 
 ### Join Behavior
 
-為了比較符合大部分的使用情境, 預設的 Join type 是 `INNER`, 也會將結果排除重複 (*distinct*), 你可以設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 來改變, 如:
+為了比較符合大部分的使用情境, 以下是預設的行為:
+
+- Join type 預設為 `INNER`
+- 將結果排除重複 (`distinct`)
+
+透過設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 可以改變預設行為, 如:
 
 ```java
 @FetchJoin(joinType = JoinType.RIGHT, distinct = false)
