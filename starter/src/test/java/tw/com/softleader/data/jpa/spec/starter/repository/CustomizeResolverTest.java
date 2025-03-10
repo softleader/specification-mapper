@@ -47,11 +47,7 @@ import tw.com.softleader.data.jpa.spec.Databind;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
 import tw.com.softleader.data.jpa.spec.SpecificationResolver;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.Conjunction;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.Disjunction;
-import tw.com.softleader.data.jpa.spec.domain.GreaterThanEqual;
-import tw.com.softleader.data.jpa.spec.domain.StartingWith;
+import tw.com.softleader.data.jpa.spec.domain.*;
 import tw.com.softleader.data.jpa.spec.starter.repository.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.starter.repository.usecase.CustomerRepository;
 

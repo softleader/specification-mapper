@@ -22,21 +22,33 @@ package tw.com.softleader.data.jpa.spec.starter.repository.support;
 
 import jakarta.persistence.EntityManager;
 import java.io.Serializable;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
 
 /**
  * Default implementation of {@code QueryBySpecExecutor}
  *
  * @author Matt Ho
- * @deprecated in favor of {@link DefaultQueryBySpecExecutor} instead, which is the preferred name.
  */
-@Deprecated(since = "3.2.0")
-public class QueryBySpecExecutorImpl<T, ID extends Serializable>
-    extends DefaultQueryBySpecExecutor<T, ID> {
+@Setter
+@Getter
+public class DefaultQueryBySpecExecutor<T, ID extends Serializable>
+    extends SimpleJpaRepository<T, ID> implements QueryBySpecExecutorAdapter<T> {
 
-  public QueryBySpecExecutorImpl(
+  private SpecMapper specMapper;
+
+  public DefaultQueryBySpecExecutor(
       @NonNull JpaEntityInformation<T, ?> entityInformation, @NonNull EntityManager entityManager) {
     super(entityInformation, entityManager);
+  }
+
+  @NonNull
+  @Override
+  public Class<T> getDomainClass() {
+    return super.getDomainClass();
   }
 }

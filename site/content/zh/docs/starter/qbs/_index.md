@@ -39,14 +39,14 @@ public class PersonService {
 
 ## Customize Base Repository
 
-在配置的過程中, QBS 會自動配置 Spring Data JPA 的 [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository), 預設的實作為 [`QueryBySpecExecutorImpl`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorImpl.java)
+在配置的過程中, QBS 會自動配置 Spring Data JPA 的 [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository), 預設的實作為 `DefaultQueryBySpecExecutor`
 
-由於 Java 只能單一繼承, 為了應用程式可以保留原有的 Parent Base Repository, QBS 還多提供了 [`QueryBySpecExecutorAdapter`](./src/main/java/tw/com/softleader/data/jpa/spec/repository/support/QueryBySpecExecutorAdapter.java) 擴展點
+由於 Java 只能單一繼承, 為了應用程式可以保留原有的 Parent Base Repository, QBS 還多提供了 `QueryBySpecExecutorAdapter` 擴展點
 
-你的應用程式可以視情況選擇繼承 `QueryBySpecExecutorImpl` 或實作 `QueryBySpecExecutorAdapter` 去客製化 Base Repository, 如:
+你的應用程式可以視情況選擇繼承 `DefaultQueryBySpecExecutor` 或實作 `QueryBySpecExecutorAdapter` 去客製化 Base Repository, 如:
 
 ```java
-class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
+class MyJpaRepository<T, ID> extends SimpleJpaRepository<T, ID>
   implements QueryBySpecExecutorAdapter<T> {
 
   @Setter
@@ -55,7 +55,7 @@ class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
 
   private final EntityManager entityManager;
 
-  MyRepositoryImpl(JpaEntityInformation entityInformation,
+  MyJpaRepository(JpaEntityInformation entityInformation,
                           EntityManager entityManager) {
     super(entityInformation, entityManager);
 
@@ -80,5 +80,5 @@ class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
 ```yaml
 spec:
   mapper:
-    repository-base-class: com.acme.example.MyRepositoryImpl
+    repository-base-class: com.example.MyJpaRepository
 ```

@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec.starter.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.test.util.AopTestUtils.getUltimateTargetObject;
 
 import lombok.Builder;
 import lombok.Data;
@@ -37,6 +38,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.starter.repository.support.DefaultQueryBySpecExecutor;
 import tw.com.softleader.data.jpa.spec.starter.repository.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.starter.repository.usecase.CustomerRepository;
 
@@ -47,6 +49,14 @@ import tw.com.softleader.data.jpa.spec.starter.repository.usecase.CustomerReposi
 class QueryBySpecExecutorTest {
 
   @Autowired CustomerRepository repository;
+
+  @Autowired QueryBySpecExecutor<?> executor;
+
+  @Test
+  void shouldGetDefaultQueryBySpecExecutor() {
+    var actual = getUltimateTargetObject(executor);
+    assertThat(actual).isInstanceOf(DefaultQueryBySpecExecutor.class);
+  }
 
   @Test
   void findBySpec() {

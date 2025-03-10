@@ -22,8 +22,9 @@ package tw.com.softleader.data.jpa.spec.starter.autoconfigure;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import tw.com.softleader.data.jpa.spec.starter.repository.QueryBySpecExecutor;
+import tw.com.softleader.data.jpa.spec.starter.repository.support.DefaultQueryBySpecExecutor;
 import tw.com.softleader.data.jpa.spec.starter.repository.support.QueryBySpecExecutorAdapter;
-import tw.com.softleader.data.jpa.spec.starter.repository.support.QueryBySpecExecutorImpl;
 
 /**
  * @author Matt Ho
@@ -41,10 +42,10 @@ public class SpecMapperProperties {
    * Configures the repository base class. the given class must implement QueryBySpecExecutorAdapter
    *
    * @see QueryBySpecExecutorAdapter
-   * @see QueryBySpecExecutorImpl
+   * @see DefaultQueryBySpecExecutor
    */
   @SuppressWarnings("rawtypes")
-  Class<? extends QueryBySpecExecutorAdapter> repositoryBaseClass = QueryBySpecExecutorImpl.class;
+  Class<? extends QueryBySpecExecutor> repositoryBaseClass = DefaultQueryBySpecExecutor.class;
 
   /**
    * Whether to impersonate the logger, if enabled, the actual logger of the changed object will be

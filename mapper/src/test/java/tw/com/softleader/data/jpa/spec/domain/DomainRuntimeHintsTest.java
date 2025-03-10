@@ -25,7 +25,6 @@ import static org.springframework.aot.hint.predicate.RuntimeHintsPredicates.refl
 
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
-import tw.com.softleader.data.jpa.spec.*;
 import tw.com.softleader.data.jpa.spec.aot.SpecMapperRuntimeHints;
 
 class DomainRuntimeHintsTest {
