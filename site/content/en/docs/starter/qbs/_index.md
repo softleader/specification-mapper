@@ -41,14 +41,14 @@ By inheriting `QueryBySpecExecutor<T>`, you can directly use the query methods i
 
 ## Customize Base Repository
 
-During the configuration process, QBS automatically configures the Spring Data JPA [Base Repository](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.customize-base-repository). The default implementation is `DefaultQueryBySpecExecutor`.
+During the configuration process, QBS automatically configures the Spring Data JPA [Base Repository](https://docs.spring.io/spring-data/jpa/reference/repositories/custom-implementations.html#repositories.customize-base-repository). The default implementation is `DefaultQueryBySpecExecutor`.
 
 However, since Java only supports single inheritance, and to allow your application to retain its original parent Base Repository, QBS provides an extension point called `QueryBySpecExecutorAdapter`.
 
 Depending on your application's needs, you can choose to either extend `DefaultQueryBySpecExecutor` or implement `QueryBySpecExecutorAdapter` to customize the Base Repository. For example:
 
 ```java
-class MyJpaRepository<T, ID> extends SimpleJpaRepository<T, ID>
+class MyRepositoryImpl<T, ID> extends SimpleJpaRepository<T, ID>
   implements QueryBySpecExecutorAdapter<T> {
 
   @Setter
@@ -57,7 +57,7 @@ class MyJpaRepository<T, ID> extends SimpleJpaRepository<T, ID>
 
   private final EntityManager entityManager;
 
-  MyJpaRepository(JpaEntityInformation entityInformation,
+  MyRepositoryImpl(JpaEntityInformation entityInformation,
                           EntityManager entityManager) {
     super(entityInformation, entityManager);
 
@@ -82,5 +82,5 @@ You can configure your custom Base Repository by setting the `spec.mapper.reposi
 ```yaml
 spec:
   mapper:
-    repository-base-class: com.example.MyJpaRepository
+    repository-base-class: com.example.MyRepositoryImpl
 ```
