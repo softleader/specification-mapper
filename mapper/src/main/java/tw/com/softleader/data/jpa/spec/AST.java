@@ -21,16 +21,43 @@
 package tw.com.softleader.data.jpa.spec;
 
 import lombok.NonNull;
+import tw.com.softleader.data.jpa.spec.domain.Context;
 
 /**
+ * Represents an Abstract Syntax Tree (AST) used for logging and debugging purposes. This interface
+ * provides methods to add hierarchical log entries and print the AST.
+ *
  * @author Matt Ho
  */
 public interface AST {
 
+  /**
+   * The context key for storing {@code AST} instance.
+   *
+   * @see Context
+   */
   String CTX_AST = "_AST";
+
+  /**
+   * The context key for storing current depth level.
+   *
+   * @see Context
+   */
   String CTX_DEPTH = "_DEPTH";
 
+  /**
+   * Adds a formatted message to the AST at the specified depth.
+   *
+   * @param depth the depth level in the AST hierarchy
+   * @param message the format string of the log message, must not be null
+   * @param args the arguments referenced by the format specifiers in the message
+   */
   void add(int depth, @NonNull String message, Object... args);
 
+  /**
+   * Prints the current AST structure as a string.
+   *
+   * @return the formatted AST representation
+   */
   String print();
 }

@@ -35,21 +35,51 @@ import org.springframework.lang.Nullable;
  */
 public interface JoinContext {
 
+  /**
+   * The context key for storing {@code JoinContext} instance.
+   *
+   * @see Context
+   */
   String CTX_JOIN = "_JOIN";
 
+  /**
+   * Checks whether the given target object and field have already been processed for the specified
+   * annotation.
+   *
+   * @return {@code true} if the target and field have already been handled, otherwise {@code false}
+   */
   boolean hasHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def);
 
+  /** Marks the given target object and field as processed for the specified annotation. */
   void markHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def);
 
+  /** Stores a {@link Join} object in the context if it is not already present. */
   void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join);
 
+  /** Stores a {@link FetchRef} object in the context if it is not already present. */
   void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull FetchRef ref);
 
+  /**
+   * Retrieves a {@link Join} associated with the given root entity and alias.
+   *
+   * @return the associated {@link Join}, or {@code null} if not found
+   */
   @Nullable
   Join<?, ?> getJoin(@NonNull Root<?> root, @NonNull String alias);
 
+  /**
+   * Retrieves a {@link FetchRef} associated with the given root entity and alias.
+   *
+   * @return the associated {@link FetchRef}, or {@code null} if not found
+   */
   @Nullable
   FetchRef getFetch(@NonNull Root<?> root, @NonNull String alias);
 
+  /**
+   * A record representing a fetch operation along with its associated paths.
+   *
+   * @param fetch the {@link Fetch} object, must not be {@code null}
+   * @param paths the property paths related to the fetch, must not be {@code null}
+   */
   record FetchRef(@NonNull Fetch<?, ?> fetch, @NonNull String... paths) {}
 }

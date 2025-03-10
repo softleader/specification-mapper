@@ -21,19 +21,53 @@
 package tw.com.softleader.data.jpa.spec;
 
 /**
+ * Represents an invocation of a specification resolver within the AST. This interface provides
+ * access to contextual information about the specification resolution process, including depth,
+ * target type, field details, and the associated resolver.
+ *
  * @author Matt Ho
  */
 public interface SpecInvocation {
 
+  /**
+   * Returns the AST instance associated with this invocation.
+   *
+   * @return the AST instance
+   */
   AST getAst();
 
+  /**
+   * Returns the depth level of this invocation in the AST.
+   *
+   * @return the depth level
+   */
   int getDepth();
 
+  /**
+   * Returns the type of the specification resolver handling this invocation.
+   *
+   * @return the class of the specification resolver
+   */
   Class<? extends SpecificationResolver> getResolverType();
 
+  /**
+   * Returns the type of the target object being evaluated in this invocation.
+   *
+   * @return the class of the target type
+   */
   Class<?> getTargetType();
 
+  /**
+   * Returns the type of the field being evaluated in this invocation.
+   *
+   * @return the class of the field type
+   */
   Class<?> getFieldType();
 
+  /**
+   * Returns the name of the field being evaluated in this invocation.
+   *
+   * @return the field name
+   */
   String getFieldName();
 }

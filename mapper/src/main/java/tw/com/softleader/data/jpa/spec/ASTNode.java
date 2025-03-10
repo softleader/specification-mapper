@@ -25,10 +25,19 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 /**
+ * Represents a node within an AST that supports pre- and post-visitation hooks. This interface
+ * provides default implementations for logging AST structures during the resolution of
+ * specifications.
+ *
  * @author Matt Ho
  */
 public interface ASTNode {
 
+  /**
+   * Called before processing a specification invocation. Logs the invocation details to the AST.
+   *
+   * @param node the specification invocation being processed, must not be null
+   */
   default void preVisit(@NonNull SpecInvocation node) {
     node.getAst()
         .add(
@@ -40,6 +49,13 @@ public interface ASTNode {
             node.getResolverType().getSimpleName());
   }
 
+  /**
+   * Called after processing a specification invocation. Logs the resolved specification result to
+   * the AST.
+   *
+   * @param node the specification invocation that was processed, must not be null
+   * @param resolved the resolved specification, may be null
+   */
   default void postVisit(@NonNull SpecInvocation node, @Nullable Specification<Object> resolved) {
     node.getAst()
         .add(
