@@ -29,7 +29,7 @@ If you want to fetch Order data when retrieving Customer, you can do:
 
 ```java
 @Data
-@JoinFetch(paths = "orders")
+@JoinFetch(path = "orders")
 class CustomerOrderCriteria {
 
   @Spec

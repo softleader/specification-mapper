@@ -29,7 +29,7 @@ class Order {
 
 ```java
 @Data
-@JoinFetch(paths = "orders")
+@JoinFetch(path = "orders")
 class CustomerOrderCriteria {
 
   @Spec
