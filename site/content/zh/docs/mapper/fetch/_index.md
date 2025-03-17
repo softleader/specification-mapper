@@ -57,10 +57,10 @@ where customer0_.name=?
 - Join type 預設為 `INNER`
 - 將結果排除重複 (`distinct`)
 
-透過設定 `@FetchJoin#joinType` 或 `@FetchJoin#distinct` 可以改變預設行為, 如:
+透過設定 `@JoinFetch#joinType` 或 `@JoinFetch#distinct` 可以改變預設行為, 如:
 
 ```java
-@FetchJoin(joinType = JoinType.RIGHT, distinct = false)
+@JoinFetch(joinType = JoinType.RIGHT, distinct = false)
 ```
 
 ### With Clause
