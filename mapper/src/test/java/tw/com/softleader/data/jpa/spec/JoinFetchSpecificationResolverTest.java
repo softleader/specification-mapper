@@ -36,10 +36,7 @@ import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.In;
-import tw.com.softleader.data.jpa.spec.usecase.Customer;
-import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
-import tw.com.softleader.data.jpa.spec.usecase.Order;
-import tw.com.softleader.data.jpa.spec.usecase.Tag;
+import tw.com.softleader.data.jpa.spec.usecase.*;
 
 @IntegrationTest
 class JoinFetchSpecificationResolverTest {
@@ -57,6 +54,38 @@ class JoinFetchSpecificationResolverTest {
             .resolver(joinFetchResolver = spy(new JoinFetchSpecificationResolver()))
             .resolver(simpleResolver = spy(new SimpleSpecificationResolver()))
             .build();
+  }
+
+  @DisplayName("單一層級的 Join Fetch 在 class 上, 多個 join")
+  @Test
+  void multiJoinFetch() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(Order.builder().itemName("Pizza").build())
+                .school(School.builder().name("A").build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .order(Order.builder().itemName("Hamburger").build())
+            .school(School.builder().name("A").build())
+            .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .order(Order.builder().itemName("Coke").build())
+            .school(School.builder().name("B").build())
+            .build());
+
+    var spec =
+        mapper.toSpec(
+            SingleLevelMultiJoinFetches.builder().itemName("Pizza").schoolName("A").build(),
+            Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(matt);
   }
 
   @DisplayName("單一層級的 Join Fetch 在 class 上")
@@ -216,5 +245,16 @@ class JoinFetchSpecificationResolverTest {
     @JoinFetches({@JoinFetch(path = "orders"), @JoinFetch(path = "orders.tags")})
     @Spec(path = "orders_tags.name", value = In.class)
     Collection<String> tags;
+  }
+
+  @JoinFetches({@JoinFetch(path = "orders"), @JoinFetch(path = "schools")})
+  @Builder
+  @Data
+  public static class SingleLevelMultiJoinFetches {
+    @Spec(path = "orders.itemName")
+    String itemName;
+
+    @Spec(path = "schools.name")
+    String schoolName;
   }
 }
