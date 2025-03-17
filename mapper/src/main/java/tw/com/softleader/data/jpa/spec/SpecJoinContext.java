@@ -20,6 +20,8 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.lang.Integer.toHexString;
+import static java.lang.System.identityHashCode;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Optional.ofNullable;
 
@@ -73,10 +75,10 @@ class SpecJoinContext implements JoinContext {
     return fetched.get(new FetchKey(root, alias));
   }
 
-  record HandleKey(int target, @Nullable String field, Annotation def) {
-    HandleKey(Object target, Field field, Annotation def) {
+  record HandleKey(@NonNull String target, @Nullable String field, @NonNull Annotation def) {
+    HandleKey(@NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
       this(
-          target.hashCode(),
+          toHexString(identityHashCode(target)),
           ofNullable(field).map(f -> f.getDeclaringClass().getName()).orElse(null),
           def);
     }
