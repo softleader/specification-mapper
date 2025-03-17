@@ -77,10 +77,11 @@ class SpecJoinContext implements JoinContext {
 
   record HandleKey(@NonNull String target, @Nullable String field, @NonNull Annotation def) {
     HandleKey(@NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
-      this(
-          toHexString(identityHashCode(target)),
-          ofNullable(field).map(f -> f.getDeclaringClass().getName()).orElse(null),
-          def);
+      this(identityHex(target), ofNullable(field).map(HandleKey::identityHex).orElse(null), def);
+    }
+
+    static String identityHex(@NonNull Object obj) {
+      return toHexString(identityHashCode(obj));
     }
   }
 
