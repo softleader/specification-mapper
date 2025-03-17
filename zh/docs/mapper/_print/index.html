@@ -299,7 +299,7 @@ Logging</button></li></ul><div class=tab-content id=tabs-0-content><div class="t
 </span></span></span><span class=line><span class=cl><span class=w>  </span><span class=kd>private</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>itemName</span><span class=p>;</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
 </span></span></span></code></pre></div><p>如果你想在取得 Customer 時就順便取得 Order, 則:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Data</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w></span><span class=nd>@JoinFetch</span><span class=p>(</span><span class=n>paths</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s>&#34;orders&#34;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nd>@JoinFetch</span><span class=p>(</span><span class=n>path</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s>&#34;orders&#34;</span><span class=p>)</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>class</span> <span class=nc>CustomerOrderCriteria</span><span class=w> </span><span class=p>{</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nd>@Spec</span><span class=w>
