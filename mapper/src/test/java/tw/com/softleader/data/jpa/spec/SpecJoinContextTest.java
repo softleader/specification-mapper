@@ -1,7 +1,5 @@
 package tw.com.softleader.data.jpa.spec;
 
-import static java.lang.Integer.toHexString;
-import static java.lang.System.identityHashCode;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static tw.com.softleader.data.jpa.spec.SpecJoinContext.HandleKey.identityHex;
@@ -13,28 +11,15 @@ import tw.com.softleader.data.jpa.spec.SpecJoinContext.HandleKey;
 class SpecJoinContextTest {
 
   @Test
-  void shouldConvertTargetToIdentityHexString() {
-    var target = new Object();
-    var annotation = mock(Annotation.class);
-
-    var key = new HandleKey(target, null, annotation);
-
-    var expectedTarget = identityHex(target);
-    assertThat(key.target()).isEqualTo(expectedTarget);
-    assertThat(key.field()).isNull();
-    assertThat(key.def()).isEqualTo(annotation);
-  }
-
-  @Test
-  void shouldConvertFieldToIdentityHexString() throws NoSuchFieldException {
+  void shouldConvertTargetAndFieldToIdentityHex() throws NoSuchFieldException {
     var target = new Object();
     var annotation = mock(Annotation.class);
     var field = TargetA.class.getDeclaredField("field");
 
     var key = new HandleKey(target, field, annotation);
 
-    var expectedField = toHexString(identityHashCode(field));
-    assertThat(key.target()).isEqualTo(toHexString(identityHashCode(target)));
+    var expectedField = identityHex(field);
+    assertThat(key.target()).isEqualTo(identityHex(target));
     assertThat(key.field()).isEqualTo(expectedField);
     assertThat(key.def()).isEqualTo(annotation);
   }
@@ -46,9 +31,23 @@ class SpecJoinContextTest {
 
     var key = new HandleKey(target, null, annotation);
 
-    assertThat(key.target()).isEqualTo(toHexString(identityHashCode(target)));
+    assertThat(key.target()).isEqualTo(identityHex(target));
     assertThat(key.field()).isNull();
     assertThat(key.def()).isEqualTo(annotation);
+  }
+
+  @Test
+  void shouldGenerateDifferentKeysForNullFieldInDifferentClasses() {
+    var annotation = mock(Annotation.class);
+
+    var keyA = new HandleKey(new Object(), null, annotation);
+    var keyB = new HandleKey(new Object(), null, annotation);
+
+    assertThat(keyA).isNotEqualTo(keyB);
+    assertThat(keyA.field()).isNull();
+    assertThat(keyA.def()).isEqualTo(annotation);
+    assertThat(keyB.field()).isNull();
+    assertThat(keyB.def()).isEqualTo(annotation);
   }
 
   @Test
