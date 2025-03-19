@@ -192,6 +192,47 @@ class JoinSpecificationResolverTest {
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
+  @DisplayName("多層級的 Join 僅在 class 上 (無任何欄位)")
+  @Test
+  void joinsOnClassOnly() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(
+                    Order.builder()
+                        .itemName("Pizza")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(
+                    Order.builder()
+                        .itemName("Hamburger")
+                        .tag(Tag.builder().name("Food").build())
+                        .build())
+                .build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .order(
+                Order.builder()
+                    .itemName("Coke")
+                    .tag(Tag.builder().name("Beverage").build())
+                    .build())
+            .build());
+
+    var criteria = new CustomerJoinsOnClassOnly();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+    assertThat(spec).isNotNull();
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(matt, mary);
+  }
+
   @Builder
   @Data
   public static class CustomerJoinOnField {
@@ -230,4 +271,7 @@ class JoinSpecificationResolverTest {
     @Spec(path = "t.name", value = In.class)
     Collection<String> tags;
   }
+
+  @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
+  public static class CustomerJoinsOnClassOnly {}
 }

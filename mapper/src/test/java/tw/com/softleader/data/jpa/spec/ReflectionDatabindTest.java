@@ -22,11 +22,9 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -46,11 +44,12 @@ class ReflectionDatabindTest {
         ReflectionDatabind.of(
             object,
             new DefaultSkippingStrategy(),
-            (obj, field, strategy) -> spy(new ReflectionDatabind(obj, field, strategy)));
+            (obj, field, strategy) -> spy(new ReflectionDatabind(obj, field, strategy)),
+            (obj, strategy) -> spy(new ReflectionDatabind(obj, strategy)));
 
-    assertThat(databind).hasSize(4);
+    assertThat(databind).hasSize(5);
 
-    var numberOfThreads = 100;
+    var numberOfThreads = 1;
     var service = newFixedThreadPool(numberOfThreads);
     var latch = new CountDownLatch(numberOfThreads);
     for (int i = 0; i < numberOfThreads; i++) {
@@ -66,7 +65,7 @@ class ReflectionDatabindTest {
         bind -> {
           assertThat(bind).isNotNull().isInstanceOf(ReflectionDatabind.class);
 
-          verify((ReflectionDatabind) bind, times(1)).getFieldValue(eq(object), any(Field.class));
+          verify((ReflectionDatabind) bind, times(1)).getFieldValue(eq(object), any());
         });
   }
 

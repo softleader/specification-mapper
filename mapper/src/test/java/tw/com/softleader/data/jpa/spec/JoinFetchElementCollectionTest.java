@@ -89,8 +89,7 @@ class JoinFetchElementCollectionTest {
         .map(Specification.class::cast)
         .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
         .hasSize(1);
-    var totalFields = CustomerFetchPhone.class.getDeclaredFields().length;
-    verify(joinFetchResolver, times(totalFields)).buildSpecification(any(), any());
+    verify(joinFetchResolver, times(1)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
@@ -136,10 +135,7 @@ class JoinFetchElementCollectionTest {
         .extracting("specs", LIST)
         .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
         .hasSize(1);
-    var totalFields =
-        CustomerFetchPhone.class.getDeclaredFields().length
-            + CustomerFetchSchool.class.getDeclaredFields().length;
-    verify(joinFetchResolver, times(totalFields)).buildSpecification(any(), any());
+    verify(joinFetchResolver, times(2)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);

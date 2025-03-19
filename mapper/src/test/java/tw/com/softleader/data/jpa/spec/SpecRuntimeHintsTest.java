@@ -41,7 +41,6 @@ class SpecRuntimeHintsTest {
     assertThat(reflection().onType(JoinSpecificationResolver.class)).accepts(hints);
     assertThat(reflection().onType(NestedSpecificationResolver.class)).accepts(hints);
     assertThat(reflection().onType(ReflectionDatabind.class)).accepts(hints);
-    assertThat(reflection().onType(ReflectionDatabindFactory.class)).accepts(hints);
     assertThat(reflection().onType(ReflectionSpecInvocation.class)).accepts(hints);
     assertThat(reflection().onType(SimpleSpecificationResolver.class)).accepts(hints);
     assertThat(reflection().onType(SkippingStrategy.class)).accepts(hints);
