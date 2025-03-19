@@ -52,6 +52,10 @@ class ReflectionDatabind implements Databind {
   @Getter @NonNull private final FieldDescriptor field;
   @NonNull private final SkippingStrategy skippingStrategy;
 
+  private final AtomicBoolean loaded = new AtomicBoolean();
+  private final CountDownLatch latch = new CountDownLatch(1);
+  private Object value;
+
   ReflectionDatabind(
       @NonNull Object target, @NonNull Field field, @NonNull SkippingStrategy skippingStrategy) {
     this(target, new ReflectiveFieldDescriptor(field), skippingStrategy);
@@ -60,10 +64,6 @@ class ReflectionDatabind implements Databind {
   ReflectionDatabind(@NonNull Object target, @NonNull SkippingStrategy skippingStrategy) {
     this(target, ABSENT, skippingStrategy);
   }
-
-  private final AtomicBoolean loaded = new AtomicBoolean();
-  private final CountDownLatch latch = new CountDownLatch(1);
-  private Object value;
 
   static List<Databind> of(@NonNull Object target, @NonNull SkippingStrategy skippingStrategy) {
     return of(target, skippingStrategy, ReflectionDatabind::new, ReflectionDatabind::new);
