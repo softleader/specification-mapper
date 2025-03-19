@@ -128,7 +128,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
     node.getAst()
         .add(
             node.getDepth(),
-            "|    [%s.%s]: %s",
+            "|  +-[%s.%s]: %s",
             node.getTargetType().getSimpleName(),
             node.getFieldName(),
             resolved);

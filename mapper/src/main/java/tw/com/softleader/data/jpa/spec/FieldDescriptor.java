@@ -111,7 +111,7 @@ public interface FieldDescriptor extends AnnotatedElement {
     @Override
     @NonNull
     public String getName() {
-      return this.getClass().getSimpleName();
+      return "<absent>";
     }
 
     @Override
