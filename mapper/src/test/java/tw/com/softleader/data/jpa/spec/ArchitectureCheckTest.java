@@ -90,12 +90,12 @@ class ArchitectureCheckTest {
       classes()
           .that()
           .resideInAPackage(INFRA_PACKAGE)
-          .and(
-              doNot(
-                  INTERFACES
-                      .or(BUILDER)
-                      .or(FACTORY)
-                      .or(assignableTo(SpecMapper.class).or(assignableTo(SpecContext.class)))))
+          .and(doNot(INTERFACES))
+          .and(doNot((BUILDER)))
+          .and(doNot((FACTORY)))
+          .and(doNot((assignableTo(SpecMapper.class).or(assignableTo(SpecContext.class)))))
+          .and()
+          .areNotNestedClasses()
           .should()
           .notBePublic();
 

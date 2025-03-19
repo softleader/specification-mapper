@@ -25,6 +25,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
+import static tw.com.softleader.data.jpa.spec.FieldDescriptor.ABSENT;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -47,24 +49,34 @@ import org.springframework.util.ReflectionUtils;
 class ReflectionDatabind implements Databind {
 
   @Getter @NonNull private final Object target;
-
-  @Getter @NonNull private final Field field;
-
+  @Getter @NonNull private final FieldDescriptor field;
   @NonNull private final SkippingStrategy skippingStrategy;
+
+  ReflectionDatabind(
+      @NonNull Object target, @NonNull Field field, @NonNull SkippingStrategy skippingStrategy) {
+    this(target, new ReflectiveFieldDescriptor(field), skippingStrategy);
+  }
+
+  ReflectionDatabind(@NonNull Object target, @NonNull SkippingStrategy skippingStrategy) {
+    this(target, ABSENT, skippingStrategy);
+  }
 
   private final AtomicBoolean loaded = new AtomicBoolean();
   private final CountDownLatch latch = new CountDownLatch(1);
   private Object value;
 
   static List<Databind> of(@NonNull Object target, @NonNull SkippingStrategy skippingStrategy) {
-    return of(target, skippingStrategy, ReflectionDatabind::new);
+    return of(target, skippingStrategy, ReflectionDatabind::new, ReflectionDatabind::new);
   }
 
+  // Visible for testing
   static List<Databind> of(
       @NonNull Object target,
       @NonNull SkippingStrategy skippingStrategy,
-      @NonNull ReflectionDatabindFactory<Object, Field, SkippingStrategy, Databind> factory) {
+      @NonNull DatabindFactory factory,
+      @NonNull DatabindFactoryNoField factoryNoField) {
     var lookup = new ArrayList<Databind>();
+    lookup.add(factoryNoField.apply(target, skippingStrategy));
     doWithLocalFields(
         target.getClass(), field -> lookup.add(factory.apply(target, field, skippingStrategy)));
     return unmodifiableList(lookup);
@@ -74,7 +86,7 @@ class ReflectionDatabind implements Databind {
   @SneakyThrows
   public Optional<Object> getFieldValue() {
     if (loaded.compareAndSet(false, true)) {
-      value = getFieldValue(target, field);
+      value = getFieldValue(target, field.unwrap(Field.class));
       latch.countDown();
     } else {
       latch.await();
@@ -83,12 +95,29 @@ class ReflectionDatabind implements Databind {
   }
 
   // Visible for testing
-  Object getFieldValue(Object target, Field field) {
+  Object getFieldValue(@NonNull Object target, @Nullable Field field) {
+    if (field == null) {
+      return null;
+    }
     makeAccessible(field);
     var val = ReflectionUtils.getField(field, target);
     if (val instanceof Optional) {
       return ((Optional<?>) val).orElse(null);
     }
     return val;
+  }
+
+  // for test spy
+  @FunctionalInterface
+  interface DatabindFactory {
+
+    Databind apply(Object target, Field field, SkippingStrategy strategy);
+  }
+
+  // for test spy
+  @FunctionalInterface
+  interface DatabindFactoryNoField {
+
+    Databind apply(Object target, SkippingStrategy strategy);
   }
 }

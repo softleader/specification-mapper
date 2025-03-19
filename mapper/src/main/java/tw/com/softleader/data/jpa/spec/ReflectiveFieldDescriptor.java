@@ -20,14 +20,18 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
-/**
- * This interface is designed to abstractly construct a {@link ReflectionDatabind} factory,
- * primarily for facilitating spy intervention during testing.
- *
- * @author Matt Ho
- */
-@FunctionalInterface
-interface ReflectionDatabindFactory<T, U, V, R> {
+import java.lang.reflect.Field;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Delegate;
 
-  R apply(T t, U u, V v);
+@RequiredArgsConstructor
+class ReflectiveFieldDescriptor implements FieldDescriptor {
+
+  @NonNull @Delegate private final Field field;
+
+  @Override
+  public Object unwrap() {
+    return field;
+  }
 }

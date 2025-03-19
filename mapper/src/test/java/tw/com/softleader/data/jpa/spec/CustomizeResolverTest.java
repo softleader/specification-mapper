@@ -163,8 +163,7 @@ class CustomizeResolverTest {
 
     verify(nestedResolver, times(1)).buildSpecification(any(Context.class), any(Databind.class));
 
-    // 跟掛 annotation 的 class fields 數一樣
-    verify(customizeOnTypeResolver, times(2))
+    verify(customizeOnTypeResolver, times(1))
         .buildSpecification(any(Context.class), any(Databind.class));
 
     verify(customizeOnTypeResolver, times(1)).buildSpecification();
@@ -240,7 +239,7 @@ class CustomizeResolverTest {
 
     @Override
     public boolean supports(@NonNull Databind databind) {
-      return databind.getTarget().getClass().isAnnotationPresent(CustomizeOnType.class);
+      return databind.isAnnotationPresentOnTargetOnly(CustomizeOnType.class);
     }
 
     @Override

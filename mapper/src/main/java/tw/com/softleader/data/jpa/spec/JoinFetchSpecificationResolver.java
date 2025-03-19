@@ -53,7 +53,7 @@ class JoinFetchSpecificationResolver implements SpecificationResolver {
   private boolean isAnnotationPresentOnFieldOrTargetClass(
       @NonNull Databind databind, Class<? extends Annotation> annotation) {
     return databind.getField().isAnnotationPresent(annotation)
-        || databind.getTarget().getClass().isAnnotationPresent(annotation);
+        || databind.isAnnotationPresentOnTargetOnly(annotation);
   }
 
   @Override

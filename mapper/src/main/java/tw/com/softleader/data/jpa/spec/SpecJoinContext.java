@@ -26,7 +26,6 @@ import static java.util.Optional.ofNullable;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
@@ -44,12 +43,12 @@ class SpecJoinContext implements JoinContext {
 
   @Override
   public boolean hasHandled(
-      @NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
+      @NonNull Object target, @Nullable Object field, @NonNull Annotation def) {
     return handled.containsKey(new HandleKey(target, field, def));
   }
 
   @Override
-  public void markHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
+  public void markHandled(@NonNull Object target, @Nullable Object field, @NonNull Annotation def) {
     handled.put(new HandleKey(target, field, def), null);
   }
 
@@ -74,7 +73,7 @@ class SpecJoinContext implements JoinContext {
   }
 
   record HandleKey(@NonNull String target, @Nullable String field, @NonNull Annotation def) {
-    HandleKey(@NonNull Object target, @Nullable Field field, @NonNull Annotation def) {
+    HandleKey(@NonNull Object target, @Nullable Object field, @NonNull Annotation def) {
       this(identityHex(target), identityHex(field), def);
     }
 

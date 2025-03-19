@@ -24,7 +24,6 @@ import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -48,10 +47,10 @@ public interface JoinContext {
    *
    * @return {@code true} if the target and field have already been handled, otherwise {@code false}
    */
-  boolean hasHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def);
+  boolean hasHandled(@NonNull Object target, @Nullable Object field, @NonNull Annotation def);
 
   /** Marks the given target object and field as processed for the specified annotation. */
-  void markHandled(@NonNull Object target, @Nullable Field field, @NonNull Annotation def);
+  void markHandled(@NonNull Object target, @Nullable Object field, @NonNull Annotation def);
 
   /** Stores a {@link Join} object in the context if it is not already present. */
   void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join);
