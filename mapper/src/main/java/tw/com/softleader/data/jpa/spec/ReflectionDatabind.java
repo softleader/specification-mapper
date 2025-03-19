@@ -73,10 +73,10 @@ class ReflectionDatabind implements Databind {
   static List<Databind> of(
       @NonNull Object target,
       @NonNull SkippingStrategy skippingStrategy,
-      @NonNull DatabindFactory factory,
-      @NonNull DatabindFactoryNoField factoryNoField) {
+      @NonNull FieldDescriptorFactory factory,
+      @NonNull TargetOnlyFieldDescriptorFactory targetOnlyFactory) {
     var lookup = new ArrayList<Databind>();
-    lookup.add(factoryNoField.apply(target, skippingStrategy));
+    lookup.add(targetOnlyFactory.apply(target, skippingStrategy));
     doWithLocalFields(
         target.getClass(), field -> lookup.add(factory.apply(target, field, skippingStrategy)));
     return unmodifiableList(lookup);
@@ -107,16 +107,16 @@ class ReflectionDatabind implements Databind {
     return val;
   }
 
-  // for test spy
+  // For test spy
   @FunctionalInterface
-  interface DatabindFactory {
+  interface FieldDescriptorFactory {
 
     Databind apply(Object target, Field field, SkippingStrategy strategy);
   }
 
-  // for test spy
+  // For test spy
   @FunctionalInterface
-  interface DatabindFactoryNoField {
+  interface TargetOnlyFieldDescriptorFactory {
 
     Databind apply(Object target, SkippingStrategy strategy);
   }
