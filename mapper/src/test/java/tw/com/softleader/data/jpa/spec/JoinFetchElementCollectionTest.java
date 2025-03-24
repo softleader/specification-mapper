@@ -41,7 +41,6 @@ import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
-import tw.com.softleader.data.jpa.spec.usecase.Gender;
 import tw.com.softleader.data.jpa.spec.usecase.School;
 
 @IntegrationTest
@@ -82,7 +81,8 @@ class JoinFetchElementCollectionTest {
             .phone("fetnet", "0966777888")
             .build());
 
-    var spec = mapper.toSpec(CustomerFetchPhone.builder().name("matt").build(), Customer.class);
+    var spec =
+        mapper.toSpec(JoinFetchElementCollection.builder().name("matt").build(), Customer.class);
     var depth1 =
         assertThat(spec)
             .isNotNull()
@@ -92,7 +92,7 @@ class JoinFetchElementCollectionTest {
     depth1.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(Equals.class);
     verify(joinFetchResolver, times(1)).buildSpecification(any(), any());
-    verify(nestedResolver, times(1)).buildSpecification(any(), any());
+    verify(nestedResolver, never()).buildSpecification(any(), any());
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
   }
@@ -123,8 +123,8 @@ class JoinFetchElementCollectionTest {
             .school(School.builder().city("Taichung").name("B").build())
             .build());
     var criteria =
-        CustomerFetchPhone.builder()
-            .school(CustomerFetchSchool.builder().name("A").city("Taipei").build())
+        NestedJoinFetchElementCollection.builder()
+            .school(JoinFetchOnClass.builder().name("A").city("Taipei").build())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
     var depth1 =
@@ -148,19 +148,22 @@ class JoinFetchElementCollectionTest {
   @Data
   @Builder
   @JoinFetch(path = "phones", alias = "p")
-  public static class CustomerFetchPhone {
-
+  public static class JoinFetchElementCollection {
     @Spec String name;
+  }
 
-    @Spec Gender gender;
+  @Data
+  @Builder
+  @JoinFetch(path = "phones")
+  public static class NestedJoinFetchElementCollection {
 
-    @NestedSpec CustomerFetchSchool school;
+    @NestedSpec JoinFetchOnClass school;
   }
 
   @Data
   @Builder
   @JoinFetch(path = "schools")
-  public static class CustomerFetchSchool {
+  public static class JoinFetchOnClass {
 
     @Spec(path = "schools.city")
     String city;
