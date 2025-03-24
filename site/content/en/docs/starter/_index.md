@@ -31,6 +31,8 @@ description: >
   {{% /tab %}}
 {{< /tabpane >}}
 
+> Check the latest version on [Maven Central](https://central.sonatype.com/artifact/tw.com.softleader.data.jakarta/specification-mapper-starter)
+
 The `specification-mapper-starter` integrates [specification-mapper](/docs/mapper) with [Spring Data JPA](https://spring.io/projects/spring-data-jpa) and provides a way to query by specifications.
 
 Query by Spec (QBS) is a user-friendly querying approach that allows you to dynamically build query conditions using specifications. With the QBS interface, you can execute query statements easily.
