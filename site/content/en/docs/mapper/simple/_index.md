@@ -2,7 +2,7 @@
 title: Simple Specs
 weight: 20
 description: > 
-  Built-in, basic query conditions
+  Basic query conditions
 ---
 
 You can use `@Spec` on fields to define the implementation of the `Specification`, `Equals` spec is the default:
