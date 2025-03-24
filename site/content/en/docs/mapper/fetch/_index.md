@@ -1,6 +1,8 @@
 ---
 title: Join Fetch
 weight: 60
+description: > 
+  Filter related entities while selecting specific columns
 ---
 
 In a POJO, you can use `@JoinFetch` on a field or class to filter associated entities. The difference from [`@Join`](/docs/mapper/join) is that this allows fetching all lazy-related data at once.

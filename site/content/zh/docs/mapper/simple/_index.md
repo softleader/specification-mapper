@@ -1,6 +1,8 @@
 ---
 title: Simple Specs
 weight: 20
+description: > 
+  內建的基本查詢條件
 ---
 
 在 POJO 中, 你可以在 Field 上使用 `@Spec` 來定義 `Specification` 的實作, 預設是 `Equals`: 

@@ -1,6 +1,8 @@
 ---
 title: Nested Specs
 weight: 40
+description: > 
+  Handle query conditions for nested objects
 ---
 
 You can use `@NestedSpec` on a field to instruct `SpecMapper` to combine specifications with the nested object. There is no level limitation, so you can keep going deeper!

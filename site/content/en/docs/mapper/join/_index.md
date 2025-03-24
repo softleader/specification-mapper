@@ -1,6 +1,8 @@
 ---
 title: Join
 weight: 50
+description: > 
+  Filter related entities
 ---
 
 In a POJO, you can use `@Join` on a field or class to filter related entities.

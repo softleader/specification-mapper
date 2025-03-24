@@ -1,6 +1,8 @@
 ---
 title: Customize Specs
 weight: 70
+description: > 
+  CustomExtend and customize query conditions
 ---
 
 Continuing from the example in the section [Extending @Spec](/mapper/simple/#extending-spec), let's take it a step further. Now, we want to make the entity class configurable so that it can be used for entities other than `Customer`. 

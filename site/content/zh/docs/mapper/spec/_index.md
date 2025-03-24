@@ -1,6 +1,8 @@
 ---
 title: SpecMapper
 weight: 10
+description: > 
+  操作入口
 ---
 
 `SpecMapper` 是所有 Spec 操作的 API 入口, 首先我們需要建構實例:

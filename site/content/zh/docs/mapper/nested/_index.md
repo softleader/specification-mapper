@@ -1,6 +1,8 @@
 ---
 title: Nested Specs
 weight: 40
+description: > 
+  處理巢狀物件的查詢條件
 ---
 
 在 POJO 中, 你可以在 Field 上使用 `@NestedSpec` 來告知 `SpecMapper` 要往下一層物件 (Nested Object) 去組合 Specification,  這是沒有層級限制的, 可以一直往下找!

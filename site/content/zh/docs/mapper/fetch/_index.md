@@ -1,6 +1,8 @@
 ---
 title: Join Fetch
 weight: 60
+description: > 
+  關聯查詢的過濾條件, 並同時選取指定欄位
 ---
 
 在 POJO 中, 你可以在 Field 或 Class 上使用 `@JoinFetch` 來過濾關聯的 Entity, 跟 [`@Join`](/docs/mapper/join) 的差別是, 這可以一次撈出所有 Lazy 的關聯資料

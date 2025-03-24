@@ -1,6 +1,8 @@
 ---
 title: Join
 weight: 50
+description: > 
+  關聯查詢的過濾條件
 ---
 
 在 POJO 中, 你可以在 Field 或 Class 上使用 `@Join` 來過濾關聯的 Entity

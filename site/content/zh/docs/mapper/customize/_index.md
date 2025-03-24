@@ -1,6 +1,8 @@
 ---
 title: Customize Specs
 weight: 70
+description: > 
+  客製化與擴充查詢條件
 ---
 
 延續 [Extending @Spec](/docs/mapper/simple/#extending-spec) 章節範例, 進階一點現在我們希望可以將 Entity Class 設計成可以配置, 這樣才能在 Customer 以外的 Entity 都可以使用!

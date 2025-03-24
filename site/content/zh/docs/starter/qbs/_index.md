@@ -1,6 +1,8 @@
 ---
 title: Query by Spec
 weight: 10
+description: > 
+  介紹與使用 Query by Spec (QBS)
 ---
 
 Query by Spec (QBS) 提供了 `QueryBySpecExecutor<T>` 包含了許多查詢方法:

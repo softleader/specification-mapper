@@ -1,6 +1,8 @@
 ---
 title: SpecMapper
 weight: 10
+description: > 
+  The entry point for specification operations
 ---
 
 `SpecMapper` is the most important class and serves as the API entry point for all specification operations:

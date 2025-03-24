@@ -1,6 +1,8 @@
 ---
 title: Combine Specs
 weight: 30
+description: > 
+  組合多個查詢條件
 ---
 
 在 POJO 中, 可以使用 `@And` 或 `@Or` 來組合一個物件中的多個 Specification, 組合的預設是 `@And`.

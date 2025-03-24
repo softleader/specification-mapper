@@ -1,6 +1,8 @@
 ---
 title: Query by Spec
 weight: 10
+description: > 
+  Introduction and usage of Query by Spec (QBS)
 ---
 
 Query by Spec (QBS) provides the `QueryBySpecExecutor<T>` interface, which includes several query methods:

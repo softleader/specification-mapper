@@ -1,6 +1,8 @@
 ---
 title: Logging
 weight: 80
+description: > 
+  Logs the object-to-spec conversion process
 ---
 
 Setting logging level `tw.com.softleader.data.jpa.spec.SpecMapper=debug` will print more details during the object-to-Spec conversion process, which can be very helpful for troubleshooting. The output will look like this:

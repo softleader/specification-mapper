@@ -1,6 +1,8 @@
 ---
 title: Combine Specs
 weight: 30
+description: > 
+  Combine multiple query conditions
 ---
 
 You can use `@And` or `@Or` to combine multiple specifications within an object. The default combination is `@And`.

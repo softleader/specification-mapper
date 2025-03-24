@@ -1,6 +1,8 @@
 ---
 title: Config SpecMapper
 weight: 20
+description: > 
+  自動配置 SpecMapper
 ---
 
 Starter 會在 App 啟動的過程中自動的配置一個 [*Default SpecMapper*](/docs/mapper/spec/), 並註冊成 *Spring @Bean* 中, 你可以透過 *Autowired* 的方式跟 Spring 取得.

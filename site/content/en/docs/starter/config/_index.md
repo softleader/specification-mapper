@@ -1,6 +1,8 @@
 ---
 title: Config SpecMapper
 weight: 20
+description: > 
+  Auto-configuration of SpecMapper
 ---
 
 During application startup, the starter automatically configures a [*Default SpecMapper*](/docs/mapper/spec/) and registers it as a *Spring @Bean*, allowing you to retrieve it via Autowired.
