@@ -21,7 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -108,13 +108,13 @@ class NestedSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth1.first().isInstanceOf(Equals.class);
     depth1
         .element(1)
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Equals.class);
@@ -148,20 +148,16 @@ class NestedSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Disjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth1.first().isInstanceOf(Equals.class);
     var depth2 =
-        depth1
-            .element(1)
-            .isInstanceOf(Disjunction.class)
-            .extracting("specs", COLLECTION)
-            .hasSize(2);
+        depth1.element(1).isInstanceOf(Disjunction.class).extracting("specs", LIST).hasSize(2);
     depth2.first().isInstanceOf(Equals.class);
     depth2
         .element(1)
         .isInstanceOf(Disjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Equals.class);
@@ -204,23 +200,15 @@ class NestedSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth1.first().isInstanceOf(Equals.class);
     var depth2 =
-        depth1
-            .element(1)
-            .isInstanceOf(Disjunction.class)
-            .extracting("specs", COLLECTION)
-            .hasSize(3);
+        depth1.element(1).isInstanceOf(Disjunction.class).extracting("specs", LIST).hasSize(3);
     depth2.first().isInstanceOf(Equals.class);
     depth2.element(1).isInstanceOf(Equals.class);
     var depth3 =
-        depth2
-            .element(2)
-            .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
-            .hasSize(2);
+        depth2.element(2).isInstanceOf(Conjunction.class).extracting("specs", LIST).hasSize(2);
     depth3.first().isInstanceOf(Equals.class);
     depth3.element(1).isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
@@ -253,7 +241,7 @@ class NestedSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(3);
     depth1.first().isInstanceOf(StartingWith.class);
     depth1.element(1).isInstanceOf(Equals.class);
@@ -263,7 +251,7 @@ class NestedSpecificationResolverTest {
             .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.Or.class)
             .extracting("spec")
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth2.first().isInstanceOf(After.class);
     depth2.element(1).isInstanceOf(Equals.class);
@@ -299,7 +287,7 @@ class NestedSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Disjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(3);
     depth1.first().isInstanceOf(StartingWith.class);
     depth1.element(1).isInstanceOf(Equals.class);
@@ -309,7 +297,7 @@ class NestedSpecificationResolverTest {
             .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.And.class)
             .extracting("spec")
             .isInstanceOf(Disjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth2.first().isInstanceOf(After.class);
     depth2.element(1).isInstanceOf(Equals.class);

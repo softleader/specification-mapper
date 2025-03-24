@@ -22,7 +22,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -120,7 +120,7 @@ class CustomizeSimpleSpecTest {
   void customizeSimpleSpec() {
     var criteria = MyCriteria.builder().gender(Gender.MALE).simpleMaxBy("name").build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    var depth1 = assertThat(spec).isNotNull().extracting("specs", COLLECTION).hasSize(2);
+    var depth1 = assertThat(spec).isNotNull().extracting("specs", LIST).hasSize(2);
     depth1.first().isInstanceOf(Equals.class);
     depth1.element(1).isInstanceOf(MaxCustomerCreatedTime.class);
     var actual = repository.findAll(spec);

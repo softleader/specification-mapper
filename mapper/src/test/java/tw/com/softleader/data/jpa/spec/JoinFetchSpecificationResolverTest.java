@@ -21,7 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.Mockito.spy;
 
 import java.util.Collection;
@@ -80,7 +80,7 @@ class JoinFetchSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(2)
         .hasExactlyElementsOfTypes(
             tw.com.softleader.data.jpa.spec.domain.JoinFetch.class, Equals.class);
@@ -112,7 +112,7 @@ class JoinFetchSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(2)
         .hasExactlyElementsOfTypes(
             tw.com.softleader.data.jpa.spec.domain.JoinFetch.class, In.class);
@@ -157,12 +157,12 @@ class JoinFetchSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth1
         .first()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(Equals.class);
@@ -210,12 +210,12 @@ class JoinFetchSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(2);
     depth1
         .first()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(In.class);
@@ -262,11 +262,11 @@ class JoinFetchSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     var actual = repository.findAll(spec);
@@ -307,12 +307,12 @@ class JoinFetchSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(3);
     depth1
         .first()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(Equals.class);

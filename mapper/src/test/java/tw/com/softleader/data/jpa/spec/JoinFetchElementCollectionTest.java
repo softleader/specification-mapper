@@ -33,11 +33,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
+import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
@@ -83,12 +83,14 @@ class JoinFetchElementCollectionTest {
             .build());
 
     var spec = mapper.toSpec(CustomerFetchPhone.builder().name("matt").build(), Customer.class);
-    assertThat(spec)
-        .isNotNull()
-        .extracting("specs", LIST)
-        .map(Specification.class::cast)
-        .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
-        .hasSize(1);
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", LIST)
+            .hasSize(2);
+    depth1.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
+    depth1.element(1).isInstanceOf(Equals.class);
     verify(joinFetchResolver, times(1)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
     var actual = repository.findAll(spec);
@@ -125,16 +127,18 @@ class JoinFetchElementCollectionTest {
             .school(CustomerFetchSchool.builder().name("A").city("Taipei").build())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    var specs =
-        assertThat(spec).isNotNull().extracting("specs", LIST).map(Specification.class::cast);
-    specs.filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance).hasSize(1);
-    specs
-        .filteredOn(Conjunction.class::isInstance)
-        .hasSize(1)
-        .first()
-        .extracting("specs", LIST)
-        .filteredOn(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class::isInstance)
-        .hasSize(1);
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", LIST)
+            .hasSize(2);
+    depth1.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
+    var depth2 =
+        depth1.element(1).isInstanceOf(Conjunction.class).extracting("specs", LIST).hasSize(3);
+    depth2.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
+    depth2.element(1).isInstanceOf(Equals.class);
+    depth2.element(2).isInstanceOf(In.class);
     verify(joinFetchResolver, times(2)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
     var actual = repository.findAll(spec);

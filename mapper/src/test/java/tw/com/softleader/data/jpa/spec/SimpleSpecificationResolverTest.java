@@ -21,7 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
@@ -79,7 +79,7 @@ class SimpleSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Equals.class);
@@ -117,7 +117,7 @@ class SimpleSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Equals.class);
@@ -147,7 +147,7 @@ class SimpleSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(In.class);
@@ -172,7 +172,7 @@ class SimpleSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Not.class)
@@ -217,7 +217,7 @@ class SimpleSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(3);
     depth1.first().isInstanceOf(Equals.class);
     depth1.element(1).isInstanceOf(Equals.class);
@@ -266,7 +266,7 @@ class SimpleSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Conjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(3);
     depth1.first().isInstanceOf(Equals.class);
     depth1
@@ -315,7 +315,7 @@ class SimpleSpecificationResolverTest {
         assertThat(spec)
             .isNotNull()
             .isInstanceOf(Disjunction.class)
-            .extracting("specs", COLLECTION)
+            .extracting("specs", LIST)
             .hasSize(3);
     depth1.first().isInstanceOf(Equals.class);
     depth1.element(1).isInstanceOf(Equals.class);
@@ -393,7 +393,7 @@ class SimpleSpecificationResolverTest {
     assertThat(spec)
         .isNotNull()
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Equals.class);

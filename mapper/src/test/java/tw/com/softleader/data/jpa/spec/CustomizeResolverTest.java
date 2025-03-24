@@ -22,7 +22,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -135,7 +135,7 @@ class CustomizeResolverTest {
   void customizeResolver() {
     var criteria = MyCriteria.builder().gender(Gender.MALE).maxBy("name").build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    var depth1 = assertThat(spec).isNotNull().extracting("specs", COLLECTION).hasSize(2);
+    var depth1 = assertThat(spec).isNotNull().extracting("specs", LIST).hasSize(2);
     depth1.first().isInstanceOf(Equals.class);
     depth1.element(1).isInstanceOf(MaxCreatedTimeSpec.class);
     var actual = repository.findAll(spec);
@@ -167,13 +167,13 @@ class CustomizeResolverTest {
             .inner(InnerCriteria.builder().gender(Gender.FEMALE).build())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    var depth1 = assertThat(spec).isNotNull().extracting("specs", COLLECTION).hasSize(3);
+    var depth1 = assertThat(spec).isNotNull().extracting("specs", LIST).hasSize(3);
     depth1.first().isInstanceOf(CustomizeOnTypeSpec.class);
     depth1.element(1).isInstanceOf(Equals.class);
     depth1
         .element(2)
         .isInstanceOf(Conjunction.class)
-        .extracting("specs", COLLECTION)
+        .extracting("specs", LIST)
         .hasSize(1)
         .first()
         .isInstanceOf(Equals.class);
