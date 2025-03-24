@@ -22,9 +22,14 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,9 +45,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import tw.com.softleader.data.jpa.spec.CustomizeResolverTest.CustomizeOnTypeSpecificationResolver.CustomizeOnTypeSpec;
+import tw.com.softleader.data.jpa.spec.CustomizeResolverTest.MaxCreatedTimeSpecificationResolver.MaxCreatedTimeSpec;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
@@ -126,7 +135,9 @@ class CustomizeResolverTest {
   void customizeResolver() {
     var criteria = MyCriteria.builder().gender(Gender.MALE).maxBy("name").build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 = assertThat(spec).isNotNull().extracting("specs", COLLECTION).hasSize(2);
+    depth1.first().isInstanceOf(Equals.class);
+    depth1.element(1).isInstanceOf(MaxCreatedTimeSpec.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
@@ -156,8 +167,16 @@ class CustomizeResolverTest {
             .inner(InnerCriteria.builder().gender(Gender.FEMALE).build())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
-
+    var depth1 = assertThat(spec).isNotNull().extracting("specs", COLLECTION).hasSize(3);
+    depth1.first().isInstanceOf(CustomizeOnTypeSpec.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    depth1
+        .element(2)
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(mary);
 
@@ -202,19 +221,22 @@ class CustomizeResolverTest {
       var def = databind.getField().getAnnotation(MaxCreatedTime.class);
       return databind
           .getFieldValue()
-          .map(value -> subquery(def.from(), value.toString()))
+          .map(value -> new MaxCreatedTimeSpec(def.from(), value.toString()))
           .orElse(null);
     }
 
-    Specification<Object> subquery(Class<?> entityClass, String by) {
-      return (root, query, builder) -> {
+    record MaxCreatedTimeSpec(Class<?> entityClass, String by) implements Specification<Object> {
+
+      @Override
+      public Predicate toPredicate(
+          Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         var subquery = query.subquery(LocalDateTime.class);
         var subroot = subquery.from(entityClass);
         subquery
             .select(builder.greatest(subroot.get("createdTime").as(LocalDateTime.class)))
             .where(builder.equal(root.get(by), subroot.get(by)));
         return builder.equal(root.get("createdTime"), subquery);
-      };
+      }
     }
   }
 
@@ -255,7 +277,16 @@ class CustomizeResolverTest {
     }
 
     Specification<Object> buildSpecification() {
-      return (root, query, builder) -> builder.isNotNull(root.get("gender"));
+      return new CustomizeOnTypeSpec();
+    }
+
+    record CustomizeOnTypeSpec() implements Specification<Object> {
+
+      @Override
+      public Predicate toPredicate(
+          Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        return builder.isNotNull(root.get("gender"));
+      }
     }
   }
 }

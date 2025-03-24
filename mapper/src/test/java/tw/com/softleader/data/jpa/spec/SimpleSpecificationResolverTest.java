@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;
@@ -40,9 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.After;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.In;
+import tw.com.softleader.data.jpa.spec.domain.*;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
@@ -77,7 +76,13 @@ class SimpleSpecificationResolverTest {
 
     var criteria = MyCriteria.builder().name(matt.getName()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
@@ -109,7 +114,13 @@ class SimpleSpecificationResolverTest {
 
     var criteria = MyCriteria.builder().opt(Optional.of("matt")).build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
@@ -133,7 +144,13 @@ class SimpleSpecificationResolverTest {
 
     var criteria = MyCriteria.builder().names(Arrays.asList("matt")).build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(In.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
@@ -152,7 +169,15 @@ class SimpleSpecificationResolverTest {
 
     var criteria = MyCriteria.builder().birthday(LocalDate.now()).build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Not.class)
+        .extracting("spec")
+        .isInstanceOf(After.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
 
@@ -188,7 +213,21 @@ class SimpleSpecificationResolverTest {
             .birthday(LocalDate.now())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(3);
+    depth1.first().isInstanceOf(Equals.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    depth1
+        .element(2)
+        .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.Or.class)
+        .extracting("spec")
+        .isInstanceOf(Not.class)
+        .extracting("spec")
+        .isInstanceOf(After.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
@@ -223,7 +262,21 @@ class SimpleSpecificationResolverTest {
             .birthday(LocalDate.now())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(3);
+    depth1.first().isInstanceOf(Equals.class);
+    depth1
+        .element(1)
+        .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.Or.class)
+        .extracting("spec")
+        .isInstanceOf(Not.class)
+        .extracting("spec")
+        .isInstanceOf(After.class);
+    depth1.element(2).isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 
@@ -258,7 +311,21 @@ class SimpleSpecificationResolverTest {
             .birthday(LocalDate.now())
             .build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(3);
+    depth1.first().isInstanceOf(Equals.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    depth1
+        .element(2)
+        .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.And.class)
+        .extracting("spec")
+        .isInstanceOf(Not.class)
+        .extracting("spec")
+        .isInstanceOf(After.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
 
@@ -323,7 +390,13 @@ class SimpleSpecificationResolverTest {
 
     var criteria = SkipEmptyText.builder().name(" ").build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
     assertThat(actual).isEmpty();
 

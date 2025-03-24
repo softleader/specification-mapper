@@ -22,6 +22,7 @@ package tw.com.softleader.data.jpa.spec;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Context;
+import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
@@ -118,7 +120,9 @@ class CustomizeSimpleSpecTest {
   void customizeSimpleSpec() {
     var criteria = MyCriteria.builder().gender(Gender.MALE).simpleMaxBy("name").build();
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 = assertThat(spec).isNotNull().extracting("specs", COLLECTION).hasSize(2);
+    depth1.first().isInstanceOf(Equals.class);
+    depth1.element(1).isInstanceOf(MaxCustomerCreatedTime.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, bob);
 

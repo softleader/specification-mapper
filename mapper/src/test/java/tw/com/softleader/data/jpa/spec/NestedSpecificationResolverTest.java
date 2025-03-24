@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -36,9 +37,7 @@ import tw.com.softleader.data.jpa.spec.annotation.And;
 import tw.com.softleader.data.jpa.spec.annotation.NestedSpec;
 import tw.com.softleader.data.jpa.spec.annotation.Or;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
-import tw.com.softleader.data.jpa.spec.domain.After;
-import tw.com.softleader.data.jpa.spec.domain.Context;
-import tw.com.softleader.data.jpa.spec.domain.StartingWith;
+import tw.com.softleader.data.jpa.spec.domain.*;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Gender;
@@ -105,7 +104,21 @@ class NestedSpecificationResolverTest {
             .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth1.first().isInstanceOf(Equals.class);
+    depth1
+        .element(1)
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Equals.class);
+
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
@@ -131,7 +144,28 @@ class NestedSpecificationResolverTest {
             .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth1.first().isInstanceOf(Equals.class);
+    var depth2 =
+        depth1
+            .element(1)
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth2.first().isInstanceOf(Equals.class);
+    depth2
+        .element(1)
+        .isInstanceOf(Disjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Equals.class);
+
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
@@ -166,8 +200,29 @@ class NestedSpecificationResolverTest {
             .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    System.out.println(spec);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth1.first().isInstanceOf(Equals.class);
+    var depth2 =
+        depth1
+            .element(1)
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(3);
+    depth2.first().isInstanceOf(Equals.class);
+    depth2.element(1).isInstanceOf(Equals.class);
+    var depth3 =
+        depth2
+            .element(2)
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth3.first().isInstanceOf(Equals.class);
+    depth3.element(1).isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
@@ -194,7 +249,25 @@ class NestedSpecificationResolverTest {
             .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(3);
+    depth1.first().isInstanceOf(StartingWith.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    var depth2 =
+        depth1
+            .element(2)
+            .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.Or.class)
+            .extracting("spec")
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth2.first().isInstanceOf(After.class);
+    depth2.element(1).isInstanceOf(Equals.class);
+
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, mary, bob);
 
@@ -222,7 +295,25 @@ class NestedSpecificationResolverTest {
             .build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(3);
+    depth1.first().isInstanceOf(StartingWith.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    var depth2 =
+        depth1
+            .element(2)
+            .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.And.class)
+            .extracting("spec")
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth2.first().isInstanceOf(After.class);
+    depth2.element(1).isInstanceOf(Equals.class);
+
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
 
