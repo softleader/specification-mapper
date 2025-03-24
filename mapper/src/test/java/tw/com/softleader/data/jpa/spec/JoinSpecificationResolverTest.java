@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.Mockito.spy;
 
 import java.util.Collection;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.annotation.Join;
 import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
+import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.In;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
@@ -58,9 +60,9 @@ class JoinSpecificationResolverTest {
             .build();
   }
 
-  @DisplayName("單一層級的 Join 在 field 上")
+  @DisplayName("Join 一層在 field 上")
   @Test
-  void join() {
+  void singleJoinOnField() {
     var matt =
         repository.save(
             Customer.builder()
@@ -76,17 +78,22 @@ class JoinSpecificationResolverTest {
     repository.save(
         Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
 
-    var criteria = CustomerJoinOnField.builder().item("Pizza").item("Hamburger").build();
+    var criteria = SingleJoinOnField.builder().item("Pizza").item("Hamburger").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(2)
+        .hasExactlyElementsOfTypes(tw.com.softleader.data.jpa.spec.domain.Join.class, In.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
-  @DisplayName("單一層級的 Join 在 class 上")
+  @DisplayName("Join 一層 在 class 上")
   @Test
-  void joinOnClass() {
+  void singleJoinOnClass() {
     var matt =
         repository.save(
             Customer.builder()
@@ -102,17 +109,22 @@ class JoinSpecificationResolverTest {
     repository.save(
         Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
 
-    var criteria = CustomerJoinOnClass.builder().item("Pizza").item("Hamburger").build();
+    var criteria = SingleJoinOnClass.builder().item("Pizza").item("Hamburger").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(2)
+        .hasExactlyElementsOfTypes(tw.com.softleader.data.jpa.spec.domain.Join.class, In.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
-  @DisplayName("多層級的 Join 在 field 上")
+  @DisplayName("Join 多層在 field 上")
   @Test
-  void joins() {
+  void multiJoinsOnField() {
     var matt =
         repository.save(
             Customer.builder()
@@ -143,17 +155,28 @@ class JoinSpecificationResolverTest {
                     .build())
             .build());
 
-    var criteria = CustomerJoinOnField.builder().tag("Food").build();
+    var criteria = MultiJoinsOnField.builder().tag("Food").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth1
+        .first()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.Join.class);
+    depth1.element(1).isInstanceOf(In.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
-  @DisplayName("多層級的 Join 在 class 上")
+  @DisplayName("Join 多層在 class 上")
   @Test
-  void joinsOnClass() {
+  void multiJoinsOnClass() {
     var matt =
         repository.save(
             Customer.builder()
@@ -184,17 +207,28 @@ class JoinSpecificationResolverTest {
                     .build())
             .build());
 
-    var criteria = CustomerJoinsOnClass.builder().tag("Food").build();
+    var criteria = MultiJoinsOnClass.builder().tag("Food").build();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", COLLECTION)
+            .hasSize(2);
+    depth1
+        .first()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.Join.class);
+    depth1.element(1).isInstanceOf(In.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(2).contains(matt, mary);
   }
 
-  @DisplayName("多層級的 Join 僅在 class 上 (無任何欄位)")
+  @DisplayName("Join 多層在 class 上, 且物件無任何 fields")
   @Test
-  void joinsOnClassOnly() {
+  void multiJoinsOnClassOnly() {
     var matt =
         repository.save(
             Customer.builder()
@@ -225,22 +259,46 @@ class JoinSpecificationResolverTest {
                     .build())
             .build());
 
-    var criteria = new CustomerJoinsOnClassOnly();
+    var criteria = new MultiJoinsOnClassOnly();
 
     var spec = mapper.toSpec(criteria, Customer.class);
-    assertThat(spec).isNotNull();
+    assertThat(spec)
+        .isNotNull()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(1)
+        .first()
+        .isInstanceOf(Conjunction.class)
+        .extracting("specs", COLLECTION)
+        .hasSize(2)
+        .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.Join.class);
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(3).contains(matt, mary);
   }
 
   @Builder
   @Data
-  public static class CustomerJoinOnField {
+  public static class SingleJoinOnField {
 
     @Singular
     @Join(path = "orders", alias = "o")
     @Spec(path = "o.itemName", value = In.class)
     Collection<String> items;
+  }
+
+  @Builder
+  @Data
+  @Join(path = "orders")
+  public static class SingleJoinOnClass {
+
+    @Singular
+    @Spec(path = "orders.itemName", value = In.class)
+    Collection<String> items;
+  }
+
+  @Builder
+  @Data
+  public static class MultiJoinsOnField {
 
     @Singular
     @Joins({@Join(path = "orders"), @Join(path = "orders.tags")})
@@ -250,18 +308,8 @@ class JoinSpecificationResolverTest {
 
   @Builder
   @Data
-  @Join(path = "orders")
-  public static class CustomerJoinOnClass {
-
-    @Singular
-    @Spec(path = "orders.itemName", value = In.class)
-    Collection<String> items;
-  }
-
-  @Builder
-  @Data
   @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
-  public static class CustomerJoinsOnClass {
+  public static class MultiJoinsOnClass {
 
     @Singular
     @Spec(path = "o.itemName", value = In.class)
@@ -273,5 +321,5 @@ class JoinSpecificationResolverTest {
   }
 
   @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
-  public static class CustomerJoinsOnClassOnly {}
+  public static class MultiJoinsOnClassOnly {}
 }
