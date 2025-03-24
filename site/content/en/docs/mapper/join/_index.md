@@ -5,7 +5,7 @@ weight: 50
 
 In a POJO, you can use `@Join` on a field or class to filter related entities.
 
-## Single Level Join
+## Single Join
 
 To use `@Join`, you first need to define the relationship in your entity. For example, a `Customer` entity has a one-to-many relationship with an `Order` entity:
 
@@ -73,7 +73,7 @@ You can modify the default behavior by configuring `@Join#joinType` or `@Join#di
 @Join(joinType = JoinType.RIGHT, distinct = false)
 ```
 
-## Multi Level Joins
+## Multi Joins
 
 You can use `@Joins` to define multi-level joins. For example, if the Order entity has a many-to-many relationship with a Tag entity:
 

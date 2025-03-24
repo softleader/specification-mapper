@@ -5,7 +5,7 @@ weight: 60
 
 In a POJO, you can use `@JoinFetch` on a field or class to filter associated entities. The difference from [`@Join`](/docs/mapper/join) is that this allows fetching all lazy-related data at once.
 
-## Single Level Fetch
+## Single Fetch
 
 For example, consider a Customer entity that has a one-to-many relationship with an Order entity:
 
@@ -106,7 +106,7 @@ public class CustomerOrderCriteria {
 }
 ```
 
-## Multi Level Fetches
+## Multi Join Fetches
 
 You can use `@JoinFetches` to define multi-level fetches. For example, if the Order entity has a many-to-many relationship with a Tag entity:
 

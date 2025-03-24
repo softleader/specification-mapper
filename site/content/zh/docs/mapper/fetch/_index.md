@@ -5,7 +5,7 @@ weight: 60
 
 在 POJO 中, 你可以在 Field 或 Class 上使用 `@JoinFetch` 來過濾關聯的 Entity, 跟 [`@Join`](/docs/mapper/join) 的差別是, 這可以一次撈出所有 Lazy 的關聯資料
 
-## Single Level Fetch
+## Single Join Fetch
 
 例如, 有個客戶 Entity, 會一對多的關聯訂單 Entity:
 
@@ -106,7 +106,7 @@ public class CustomerOrderCriteria {
 }
 ```
 
-## Multi Level Fetches
+## Multi Join Fetches
 
 你可以使用 `@JoinFetches` 來定義多層級的 Fetch, 例如, 在剛剛的訂單 Entity 中, 還會多對多的關聯到類別 Entity:
 

@@ -5,7 +5,7 @@ weight: 50
 
 在 POJO 中, 你可以在 Field 或 Class 上使用 `@Join` 來過濾關聯的 Entity
 
-## Single Level Join
+## Single Join
 
 要使用 `@Join`, 在 Entity 中需要先定義好關聯, 例如, 有個客戶 Entity, 會一對多的關聯訂單 Entity:
 
@@ -73,7 +73,7 @@ public class CustomerOrderCriteria {
 @Join(joinType = JoinType.RIGHT, distinct = false)
 ```
 
-## Multi Level Joins
+## Multi Joins
 
 你可以使用 `@Joins` 來定義多層級的 Join, 例如, 在剛剛的訂單 Entity 中, 還會多對多的關聯到類別 Entity:
 
