@@ -84,8 +84,9 @@ class JoinFetchSpecificationResolverTest {
         .hasSize(2)
         .hasExactlyElementsOfTypes(
             tw.com.softleader.data.jpa.spec.domain.JoinFetch.class, Equals.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
+    assertThat(repository.findAll(spec)).hasSize(1).contains(matt);
+    assertThat(repository.count(spec)).isEqualTo(1);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("JoinFetch 一層在 field 上")
@@ -116,8 +117,9 @@ class JoinFetchSpecificationResolverTest {
         .hasSize(2)
         .hasExactlyElementsOfTypes(
             tw.com.softleader.data.jpa.spec.domain.JoinFetch.class, In.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(2);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("JoinFetch 多層在 class 上")
@@ -166,8 +168,9 @@ class JoinFetchSpecificationResolverTest {
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(Equals.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
+    assertThat(repository.findAll(spec)).hasSize(1).contains(matt);
+    assertThat(repository.count(spec)).isEqualTo(1);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("JoinFetch 多層在 field 上")
@@ -219,8 +222,9 @@ class JoinFetchSpecificationResolverTest {
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(In.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(2);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("JoinFetch 多層在 class 上, 且物件無任何 fields")
@@ -269,8 +273,9 @@ class JoinFetchSpecificationResolverTest {
         .extracting("specs", LIST)
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(3).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(3).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(3);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("JoinFetch 多層在 class 上, 被多個 fields 所使用")
@@ -317,8 +322,9 @@ class JoinFetchSpecificationResolverTest {
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
     depth1.element(1).isInstanceOf(Equals.class);
     depth1.element(2).isInstanceOf(Equals.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
+    assertThat(repository.findAll(spec)).hasSize(1).contains(matt);
+    assertThat(repository.count(spec)).isEqualTo(1);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @JoinFetch(path = "orders")

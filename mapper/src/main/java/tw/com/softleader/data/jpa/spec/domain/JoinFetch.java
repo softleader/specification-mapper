@@ -77,16 +77,24 @@ public class JoinFetch<T> implements Specification<T> {
   public Predicate toPredicate(
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     if (query != null) {
-      query.distinct(distinct);
-      if (!isCountQuery(query)) { // do not join in count queries
-        fetch(root);
+      if (shouldDelegateToJoin(query)) {
+        return delegatePredicateToJoin(root, query, builder);
       }
+      query.distinct(distinct);
     }
-    return null;
+    fetch(root);
+    return builder.conjunction();
   }
 
-  private boolean isCountQuery(@NonNull CriteriaQuery<?> query) {
+  // delegate to join for number result type queries, e.g. count or delete
+  private boolean shouldDelegateToJoin(@NonNull CriteriaQuery<?> query) {
     return Number.class.isAssignableFrom(query.getResultType());
+  }
+
+  private Predicate delegatePredicateToJoin(
+      @NonNull Root<T> root, @NonNull CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
+    return new Join<T>(context, pathToFetch, alias, joinType, distinct)
+        .toPredicate(root, query, builder);
   }
 
   private void fetch(Root<T> root) {

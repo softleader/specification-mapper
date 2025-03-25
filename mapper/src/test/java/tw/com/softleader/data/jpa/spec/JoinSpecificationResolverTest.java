@@ -87,8 +87,9 @@ class JoinSpecificationResolverTest {
         .extracting("specs", LIST)
         .hasSize(2)
         .hasExactlyElementsOfTypes(tw.com.softleader.data.jpa.spec.domain.Join.class, In.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(2);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("Join 一層 在 class 上")
@@ -118,8 +119,9 @@ class JoinSpecificationResolverTest {
         .extracting("specs", LIST)
         .hasSize(2)
         .hasExactlyElementsOfTypes(tw.com.softleader.data.jpa.spec.domain.Join.class, In.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(2);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("Join 多層在 field 上")
@@ -170,8 +172,9 @@ class JoinSpecificationResolverTest {
         .extracting("specs", LIST)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.Join.class);
     depth1.element(1).isInstanceOf(In.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(2);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("Join 多層在 class 上")
@@ -222,8 +225,9 @@ class JoinSpecificationResolverTest {
         .extracting("specs", LIST)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.Join.class);
     depth1.element(1).isInstanceOf(In.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(2);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("Join 多層在 class 上, 且物件無任何 fields")
@@ -272,8 +276,9 @@ class JoinSpecificationResolverTest {
         .extracting("specs", LIST)
         .hasSize(2)
         .hasOnlyElementsOfType(tw.com.softleader.data.jpa.spec.domain.Join.class);
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(3).contains(matt, mary);
+    assertThat(repository.findAll(spec)).hasSize(3).contains(matt, mary);
+    assertThat(repository.count(spec)).isEqualTo(3);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @Builder

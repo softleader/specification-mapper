@@ -64,38 +64,6 @@ class JoinFetchElementCollectionTest {
             .build();
   }
 
-  @DisplayName("@JoinFetch 遇上 @ElementCollection, 並且用 count")
-  @Test
-  void countJoinFetchWithElementCollection() {
-    repository.save(
-        Customer.builder()
-            .name("matt")
-            .phone("taiwanmobile", "0911222333")
-            .phone("cht", "0944555666")
-            .build());
-    repository.save(
-        Customer.builder()
-            .name("mary")
-            .phone("cht", "0955666777")
-            .phone("fetnet", "0966777888")
-            .build());
-
-    var spec =
-        mapper.toSpec(JoinFetchElementCollection.builder().name("matt").build(), Customer.class);
-    var depth1 =
-        assertThat(spec)
-            .isNotNull()
-            .isInstanceOf(Conjunction.class)
-            .extracting("specs", LIST)
-            .hasSize(2);
-    depth1.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
-    depth1.element(1).isInstanceOf(Equals.class);
-    verify(joinFetchResolver, times(1)).buildSpecification(any(), any());
-    verify(nestedResolver, never()).buildSpecification(any(), any());
-    var actual = repository.count(spec);
-    assertThat(actual).isEqualTo(1L);
-  }
-
   @DisplayName("@JoinFetch 遇上 @ElementCollection")
   @Test
   void joinFetchWithElementCollection() {
@@ -125,56 +93,9 @@ class JoinFetchElementCollectionTest {
     depth1.element(1).isInstanceOf(Equals.class);
     verify(joinFetchResolver, times(1)).buildSpecification(any(), any());
     verify(nestedResolver, never()).buildSpecification(any(), any());
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
-  }
-
-  @DisplayName("巢狀的 @JoinFetch, 並且用 count")
-  @Test
-  void countNestedJoinFetch() {
-    var matt =
-        repository.save(
-            Customer.builder()
-                .name("matt")
-                .phone("taiwanmobile", "0911222333")
-                .phone("cht", "0944555666")
-                .school(School.builder().city("Taipei").name("A").build())
-                .build());
-    repository.save(
-        Customer.builder()
-            .name("mary")
-            .phone("cht", "0955666777")
-            .phone("fetnet", "0966777888")
-            .school(School.builder().city("Taipei").name("B").build())
-            .build());
-    repository.save(
-        Customer.builder()
-            .name("bob")
-            .phone("cht", "0955666777")
-            .phone("taiwanmobile", "0977888999")
-            .school(School.builder().city("Taichung").name("B").build())
-            .build());
-    var criteria =
-        NestedJoinFetchElementCollection.builder()
-            .school(JoinFetchOnClass.builder().name("A").city("Taipei").build())
-            .build();
-    var spec = mapper.toSpec(criteria, Customer.class);
-    var depth1 =
-        assertThat(spec)
-            .isNotNull()
-            .isInstanceOf(Conjunction.class)
-            .extracting("specs", LIST)
-            .hasSize(2);
-    depth1.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
-    var depth2 =
-        depth1.element(1).isInstanceOf(Conjunction.class).extracting("specs", LIST).hasSize(3);
-    depth2.first().isInstanceOf(tw.com.softleader.data.jpa.spec.domain.JoinFetch.class);
-    depth2.element(1).isInstanceOf(Equals.class);
-    depth2.element(2).isInstanceOf(In.class);
-    verify(joinFetchResolver, times(2)).buildSpecification(any(), any());
-    verify(nestedResolver, times(1)).buildSpecification(any(), any());
-    var actual = repository.count(spec);
-    assertThat(actual).isEqualTo(1L);
+    assertThat(repository.findAll(spec)).hasSize(1).contains(matt);
+    assertThat(repository.count(spec)).isEqualTo(1);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @DisplayName("巢狀的 @JoinFetch")
@@ -221,8 +142,9 @@ class JoinFetchElementCollectionTest {
     depth2.element(2).isInstanceOf(In.class);
     verify(joinFetchResolver, times(2)).buildSpecification(any(), any());
     verify(nestedResolver, times(1)).buildSpecification(any(), any());
-    var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(1).contains(matt);
+    assertThat(repository.findAll(spec)).hasSize(1).contains(matt);
+    assertThat(repository.count(spec)).isEqualTo(1);
+    assertThat(repository.exists(spec)).isTrue();
   }
 
   @Data
