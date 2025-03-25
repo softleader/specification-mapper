@@ -78,9 +78,15 @@ public class JoinFetch<T> implements Specification<T> {
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     if (query != null) {
       query.distinct(distinct);
+      if (!isCountQuery(query)) { // do not join in count queries
+        fetch(root);
+      }
     }
-    fetch(root);
     return null;
+  }
+
+  private boolean isCountQuery(@NonNull CriteriaQuery<?> query) {
+    return Number.class.isAssignableFrom(query.getResultType());
   }
 
   private void fetch(Root<T> root) {
