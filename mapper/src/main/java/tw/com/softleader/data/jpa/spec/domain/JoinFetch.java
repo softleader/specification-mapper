@@ -83,7 +83,7 @@ public class JoinFetch<T> implements Specification<T> {
       query.distinct(distinct);
     }
     fetch(root);
-    return builder.conjunction();
+    return null;
   }
 
   // delegate to join for number result type queries, e.g. count or delete

@@ -80,7 +80,7 @@ public class Join<T> implements Specification<T> {
       query.distinct(distinct);
     }
     join(root);
-    return builder.conjunction();
+    return null;
   }
 
   private void join(Root<T> root) {
