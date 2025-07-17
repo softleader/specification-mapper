@@ -21,7 +21,6 @@ jobs:
           cache: 'maven'
       - id: get-current-version
         run: echo "version=$(make spring-boot-version)" >> "$GITHUB_OUTPUT"
-      - uses: iskin/gh-workflow-keepalive@v1
     outputs:
       spring-boot: ${{ steps.get-current-version.outputs.version }}
 
@@ -85,3 +84,11 @@ jobs:
         run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
+  keepalive:
+    runs-on: [self-hosted, ubuntu-jammy]
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: liskin/gh-workflow-keepalive@v1
