@@ -30,7 +30,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
@@ -76,6 +75,18 @@ public interface QueryBySpecExecutorAdapter<T>
 
   @Override
   @Transactional(readOnly = true)
+  default Page<T> findBySpec(
+      @Nullable Object spec, @Nullable Object countSpec, @NonNull Pageable pageable) {
+    var mapper = getSpecMapper();
+    var domainClass = getDomainClass();
+    notNull(mapper, "getSpecMapper() must not returns null");
+    notNull(domainClass, "getDomainClass() must not returns null");
+    return findAll(
+        mapper.toSpec(spec, domainClass), mapper.toSpec(countSpec, domainClass), pageable);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   default long countBySpec(@Nullable Object spec) {
     var mapper = getSpecMapper();
     var domainClass = getDomainClass();
@@ -108,7 +119,7 @@ public interface QueryBySpecExecutorAdapter<T>
   @Transactional(readOnly = true)
   default <S extends T, R> R findBySpec(
       @Nullable Object spec,
-      @NonNull Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+      @NonNull Function<? super SpecificationFluentQuery<S>, R> queryFunction) {
     var mapper = getSpecMapper();
     var domainClass = getDomainClass();
     notNull(mapper, "getSpecMapper() must not returns null");
