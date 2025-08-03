@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,11 +84,6 @@ class CustomQueryBySpecExecutor extends SimpleJpaRepository<Object, Long>
   }
 
   @Override
-  public Page<Object> findBySpec(Object spec, Object countSpec, Pageable pageable) {
-    return null;
-  }
-
-  @Override
   public List<Object> findBySpec(Object spec, Sort sort) {
     return List.of();
   }
@@ -104,7 +100,7 @@ class CustomQueryBySpecExecutor extends SimpleJpaRepository<Object, Long>
 
   @Override
   public <S, R> R findBySpec(
-      Object spec, Function<? super SpecificationFluentQuery<S>, R> queryFunction) {
+      Object spec, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
     return null;
   }
 }

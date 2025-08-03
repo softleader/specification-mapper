@@ -5,17 +5,13 @@ description: >
   通過相容性測試的版本清單
 ---
 
-## Java
- 
-- 17
-- 21
+| [Spring Boot](https://spring.io/projects/spring-boot) | Java 17 | Java 21 |
+|-------------------------------------------------------|---------|---------|
+| `3.0.x`                                               | V       | N/A     |
+| `3.1.x`                                               | V       | N/A     |
+| `3.2.x`                                               | V       | V       |
+| `3.3.x`                                               | V       | V       |
+| `3.4.x`                                               | V       | V       |
+| `3.5.x`                                               | V       | V       |
 
-## Spring
-
-以下為相容的 [Spring Boot](https://spring.io/projects/spring-boot) 版本
-
-- 3.0.x
-- 3.1.x
-- 3.2.x
-- 3.3.x
-- 3.4.x
+> `N/A` 表示該 Spring Boot 版本推出時尚未支援 Java 21
