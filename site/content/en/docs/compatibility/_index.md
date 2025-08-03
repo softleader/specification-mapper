@@ -5,17 +5,13 @@ description: >
   Versions that have been tested for compatibility.
 ---
 
-## Java
- 
-- 17
-- 21
+| [Spring Boot](https://spring.io/projects/spring-boot) | Java 17 | Java 21 |
+|-------------------------------------------------------|---------|---------|
+| `3.0.x`                                               | V       | N/A     |
+| `3.1.x`                                               | V       | N/A     |
+| `3.2.x`                                               | V       | V       |
+| `3.3.x`                                               | V       | V       |
+| `3.4.x`                                               | V       | V       |
+| `3.5.x`                                               | V       | V       |
 
-## Spring
-
-The following shows versions with compatible [Spring Boot](https://spring.io/projects/spring-boot) releases.
-
-- 3.0.x
-- 3.1.x
-- 3.2.x
-- 3.3.x
-- 3.4.x
+> `N/A` means that the corresponding Spring Boot version was released before Java 21 was supported.
