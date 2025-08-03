@@ -30,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.SpecMapper;
@@ -72,16 +73,6 @@ public interface QueryBySpecExecutor<T> {
   Page<T> findBySpec(@Nullable Object spec, @NonNull Pageable pageable);
 
   /**
-   * Returns a {@link Page} of entities matching the given {@code spec} and {@code countSpec}.
-   *
-   * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
-   * @param countSpec the object will be mapped into {@link Specification} by {@link SpecMapper}
-   * @return never {@literal null}.
-   * @see JpaSpecificationExecutor#findAll(Specification, Specification, Pageable)
-   */
-  Page<T> findBySpec(@Nullable Object spec, @Nullable Object countSpec, @NonNull Pageable pageable);
-
-  /**
    * Returns all entities matching the given {@code spec} and {@link Sort}.
    *
    * @param spec the object will be mapped into {@link Specification} by {@link SpecMapper}
@@ -120,6 +111,5 @@ public interface QueryBySpecExecutor<T> {
    */
   <S extends T, R> R findBySpec(
       @Nullable Object spec,
-      @NonNull
-          Function<? super JpaSpecificationExecutor.SpecificationFluentQuery<S>, R> queryFunction);
+      @NonNull Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction);
 }
