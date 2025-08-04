@@ -110,46 +110,33 @@ spec:
         }
       }
     }
-
-    // 執行當前 pom.xml 以外，還支援的 java, spring 版本的交叉測試
-    stage('Java 17 Tests') {
-      steps {
-        script {
-          def matrixJobs = [:]
-          for (int s = 0; s < java17_springBootVersions.size(); s++) {
-            def java = 17
-            def springboot = java17_springBootVersions[s]
-            def jobName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-            matrixJobs[jobName] = {
-              stage(jobName) {
+    stage('Matrix Tests') {
+      parallel {
+        Java_17: {
+          script {
+            for (int s = 0; s < java17_springBootVersions.size(); s++) {
+              def java = 17
+              def springboot = java17_springBootVersions[s]
+              stage("JAVA = ${java}, SPRING_BOOT = ${springboot}") {
                 container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
               }
             }
           }
-          parallel matrixJobs
         }
-      }
-    }
-
-    stage('Java 21 Tests') {
-      steps {
-        script {
-          def matrixJobs = [:]
-          for (int s = 0; s < java21_springBootVersions.size(); s++) {
-            def java = 21
-            def springboot = java21_springBootVersions[s]
-            def jobName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-            matrixJobs[jobName] = {
-              stage(jobName) {
+        Java_21: {
+          script {
+            for (int s = 0; s < java21_springBootVersions.size(); s++) {
+              def java = 21
+              def springboot = java21_springBootVersions[s]
+              stage("JAVA = ${java}, SPRING_BOOT = ${springboot}") {
                 container("maven-java${java}") {
                   sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
                 }
               }
             }
           }
-          parallel matrixJobs
         }
       }
     }
