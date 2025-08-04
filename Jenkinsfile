@@ -110,7 +110,8 @@ spec:
         }
       }
     }
-    
+
+    // 執行當前 pom.xml 以外，還支援的 java, spring 版本的交叉測試
     stage('Matrix Tests') {
       steps {
         script {
