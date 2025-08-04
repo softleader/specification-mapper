@@ -124,7 +124,7 @@ spec:
               }
             }
           }
-        }
+        },
         Java_21: {
           script {
             for (int s = 0; s < java21_springBootVersions.size(); s++) {
