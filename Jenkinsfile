@@ -15,7 +15,6 @@ pipeline {
       yaml """
 kind: Pod
 spec:
-  # All containers should have the same UID
   securityContext:
     runAsUser: 0
   containers:
@@ -60,27 +59,17 @@ spec:
   }
 
   environment {
-    MAVEN_OPTS="-Xmx768m -XX:MaxMetaspaceSize=128m"
+    MAVEN_OPTS = "-Xmx768m -XX:MaxMetaspaceSize=128m"
   }
 
   stages {
-
     stage('Confirm Env') {
       steps {
         container('git') {
           script {
-            env.LAST_COMMIT_AUTHOR_NAME = sh(
-              script: 'git --no-pager show -s --format=%an',
-              returnStdout: true
-            ).trim()
-            env.LAST_COMMIT_AUTHOR_EMAIL = sh(
-              script: 'git --no-pager show -s --format=%ae',
-              returnStdout: true
-            ).trim()
-            env.LAST_COMMIT_TIME = sh(
-              script: 'git --no-pager show -s --date=format:"%Y/%m/%d %T" --format=%ad',
-              returnStdout: true
-            ).trim()
+            env.LAST_COMMIT_AUTHOR_NAME = sh(script: 'git --no-pager show -s --format=%an', returnStdout: true).trim()
+            env.LAST_COMMIT_AUTHOR_EMAIL = sh(script: 'git --no-pager show -s --format=%ae', returnStdout: true).trim()
+            env.LAST_COMMIT_TIME = sh(script: 'git --no-pager show -s --date=format:"%Y/%m/%d %T" --format=%ad', returnStdout: true).trim()
           }
         }
         sh 'printenv'
@@ -99,7 +88,6 @@ spec:
       }
     }
 
-    // 用當前 pom.xml 定義的 java, spring 版本執行測試，這個組合也會是 release 時所使用的
     stage('Unit Testing') {
       steps {
         sh "make test"
@@ -111,39 +99,53 @@ spec:
       }
     }
 
-    // 執行當前 pom.xml 以外，還支援的 java, spring 版本的交叉測試
     stage('Matrix Java + Spring Boot Testing') {
-      steps {
+      parallel {
         script {
           def matrixJobs = [:]
 
-          // Java 17 matrix
-          for (int s = 0; s < java17_springBootVersions.size(); s++) {
-            def java = 17
-            def springboot = java17_springBootVersions[s]
-            def jobName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-            matrixJobs[jobName] = {
-              stage(jobName) {
-                container("maven-java${java}") {
-                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+          def generateJob = { javaVersion, springVersion ->
+            def label = "JAVA=${javaVersion}, SPRING_BOOT=${springVersion}"
+            matrixJobs[label] = {
+              stage(label) {
+                agent {
+                  kubernetes {
+                    cloud 'SLKE'
+                    defaultContainer 'maven'
+                    yaml """
+kind: Pod
+spec:
+  securityContext:
+    runAsUser: 0
+  containers:
+  - name: maven
+    image: harbor.softleader.com.tw/library/maven:3-eclipse-temurin-${javaVersion}
+    imagePullPolicy: Always
+    command: ['cat']
+    tty: true
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "2"
+    volumeMounts:
+    - name: m2
+      mountPath: /root/.m2
+  volumes:
+  - name: m2
+    persistentVolumeClaim:
+      claimName: m2-claim
+"""
+                  }
+                }
+                steps {
+                  sh "make test JAVA=${javaVersion} SPRING_BOOT=${springVersion}"
                 }
               }
             }
           }
 
-          // Java 21 matrix
-          for (int s = 0; s < java21_springBootVersions.size(); s++) {
-            def java = 21
-            def springboot = java21_springBootVersions[s]
-            def jobName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-            matrixJobs[jobName] = {
-              stage(jobName) {
-                container("maven-java${java}") {
-                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
-                }
-              }
-            }
-          }
+          java17_springBootVersions.each { generateJob(17, it) }
+          java21_springBootVersions.each { generateJob(21, it) }
 
           parallel matrixJobs
         }
@@ -155,9 +157,9 @@ spec:
     failure {
       script {
         if (env.BRANCH_NAME == 'main'
-            // 若短時間太密集的 push, 之前的 job 會被 jenkins 中斷，這樣就可能會就連第一步都還沒執行的狀況，但也算是失敗
-            // 然而取得 git 資訊就在第一步，所以至少要第一步都有執行完才發佈 slack 吧
-            && env.LAST_COMMIT_AUTHOR_NAME && env.LAST_COMMIT_AUTHOR_EMAIL && env.LAST_COMMIT_TIME) {
+          && env.LAST_COMMIT_AUTHOR_NAME
+          && env.LAST_COMMIT_AUTHOR_EMAIL
+          && env.LAST_COMMIT_TIME) {
           slackSend(
             color: "danger",
             channel: "@matt",
