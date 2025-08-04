@@ -110,29 +110,37 @@ spec:
         }
       }
     }
+    
     stage('Matrix Tests') {
       steps {
         script {
-          def matrix = [:]
-          java17_springBootVersions.each { springboot ->
+          def jobs = [:]
+
+          jobs["Java 17 Tests"] = {
             def java = 17
-            def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-            matrix[stageName] = {
-              container("maven-java${java}") {
-                sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+            container("maven-java${java}") {
+              java17_springBootVersions.each { springboot ->
+                def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
+                stage(stageName) {
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                }
               }
             }
           }
-          java21_springBootVersions.each { springboot ->
+
+          jobs["Java 21 Tests"] = {
             def java = 21
-            def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-            matrix[stageName] = {
-              container("maven-java${java}") {
-                sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+            container("maven-java${java}") {
+              java21_springBootVersions.each { springboot ->
+                def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
+                stage(stageName) {
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                }
               }
             }
           }
-          parallel matrix
+
+          parallel jobs
         }
       }
     }
