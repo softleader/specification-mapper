@@ -69,6 +69,7 @@
             <configuration>
               <indexDir>${project.build.outputDirectory}/META-INF/spec-mapper</indexDir>
               <indexName>reflect-config.idx</indexName>
+              <skip>${skip.jandex}</skip>
             </configuration>
           </execution>
         </executions>

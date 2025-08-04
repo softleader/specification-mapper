@@ -61,6 +61,7 @@
 
     <spring-boot.version>3.5.4</spring-boot.version>
     <skip.formatting>false</skip.formatting>
+    <skip.jandex>false</skip.jandex>
     <archunit-junit5.version>1.3.0</archunit-junit5.version>
     <jandex.version>3.4.0</jandex.version>
   </properties>

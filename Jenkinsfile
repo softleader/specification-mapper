@@ -123,7 +123,7 @@ spec:
               java17_springBootVersions.each { springboot ->
                 def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
                 stage(stageName) {
-                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot} OPTS='-Dskip.jandex=true'"
                 }
               }
             }
@@ -135,7 +135,7 @@ spec:
               java21_springBootVersions.each { springboot ->
                 def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
                 stage(stageName) {
-                  sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                  sh "make test JAVA=${java} SPRING_BOOT=${springboot} OPTS='-Dskip.jandex=true'"
                 }
               }
             }

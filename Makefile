@@ -2,6 +2,7 @@
 VERSION ?=
 JAVA ?=
 SPRING_BOOT ?=
+OPTS ?=
 
 define java_version
 $(if $(filter-out "",$(JAVA)),-D'java.version=$(JAVA)',)
@@ -19,22 +20,22 @@ help: ## Display this help.
 ##@ Develop
 
 format: ## Format the source code.
-	mvn validate -e
+	mvn validate -e $(OPTS)
 
 clean: ## Remove files generated at build-time.
-	mvn clean -e
+	mvn clean -e $(OPTS)
 
 compile: clean  ## Clean and compile the source code.
-	mvn compile -e $(call java_version) $(call spring_boot_version)
+	mvn compile -e $(OPTS) $(call java_version) $(call spring_boot_version)
 
 test: clean ## Clean and test the compiled code.
-	mvn process-classes test -e $(call java_version) $(call spring_boot_version)
+	mvn process-classes test -e $(OPTS) $(call java_version) $(call spring_boot_version)
 
 test-native: clean ## Clean and native test the compiled code.
-	mvn -PnativeTest process-classes test -e $(call java_version) $(call spring_boot_version)
+	mvn -PnativeTest process-classes test -e $(OPTS) $(call java_version) $(call spring_boot_version)
 
 install: clean ## Install project to local repository w/o unit testing.
-	mvn install -e -DskipTests -Prelease $(call java_version) $(call spring_boot_version)
+	mvn install -e $(OPTS) -DskipTests -Prelease $(call java_version) $(call spring_boot_version)
 
 spring-boot-version: ## Get current Spring Boot version
 	@mvn help:evaluate -Dexpression=spring-boot.version -DforceStdout -q
@@ -63,7 +64,7 @@ endif
 	mvn versions:commit
 
 release: ## Pack w/o unit testing, and deploy to remote repository.
-	mvn clean deploy -e -Prelease -DskipTests
+	mvn clean deploy -e $(OPTS) -Prelease -DskipTests
 
 snapshot: ## Pack w/o unit testing and signing, and deploy to snapshot repository.
-	mvn clean deploy -e -Prelease -DskipTests -Dskip.signing=true
+	mvn clean deploy -e $(OPTS) -Prelease -DskipTests -Dskip.signing=true
