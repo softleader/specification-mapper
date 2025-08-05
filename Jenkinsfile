@@ -124,7 +124,7 @@ spec:
           for (v in javaVersions) {
             def version = v
             jobs["Java ${version} Tests"] = {
-              stage("Java ${version} Tests") {
+              stage("Prepare for Java ${version} Tests") {
                 // 為每個 matrix cell 建立獨立的目錄, 避免互相影響
                 dir("java-${version}") {
                   container("maven-java${version}") {
