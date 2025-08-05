@@ -145,6 +145,26 @@ public class CustomerOrderCriteria {
 }
 ```
 
+### Repeatable
+
+`@Join` 支援重複宣告, 可用直接用多個 `@Join` 代替 `@Joins`:
+
+```java
+@Joins({
+  @Join(path = "orders", alias = "o"),
+  @Join(path = "o.tags", alias = "t")
+})
+public class CustomerOrderCriteria {}
+```
+
+與以下寫法一樣:
+
+```java
+@Join(path = "orders", alias = "o")
+@Join(path = "o.tags", alias = "t")
+public class CustomerOrderCriteria {}
+```
+
 ### Joins Order
 
 Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定義 `@Joins`
@@ -155,10 +175,8 @@ Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定�
 @Data
 class CustomerOrderTagCriteria {
 
-  @Joins({
-    @Join(path = "o.tags", alias = "t"), // "o" alias will be not exist during processing this @Join
-    @Join(path = "orders", alias = "o")
-  })
+  @Join(path = "o.tags", alias = "t") // "o" alias will be not exist during processing this @Join
+  @Join(path = "orders", alias = "o")
   @Spec(path = "t.name", value = In.class)
   Collection<String> tagNames;
 }
@@ -176,9 +194,7 @@ class CustomerOrderTagCriteria {
 例如:
 
 ```java
-@Joins({
-  @Join(path = "orders"), // alias 預設為 orders
-  @Join(path = "orders.tags") // alias 預設為 orders_tags
-})
+@Join(path = "orders") // alias 預設為 orders
+@Join(path = "orders.tags") // alias 預設為 orders_tags
 @Spec(path = "orders_tags.name", value = In.class)
 ```

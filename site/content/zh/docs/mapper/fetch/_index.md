@@ -182,6 +182,26 @@ public class CustomerOrderCriteria {
 }
 ```
 
+### Repeatable
+
+`@JoinFetch` 支援重複宣告, 可用直接用多個 `@JoinFetch` 代替 `@JoinFetches`:
+
+```java
+@JoinFetches({
+  @JoinFetch(path = "orders", alias = "o"),
+  @JoinFetch(path = "o.tags", alias = "t")
+})
+public class CustomerOrderCriteria {}
+```
+
+與以下寫法一樣:
+
+```java
+@JoinFetch(path = "orders", alias = "o")
+@JoinFetch(path = "o.tags", alias = "t")
+public class CustomerOrderCriteria {}
+```
+
 ### Fetches Order
 
 Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定義 `@JoinFetches`
@@ -192,10 +212,8 @@ Annotation 的處理是有順序性的, 因此必須依照 Join 的順序去定�
 @Data
 class CustomerOrderTagCriteria {
 
-  @JoinFetches({
-    @JoinFetch(path = "o.tags", alias = "t"), // "o" alias will be not exist during processing this @Join
-    @JoinFetch(path = "orders", alias = "o")
-  })
+  @JoinFetch(path = "o.tags", alias = "t") // "o" alias will be not exist during processing this @Join
+  @JoinFetch(path = "orders", alias = "o")
   @Spec(path = "t.name", value = In.class)
   Collection<String> tagNames;
 }
@@ -213,9 +231,7 @@ class CustomerOrderTagCriteria {
 例如:
 
 ```java
-@JoinFetches({
-  @JoinFetch(path = "orders"), // alias 預設為 orders
-  @JoinFetch(path = "orders.tags") // alias 預設為 orders_tags
-})
+@JoinFetch(path = "orders") // alias 預設為 orders
+@JoinFetch(path = "orders.tags") // alias 預設為 orders_tags
 @Spec(path = "orders_tags.name", value = In.class)
 ```

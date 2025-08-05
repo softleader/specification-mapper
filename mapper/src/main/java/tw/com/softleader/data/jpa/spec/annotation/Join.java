@@ -21,10 +21,7 @@
 package tw.com.softleader.data.jpa.spec.annotation;
 
 import jakarta.persistence.criteria.JoinType;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Specifies a join operation on an entity type or fields. This annotation allows defining SQL joins
@@ -53,6 +50,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.TYPE})
+@Repeatable(Join.Joins.class)
 public @interface Join {
 
   /**

@@ -182,6 +182,26 @@ public class CustomerOrderCriteria {
 }
 ```
 
+### Repeatable
+
+`@JoinFetch` supports repeatable declarations and can be used multiple times directly instead of using `@JoinFetches`:
+
+```java
+@JoinFetches({
+  @JoinFetch(path = "orders", alias = "o"),
+  @JoinFetch(path = "o.tags", alias = "t")
+})
+public class CustomerOrderCriteria {}
+```
+
+This is equivalent to the following:
+
+```java
+@JoinFetch(path = "orders", alias = "o")
+@JoinFetch(path = "o.tags", alias = "t")
+public class CustomerOrderCriteria {}
+```
+
 ### Fetches Order
 
 Annotations are processed in order, so `@JoinFetches` must be defined in the correct sequence.
@@ -192,10 +212,8 @@ For example, in the previous scenario, the following order is incorrect:
 @Data
 class CustomerOrderTagCriteria {
 
-  @JoinFetches({
-    @JoinFetch(path = "o.tags", alias = "t"), // "o" alias will be not exist during processing this @Join
-    @JoinFetch(path = "orders", alias = "o")
-  })
+  @JoinFetch(path = "o.tags", alias = "t") // "o" alias will be not exist during processing this @Join
+  @JoinFetch(path = "orders", alias = "o")
   @Spec(path = "t.name", value = In.class)
   Collection<String> tagNames;
 }
@@ -213,9 +231,7 @@ The usage rules for `@JoinFetch#alias` are as follows:
 For example:
 
 ```java
-@JoinFetches({
-  @JoinFetch(path = "orders"), // default alias is "orders"
-  @JoinFetch(path = "orders.tags") // default alias is "orders_tags"
-})
+@JoinFetch(path = "orders") // default alias is "orders"
+@JoinFetch(path = "orders.tags") // default alias is "orders_tags"
 @Spec(path = "orders_tags.name", value = In.class)
 ```

@@ -379,6 +379,7 @@ class JoinFetchSpecificationResolverTest {
     String schoolName;
   }
 
-  @JoinFetches({@JoinFetch(path = "orders", alias = "o"), @JoinFetch(path = "o.tags", alias = "t")})
+  @JoinFetch(path = "orders", alias = "o")
+  @JoinFetch(path = "o.tags", alias = "t")
   public static class MultiJoinFetchesOnClassOnly {}
 }

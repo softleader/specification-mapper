@@ -325,6 +325,7 @@ class JoinSpecificationResolverTest {
     Collection<String> tags;
   }
 
-  @Joins({@Join(path = "orders", alias = "o"), @Join(path = "o.tags", alias = "t")})
+  @Join(path = "orders", alias = "o")
+  @Join(path = "o.tags", alias = "t")
   public static class MultiJoinsOnClassOnly {}
 }
