@@ -3,9 +3,9 @@
 def javaVersions = ['17', '21']
 // 版號查詢: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
 def springBootVersions = [
-  // 包含 3.0.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
+  // Java 17 的多版本測試, 包含 3.0.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
   '17': ['3.0.13', '3.1.12', '3.2.12', '3.3.13', '3.4.8'],
-  // 包含 3.2.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
+  // Java 21 的多版本測試, 包含 3.2.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
   '21': ['3.2.12', '3.3.13', '3.4.8']
 ]
 
