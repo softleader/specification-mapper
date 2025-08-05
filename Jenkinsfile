@@ -100,7 +100,7 @@ spec:
     }
 
     // 用當前 pom.xml 定義的 java, spring 版本執行測試，這個組合也會是 release 時所使用的
-    stage('Unit Testing') {
+    stage('Unit Tests') {
       steps {
         sh "make test"
       }
@@ -155,12 +155,6 @@ spec:
           }
 
           parallel jobs
-        }
-      }
-      post {
-        always {
-          // Clean up the workspace to avoid keeping large subdirectories from the matrix tests
-          deleteDir()
         }
       }
     }
