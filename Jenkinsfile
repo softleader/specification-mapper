@@ -111,6 +111,13 @@ spec:
       }
     }
 
+    stage('Stash Source for Matrix') {
+      steps {
+        // Stash the source code to be used in parallel stages
+        stash name: 'source', includes: '**/*', useDefaultExcludes: true
+      }
+    }
+
     // 執行當前 pom.xml 以外，還支援的 java, spring 版本的交叉測試
     stage('Matrix Tests') {
       steps {
@@ -118,40 +125,42 @@ spec:
           def jobs = [:]
 
           jobs["Java 17 Tests"] = {
-            def java = 17
-            container("maven-java${java}") {
-              java17_springBootVersions.each { springboot ->
-                def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-                stage(stageName) {
-                  sh """
-                  mvn -version
-                  pwd
-                  ls -la
-                  make test JAVA=${java} SPRING_BOOT=${springboot}
-                  """
+            dir('java17-tests') {
+              unstash 'source'
+              def java = 17
+              container("maven-java${java}") {
+                java17_springBootVersions.each { springboot ->
+                  def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
+                  stage(stageName) {
+                    sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                  }
                 }
               }
             }
           }
 
           jobs["Java 21 Tests"] = {
-            def java = 21
-            container("maven-java${java}") {
-              java21_springBootVersions.each { springboot ->
-                def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-                stage(stageName) {
-                  sh """
-                  mvn -version
-                  pwd
-                  ls -la
-                  make test JAVA=${java} SPRING_BOOT=${springboot}
-                  """
+            dir('java21-tests') {
+              unstash 'source'
+              def java = 21
+              container("maven-java${java}") {
+                java21_springBootVersions.each { springboot ->
+                  def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
+                  stage(stageName) {
+                    sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                  }
                 }
               }
             }
           }
 
           parallel jobs
+        }
+      }
+      post {
+        always {
+          // Clean up the workspace to avoid keeping large subdirectories from the matrix tests
+          deleteDir()
         }
       }
     }
