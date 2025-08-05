@@ -145,6 +145,26 @@ public class CustomerOrderCriteria {
 }
 ```
 
+### Repeatable
+
+`@Join` supports repeatable declarations and can be used multiple times directly instead of using `@Joins`:
+
+```java
+@Joins({
+  @Join(path = "orders", alias = "o"),
+  @Join(path = "o.tags", alias = "t")
+})
+public class CustomerOrderCriteria {}
+```
+
+This is equivalent to the following:
+
+```java
+@Join(path = "orders", alias = "o")
+@Join(path = "o.tags", alias = "t")
+public class CustomerOrderCriteria {}
+```
+
 ### Joins Order
 
 Annotations are processed in order, so you must define `@Joins` in the correct sequence.
@@ -155,10 +175,8 @@ For example, the following definition is incorrect:
 @Data
 class CustomerOrderTagCriteria {
 
-  @Joins({
-    @Join(path = "o.tags", alias = "t"), // "o" alias will be not exist during processing this @Join
-    @Join(path = "orders", alias = "o")
-  })
+  @Join(path = "o.tags", alias = "t") // "o" alias will be not exist during processing this @Join
+  @Join(path = "orders", alias = "o")
   @Spec(path = "t.name", value = In.class)
   Collection<String> tagNames;
 }
@@ -176,9 +194,7 @@ The usage rules for `@Join#alias` are as follows:
 For example:
 
 ```java
-@Joins({
-  @Join(path = "orders"), // default alias is "orders"
-  @Join(path = "orders.tags") // default alias is "orders_tags"
-})
+@Join(path = "orders") // default alias is "orders"
+@Join(path = "orders.tags") // default alias is "orders_tags"
 @Spec(path = "orders_tags.name", value = In.class)
 ```
