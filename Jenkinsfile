@@ -1,10 +1,13 @@
 #!/usr/bin/env groovy
 
+def javaVersions = ['17', '21']
 // 版號查詢: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
-// 包含 3.0.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
-def java17_springBootVersions = ['3.0.13', '3.1.12', '3.2.12', '3.3.13', '3.4.8']
-// 包含 3.2.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
-def java21_springBootVersions = ['3.2.12', '3.3.13', '3.4.8']
+def springBootVersions = [
+  // 包含 3.0.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
+  "17": ['3.0.13', '3.1.12', '3.2.12', '3.3.13', '3.4.8'],
+  // 包含 3.2.x 之後, 每個 minor 版本下的最後一個 patch 版本, 但不需包含最新的 minor 版本
+  "21": ['3.2.12', '3.3.13', '3.4.8']
+]
 
 pipeline {
   agent {
@@ -111,49 +114,34 @@ spec:
       }
     }
 
-    stage('Stash Source for Matrix') {
-      steps {
-        // Stash the source code to be used in parallel stages
-        stash name: 'source', includes: '**/*', useDefaultExcludes: true
-      }
-    }
-
     // 執行當前 pom.xml 以外，還支援的 java, spring 版本的交叉測試
     stage('Matrix Tests') {
       steps {
+        // Stash the source code to be used in parallel stages
+        stash name: 'source', includes: '**/*', useDefaultExcludes: true
         script {
           def jobs = [:]
-
-          jobs["Java 17 Tests"] = {
-            dir('java17-tests') {
-              unstash 'source'
-              def java = 17
-              container("maven-java${java}") {
-                java17_springBootVersions.each { springboot ->
-                  def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-                  stage(stageName) {
-                    sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+          for (v in javaVersions) {
+            def version = v
+            jobs["Java ${version} Tests"] = {
+              stage("Java ${version} Tests") {
+                // 為每個 matrix cell 建立獨立的目錄, 避免互相影響
+                dir("java-${version}") {
+                  container("maven-java${version}") {
+                    unstash 'source'
+                    script {
+                      springBootVersions["${version}"].each { springboot ->
+                        def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
+                        stage(stageName) {
+                          sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           }
-
-          jobs["Java 21 Tests"] = {
-            dir('java21-tests') {
-              unstash 'source'
-              def java = 21
-              container("maven-java${java}") {
-                java21_springBootVersions.each { springboot ->
-                  def stageName = "JAVA=${java}, SPRING_BOOT=${springboot}"
-                  stage(stageName) {
-                    sh "make test JAVA=${java} SPRING_BOOT=${springboot}"
-                  }
-                }
-              }
-            }
-          }
-
           parallel jobs
         }
       }
