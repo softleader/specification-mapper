@@ -163,5 +163,8 @@ spec:
         }
       }
     }
+    always {
+      deleteDir()
+    }
   }
 }
