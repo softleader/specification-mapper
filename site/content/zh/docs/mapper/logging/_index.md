@@ -7,7 +7,7 @@ description: >
 
 在 Logging 等級中設定 `tw.com.softleader.data.jpa.spec.SpecMapper=debug`, 會在物件轉換成 Spec 的過程中印出更多資訊, 可以有效的幫助查找問題, 輸出類似如:
 
-```
+```text
 DEBUG 20297 --- [           main] t.c.softleader.data.jpa.spec.SpecMapper  : --- Spec AST ---
 +-[CustomerCriteria]: my.package.CustomerCriteria
 |  +-[CustomerCriteria.firstname]: @Spec(value=Equals, path=, not=false) -> Equals[path=name, value=matt]
@@ -34,7 +34,7 @@ var mapper = SpecMapper.builder()
 
 輸出會類似:
 
-```
+```text
 DEBUG 20297 --- [           main] my.package.CustomerCriteria  : --- Spec AST ---
 ...
 ```
