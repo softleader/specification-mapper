@@ -81,7 +81,7 @@ repository.findAll(spec);
 
 The executed SQL will be like:
 
-```
+```sql
 ... where customer0_.created_time=(
   select max(customer1_.created_time) from customer customer1_ 
   where customer0_.firstname=customer1_.firstname

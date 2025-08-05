@@ -34,7 +34,7 @@ public class AddressCriteria {
 
 執行的 SQL 會類似:
 
-```
+```sql
 ... where x.firstname like %?% and ( x.county=? or x.city=? )
 ```
 
@@ -69,6 +69,6 @@ public class AddressCriteria {
 
 執行的 SQL 會類似:
 
-```
+```sql
 ... where (x.firstname like ?) or x.county=? and x.city=?
 ```

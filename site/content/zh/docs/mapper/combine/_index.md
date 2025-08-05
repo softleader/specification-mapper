@@ -26,7 +26,7 @@ public class CustomerCriteria {
 
 執行的 SQL 會類似:
 
-```
+```sql
 ... where x.firstname like %?% or x.lastname like %?% 
 ```
 
@@ -52,7 +52,7 @@ public class CustomerCriteria {
 
 執行的 SQL 會類似:
 
-```
+```sql
 ... where (x.firstname like ?) and (x.lastname like ?) or x.birthday<=?
 ```
 {{% alert title="Important" color="warning" %}}
@@ -79,6 +79,6 @@ public class CustomerCriteria {
 
 執行的 SQL 會類似:
 
-```
+```sql
 ... where (x.firstname like ? or x.birthday<=?) and (x.lastname like ?)
 ```

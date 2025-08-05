@@ -36,7 +36,7 @@ customerRepository.findAll(specification);
 
 執行 SQL 將會是: 
 
-```
+```sql
 ... where x.firstname like '%Hello%'
 ```
 

@@ -34,7 +34,7 @@ public class AddressCriteria {
 
 The executed SQL will be like:
 
-```
+```sql
 ... where x.firstname like %?% and ( x.county=? or x.city=? )
 ```
 
@@ -69,6 +69,6 @@ public class AddressCriteria {
 
 The executed SQL will be like:
 
-```
+```sql
 ... where (x.firstname like ?) or x.county=? and x.city=?
 ```

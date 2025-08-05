@@ -81,7 +81,7 @@ repository.findAll(spec);
 
 執行的 SQL 會類似:
 
-```
+```sql
 ... where customer0_.created_time=(
   select max(customer1_.created_time) from customer customer1_ 
   where customer0_.firstname=customer1_.firstname
