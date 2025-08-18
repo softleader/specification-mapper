@@ -10,7 +10,7 @@ jobs:
   current-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: "${{ github.ref_name }}"
           fetch-depth: 0
@@ -54,7 +54,7 @@ jobs:
     needs: [latest-version, current-version, compare-version]
     if: "${{ needs.compare-version.outputs.comparison-result == '>' }}"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: "${{ github.ref_name }}"
           fetch-depth: 0
@@ -90,5 +90,5 @@ jobs:
       contents: read
       actions: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: liskin/gh-workflow-keepalive@v1
