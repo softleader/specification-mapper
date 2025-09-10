@@ -50,7 +50,10 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - run: npm ci
+      - name: Install dependencies
+        env:
+          NODE_ENV: production
+        run: npm ci
         working-directory: site
       - run: hugo --baseURL https://${REPO_OWNER}.github.io/${REPO_NAME} --environment production --minify
         working-directory: site
