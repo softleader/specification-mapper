@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.Mockito.spy;
 
+import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
@@ -37,6 +38,7 @@ import tw.com.softleader.data.jpa.spec.annotation.Join.Joins;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.In;
+import tw.com.softleader.data.jpa.spec.domain.Like;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 import tw.com.softleader.data.jpa.spec.usecase.Order;
@@ -46,6 +48,8 @@ import tw.com.softleader.data.jpa.spec.usecase.Tag;
 class JoinSpecificationResolverTest {
 
   @Autowired CustomerRepository repository;
+
+  @Autowired EntityManager entityManager;
 
   SpecMapper mapper;
   JoinSpecificationResolver joinResolver;
@@ -281,6 +285,26 @@ class JoinSpecificationResolverTest {
     assertThat(repository.exists(spec)).isTrue();
   }
 
+  @DisplayName("相同 alias 的 Join 不應該重複產生")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void duplicateAliasJoinOnField() {
+
+    var criteria = DuplicateAliasJoinOnField.builder().orderId(1L).itemName("Pizza").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    spec.toPredicate(root, query, cb);
+
+    repository.findAll(spec);
+
+    assertThat(root.getJoins()).hasSize(1);
+  }
+
   @Builder
   @Data
   public static class SingleJoinOnField {
@@ -328,4 +352,17 @@ class JoinSpecificationResolverTest {
   @Join(path = "orders", alias = "o")
   @Join(path = "o.tags", alias = "t")
   public static class MultiJoinsOnClassOnly {}
+
+  @Builder
+  @Data
+  public static class DuplicateAliasJoinOnField {
+
+    @Join(path = "orders", alias = "order")
+    @Spec(path = "order.id")
+    Long orderId;
+
+    @Join(path = "orders", alias = "order")
+    @Spec(path = "order.itemName", value = Like.class)
+    String itemName;
+  }
 }
