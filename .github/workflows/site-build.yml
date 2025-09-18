@@ -8,6 +8,8 @@ on:
   pull_request:
     branches:
       - jakarta
+    types:
+      - closed
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
@@ -37,8 +39,6 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
-        env:
-          NODE_ENV: production
         run: npm ci
         working-directory: site
       - run: hugo --baseURL https://${REPO_OWNER}.github.io/${REPO_NAME} --environment production --minify
