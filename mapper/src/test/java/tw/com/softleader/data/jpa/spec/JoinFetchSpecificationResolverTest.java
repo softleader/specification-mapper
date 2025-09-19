@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.Mockito.spy;
 
+import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,12 +40,14 @@ import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.In;
+import tw.com.softleader.data.jpa.spec.domain.Like;
 import tw.com.softleader.data.jpa.spec.usecase.*;
 
 @IntegrationTest
 class JoinFetchSpecificationResolverTest {
 
   @Autowired CustomerRepository repository;
+  @Autowired EntityManager entityManager;
 
   SpecMapper mapper;
   JoinFetchSpecificationResolver joinFetchResolver;
@@ -327,6 +330,26 @@ class JoinFetchSpecificationResolverTest {
     assertThat(repository.exists(spec)).isTrue();
   }
 
+  @DisplayName("相同 alias 的 JoinFetch 不應該重複產生")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void duplicateAliasJoinFetchOnField() {
+
+    var criteria = DuplicateAliasJoinFetchOnField.builder().orderId(1L).itemName("Pizza").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    spec.toPredicate(root, query, cb);
+
+    repository.findAll(spec);
+
+    assertThat(root.getFetches()).hasSize(1);
+  }
+
   @JoinFetch(path = "orders")
   @AllArgsConstructor
   @Data
@@ -382,4 +405,17 @@ class JoinFetchSpecificationResolverTest {
   @JoinFetch(path = "orders", alias = "o")
   @JoinFetch(path = "o.tags", alias = "t")
   public static class MultiJoinFetchesOnClassOnly {}
+
+  @Builder
+  @Data
+  public static class DuplicateAliasJoinFetchOnField {
+
+    @JoinFetch(path = "orders", alias = "order")
+    @Spec(path = "order.id")
+    Long orderId;
+
+    @JoinFetch(path = "orders", alias = "order")
+    @Spec(path = "order.itemName", value = Like.class)
+    String itemName;
+  }
 }

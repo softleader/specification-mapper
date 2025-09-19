@@ -90,7 +90,7 @@ public class Join<T> implements Specification<T> {
   private void join(Root<T> root) {
     var jc = context.getAs(CTX_JOIN, JoinContext.class);
 
-    // check alias is not duplicated
+    // check if alias already exists, skip creating a new join
     if (jc.getJoin(root, alias) != null) {
       return;
     }

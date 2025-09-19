@@ -99,6 +99,12 @@ public class JoinFetch<T> implements Specification<T> {
 
   private void fetch(Root<T> root) {
     var jc = context.getAs(CTX_JOIN, JoinContext.class);
+
+    // check if alias already exists, skip creating new fetch
+    if (jc.getFetch(root, alias) != null) {
+      return;
+    }
+
     if (!pathToFetch.contains(".")) {
       jc.putIfAbsent(root, alias, new FetchRef(root.fetch(pathToFetch, joinType), pathToFetch));
       return;
