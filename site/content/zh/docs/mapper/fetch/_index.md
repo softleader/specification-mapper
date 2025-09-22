@@ -223,8 +223,6 @@ class CustomerOrderTagCriteria {
 
 `@JoinFetch#alias` 的使用規則如下:
 
-- 在同個 POJO 中是共用的
-- 在同的 POJO 中不可重複宣告
 - 若沒提供, 預設使用 `@JoinFetch#path`
 - 若包含了 `.` 會以 `_` 取代之
 
@@ -235,3 +233,50 @@ class CustomerOrderTagCriteria {
 @JoinFetch(path = "orders.tags") // alias 預設為 orders_tags
 @Spec(path = "orders_tags.name", value = In.class)
 ```
+
+### 重複使用相同的路徑
+
+如果多個欄位在 **相同的 path** 上宣告了 `@JoinFetch`，  
+不論是否使用不同的 alias，SQL 中都只會產生 **單一條 join**
+
+例如:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @JoinFetch(path = "orders", alias = "o1") // alias = o1
+  @Spec(path = "o1.id")
+  Long orderId;
+
+  @JoinFetch(path = "orders", alias = "o2") // alias = o2
+  @Spec(path = "o2.itemName", value = Like.class)
+  String itemName;
+}
+```
+或等同於:
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @JoinFetch(path = "orders", alias = "o") // 相同 alias
+  @Spec(path = "o.id")
+  Long orderId;
+
+  @JoinFetch(path = "orders", alias = "o") // 相同 alias
+  @Spec(path = "o.itemName", value = Like.class)
+  String itemName;
+}
+
+```
+執行的 SQL 會類似:
+```SQL
+select distinct customer0_.*
+from customer customer0_
+inner join orders o1_ on customer0_.id = o1_.order_id -- 單一條 join 被共用
+where o1_.id = ? 
+  and o1_.item_name like ? -- 條件都套用在同一條 join 上
+
+```
+
+
