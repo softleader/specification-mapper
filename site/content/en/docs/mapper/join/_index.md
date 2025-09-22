@@ -186,8 +186,6 @@ class CustomerOrderTagCriteria {
 
 The usage rules for `@Join#alias` are as follows:
 
-- It is shared within the same POJO
-- It cannot be declared multiple times within the same POJO
 - If not provided, the default alias is `@Join#path`
 - If it contains `.`, it will be replaced with `_`
 
@@ -197,4 +195,68 @@ For example:
 @Join(path = "orders") // default alias is "orders"
 @Join(path = "orders.tags") // default alias is "orders_tags"
 @Spec(path = "orders_tags.name", value = In.class)
+```
+
+### Reusing the Same Alias
+
+If multiple fields declare `@Join` with the same alias,  
+they will **share one join** in the SQL. All conditions are applied to the **same joined row**.
+
+
+For example:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @Join(path = "orders", alias = "o") // same alias
+  @Spec(path = "o.id")
+  Long orderId;
+
+  @Join(path = "orders", alias = "o") // same alias
+  @Spec(path = "o.itemName", value = Like.class)
+  String itemName;
+}
+```
+
+The executed SQL will be like:
+
+```sql
+select distinct customer0_.*
+from customer customer0_
+inner join orders o1_ on customer0_.id = o1_.order_id -- single join reused
+where o1_.id = ?
+  and o1_.item_name like ? -- both conditions apply on same row
+```
+
+### Same Path with Different Aliases
+
+If the same path is declared with **different aliases**,  
+multiple joins will be generated in the SQL. Each join may match **different rows** of the association.
+
+For example:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @Join(path = "orders", alias = "o1") // alias = o1
+  @Spec(path = "o1.id")
+  Long orderId;
+
+  @Join(path = "orders", alias = "o2") // alias = o2
+  @Spec(path = "o2.itemName", value = Like.class)
+  String itemName;
+}
+```
+
+The executed SQL will be like:
+
+```sql
+select distinct customer0_.*
+from customer customer0_
+inner join orders o1_ on customer0_.id = o1_.order_id -- first join
+inner join orders o2_ on customer0_.id = o2_.order_id -- second join
+where o1_.id = ? -- condition on o1
+  and o2_.item_name like ? -- condition on o2
 ```
