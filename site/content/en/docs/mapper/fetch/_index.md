@@ -223,8 +223,6 @@ class CustomerOrderTagCriteria {
 
 The usage rules for `@JoinFetch#alias` are as follows:
 
-- It is shared within the same POJO
-- It cannot be declared multiple times within the same POJO
 - If not provided, the default alias is `@JoinFetch#path`
 - If it contains `.`, it will be replaced with `_`
 
@@ -234,4 +232,51 @@ For example:
 @JoinFetch(path = "orders") // default alias is "orders"
 @JoinFetch(path = "orders.tags") // default alias is "orders_tags"
 @Spec(path = "orders_tags.name", value = In.class)
+```
+
+### Reusing the Same Path
+
+If multiple fields declare `@JoinFetch` on the **same path**,  
+only **one join** will be generated in the SQL, even if the aliases are different.
+
+For example:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @JoinFetch(path = "orders", alias = "o1") // alias = o1
+  @Spec(path = "o1.id")
+  Long orderId;
+
+  @JoinFetch(path = "orders", alias = "o2") // alias = o2
+  @Spec(path = "o2.itemName", value = Like.class)
+  String itemName;
+}
+```
+
+or equivalently:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @JoinFetch(path = "orders", alias = "o") // same alias
+  @Spec(path = "o.id")
+  Long orderId;
+
+  @JoinFetch(path = "orders", alias = "o") // same alias
+  @Spec(path = "o.itemName", value = Like.class)
+  String itemName;
+}
+```
+
+The executed SQL will be like:
+
+```sql
+select distinct customer0_.*
+from customer customer0_
+inner join orders o1_ on customer0_.id = o1_.order_id -- single join reused
+where o1_.id = ? 
+  and o1_.item_name like ? -- both conditions on same join
 ```
