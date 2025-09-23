@@ -23,7 +23,11 @@ package tw.com.softleader.data.jpa.spec.domain;
 import static java.util.Optional.ofNullable;
 import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.ToString.Exclude;
@@ -85,6 +89,12 @@ public class Join<T> implements Specification<T> {
 
   private void join(Root<T> root) {
     var jc = context.getAs(CTX_JOIN, JoinContext.class);
+
+    // check if alias already exists, skip creating a new join
+    if (jc.getJoin(root, alias) != null) {
+      return;
+    }
+
     if (!pathToJoinOn.contains(".")) {
       jc.putIfAbsent(root, alias, root.join(pathToJoinOn, joinType));
       return;
