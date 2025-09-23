@@ -234,7 +234,7 @@ class CustomerOrderTagCriteria {
 @Spec(path = "orders_tags.name", value = In.class)
 ```
 
-### 重複使用相同的路徑
+### Reusing the Same Path
 
 如果多個欄位在 **相同的 path** 上宣告了 `@JoinFetch`，  
 不論是否使用不同的 alias，SQL 中都只會產生 **單一條 join**

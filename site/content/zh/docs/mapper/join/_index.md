@@ -197,7 +197,7 @@ class CustomerOrderTagCriteria {
 @Spec(path = "orders_tags.name", value = In.class)
 ```
 
-### 重複使用相同的 Alias
+### Reusing the Same Alias
 
 如果多個欄位宣告了相同的 `@Join#alias`,  
 它們會在 SQL 中 **共用同一條 join**，所有條件會套用在 **同一筆關聯資料** 上
@@ -229,7 +229,7 @@ where o1_.id = ?
   and o1_.item_name like ? -- 條件都套在同一筆資料上
 ```
 
-### 同一路徑使用不同的 Alias
+### Same Path with Different Aliases
 
 如果針對相同的 path 給予 **不同的 alias**,  
 SQL 會產生 **多條 join**，每條 join 可以比對 **不同的關聯資料列**
