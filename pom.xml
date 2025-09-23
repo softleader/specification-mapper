@@ -92,10 +92,6 @@
       <name>SoftLeader Snapshots</name>
       <url>https://repo.softleader.com.tw/repository/maven-snapshots/</url>
     </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://central.sonatype.com</url>
-    </repository>
   </distributionManagement>
 
   <dependencyManagement>
