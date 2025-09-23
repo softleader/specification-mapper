@@ -31,7 +31,7 @@ description: >
   {{% /tab %}}
 {{< /tabpane >}}
 
-> 從 [Maven Central](https://central.sonatype.com/artifact/tw.com.softleader.data.jakarta/specification-mapper-starter) 查看最新版本
+[![Maven Central](https://img.shields.io/maven-central/v/tw.com.softleader.data.jakarta/specification-mapper-starter?color=orange)](https://central.sonatype.com/artifact/tw.com.softleader.data.jakarta/specification-mapper-starter)
 
 specification-mapper-starter 整合了 [specification-mapper](/docs/mapper) 及 [Spring Data JPA](https://spring.io/projects/spring-data-jpa), 並提供了 Query by Spec 的查詢方式等
 

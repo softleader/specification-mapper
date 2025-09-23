@@ -30,7 +30,7 @@ description: >
   {{% /tab %}}
 {{< /tabpane >}}
 
-> Check the latest version on [Maven Central](https://central.sonatype.com/artifact/tw.com.softleader.data.jakarta/specification-mapper)
+[![Maven Central](https://img.shields.io/maven-central/v/tw.com.softleader.data.jakarta/specification-mapper?color=orange)](https://central.sonatype.com/artifact/tw.com.softleader.data.jakarta/specification-mapper)
 
 specification-mapper is a generator for [Specifications](https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html). It reads the fields from an object and dynamically creates query conditions based on the definitions of the fields' annotations.
 
