@@ -58,6 +58,7 @@
     <license-maven-plugin.version>4.6</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <jandex-maven-plugin.version>3.4.0</jandex-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
 
     <spring-boot.version>3.5.6</spring-boot.version>
     <skip.formatting>false</skip.formatting>
@@ -93,7 +94,7 @@
     </snapshotRepository>
     <repository>
       <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>https://central.sonatype.com</url>
     </repository>
   </distributionManagement>
 
@@ -198,6 +199,17 @@
       <id>release</id>
       <build>
         <plugins>
+          <plugin>
+            <!-- https://central.sonatype.org/publish/publish-portal-maven/ -->
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>${central-publishing-maven-plugin.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
