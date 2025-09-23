@@ -82,7 +82,7 @@ In the above example, the `MySpecificationResolver` is constructed with the `Spe
 
 ### SkippingStrategy
 
-[`SkippingStrategy`](/mapper/spec/#skipping-strategy) defines rules for skipping specific fields. By registering your custom implementation as a Spring @Bean, it will be automatically detected and added to the *Default SpecMapper* during application startup.
+[`SkippingStrategy`](/docs/mapper/spec/#skipping-strategy) defines rules for skipping specific fields. By registering your custom implementation as a Spring @Bean, it will be automatically detected and added to the *Default SpecMapper* during application startup.
 
 Example:
 
