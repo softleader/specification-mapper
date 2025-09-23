@@ -186,8 +186,6 @@ class CustomerOrderTagCriteria {
 
 `@Join#alias` 的使用規則如下:
 
-- 在同個 POJO 中是共用的
-- 在同的 POJO 中不可重複宣告
 - 若沒提供, 預設使用 `@Join#path`
 - 若包含了 `.` 會以 `_` 取代之
 
@@ -197,4 +195,68 @@ class CustomerOrderTagCriteria {
 @Join(path = "orders") // alias 預設為 orders
 @Join(path = "orders.tags") // alias 預設為 orders_tags
 @Spec(path = "orders_tags.name", value = In.class)
+```
+
+### 重複使用相同的 Alias
+
+如果多個欄位宣告了相同的 `@Join#alias`,  
+它們會在 SQL 中 **共用同一條 join**，所有條件會套用在 **同一筆關聯資料** 上
+
+
+例如:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @Join(path = "orders", alias = "o") // 相同 alias
+  @Spec(path = "o.id")
+  Long orderId;
+
+  @Join(path = "orders", alias = "o") // 相同 alias
+  @Spec(path = "o.itemName", value = Like.class)
+  String itemName;
+}
+```
+
+產生的 SQL 如下:
+
+```sql
+select distinct customer0_.*
+from customer customer0_
+inner join orders o1_ on customer0_.id = o1_.order_id -- 共用單一 join
+where o1_.id = ? 
+  and o1_.item_name like ? -- 條件都套在同一筆資料上
+```
+
+### 同一路徑使用不同的 Alias
+
+如果針對相同的 path 給予 **不同的 alias**,  
+SQL 會產生 **多條 join**，每條 join 可以比對 **不同的關聯資料列**
+
+例如:
+
+```java
+@Data
+public class CustomerOrderCriteria {
+
+  @Join(path = "orders", alias = "o1") // alias = o1
+  @Spec(path = "o1.id")
+  Long orderId;
+
+  @Join(path = "orders", alias = "o2") // alias = o2
+  @Spec(path = "o2.itemName", value = Like.class)
+  String itemName;
+}
+```
+
+產生的 SQL 如下:
+
+```sql
+select distinct customer0_.*
+from customer customer0_
+inner join orders o1_ on customer0_.id = o1_.order_id -- 第一個 join
+inner join orders o2_ on customer0_.id = o2_.order_id -- 第二個 join
+where o1_.id = ? -- 套用在 o1
+  and o2_.item_name like ? -- 套用在 o2
 ```
