@@ -77,7 +77,7 @@ jobs:
             Bumps [spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
             from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}
           labels: "type: dependency-upgrade"
-          branch: "bot/${{ github.ref_name }}/spring-boot-${{ needs.current-version.outputs.spring-boot }}-${{ needs.latest-version.outputs.spring-boot }}/${{ github.run_id }}"
+          branch: "bot/${{ github.ref_name }}/bump-boot-${{ needs.latest-version.outputs.spring-boot }}"
           delete-branch: true
       - name: Enable Auto-merge
         if: steps.cpr.outputs.pull-request-operation == 'created'
