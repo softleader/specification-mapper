@@ -1,0 +1,26 @@
+{{- $docs := site.GetPage "/zh/docs" -}}
+{{- if not $docs }}
+{{- $docs = site.GetPage "section" "docs" -}}
+{{- if and $docs (ne $docs.Language.Lang "zh") -}}
+{{- $zhDocs := where $docs.Translations "Language.Lang" "zh" -}}
+{{- if gt (len $zhDocs) 0 }}
+{{- $docs = index $zhDocs 0 -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if not $docs }}{{ errorf "LLMS index requires /zh/docs" }}{{ end -}}
+{{- $home := $docs.Site.Home -}}
+
+# {{ site.Title }}
+URL: {{ site.BaseURL }}
+Language: zh-TW
+
+{{- with $home }}
+{{- $summary := index .Params "llms_summary" -}}
+{{- if $summary }}
+Summary: {{ partial "llms/normalize.txt" $summary }}
+
+{{- end }}
+{{- end }}
+## Documentation Index
+{{ partial "llms/index-section.txt" $docs }}

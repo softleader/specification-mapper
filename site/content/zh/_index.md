@@ -1,5 +1,6 @@
 ---
 title: Specification Mapper
+llms_summary: "Specification Mapper 是一套協助建構 Spring Data JPA Specifications 的工具，提供注解式、可擴充且可讀性高的查詢條件組合能力。"
 ---
 
 {{% blocks/lead color="primary" %}}
