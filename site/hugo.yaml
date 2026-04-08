@@ -41,6 +41,23 @@ imaging:
   quality: 75
   anchor: "Smart"
 
+mediaTypes:
+  text/plain:
+    suffixes:
+      - txt
+
+outputFormats:
+  LLMS:
+    mediaType: text/plain
+    baseName: llms
+    isPlainText: true
+    notAlternative: true
+  LLMSFull:
+    mediaType: text/plain
+    baseName: llms-full
+    isPlainText: true
+    notAlternative: true
+
 markup:
   goldmark:
     parser:
@@ -57,6 +74,11 @@ markup:
 
 # Everything below this are Site Params
 outputs:
+  home:
+    - HTML
+    - RSS
+    - LLMS
+    - LLMSFull
   section:
     - HTML
     - print

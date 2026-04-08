@@ -1,0 +1,38 @@
+{{- $docs := site.GetPage "/zh/docs" -}}
+{{- if not $docs }}
+{{- $docs = site.GetPage "section" "docs" -}}
+{{- if and $docs (ne $docs.Language.Lang "zh") -}}
+{{- $zhDocs := where $docs.Translations "Language.Lang" "zh" -}}
+{{- if gt (len $zhDocs) 0 }}
+{{- $docs = index $zhDocs 0 -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if not $docs }}{{ errorf "LLMS full output requires /zh/docs" }}{{ end -}}
+# {{ site.Title }} Documentation (zh-TW)
+URL: {{ site.BaseURL }}
+Language: zh-TW
+
+{{- $content := partial "llms/render-section.txt" $docs -}}
+{{- $content = htmlUnescape $content -}}
+{{- $content = printf "%s" $content -}}
+{{- $content = replace $content "&quot;" "\"" -}}
+{{- $content = replace $content "&apos;" "'" -}}
+{{- $content = replace $content "&#39;" "'" -}}
+{{- $content = replace $content "&#x27;" "'" -}}
+{{- $content = replace $content "&#34;" "\"" -}}
+{{- $content = replace $content "&#x22;" "\"" -}}
+{{- $content = replace $content "&lt;" "<" -}}
+{{- $content = replace $content "&gt;" ">" -}}
+{{- $content = replace $content "&#43;" "+" -}}
+{{- $content = replace $content "&plus;" "+" -}}
+{{- $content = replace $content "&nbsp;" " " -}}
+{{- $content = replace $content "&amp;" "&" -}}
+{{- $content = replace $content "\r\n" "\n" -}}
+{{- $content = replace $content "\r" "\n" -}}
+{{- $content = replaceRE "\n[ \t]+" "\n" $content -}}
+{{- $content = replaceRE "\n{3,}" "\n\n" $content -}}
+{{- $content = strings.TrimSpace $content -}}
+{{- if $content }}
+{{- printf "\n\n%s" $content -}}
+{{- end }}

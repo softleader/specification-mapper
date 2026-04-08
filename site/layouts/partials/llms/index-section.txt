@@ -1,0 +1,11 @@
+{{- $section := . -}}
+{{- range $child := $section.Pages.ByWeight }}
+- {{ $child.Title }} — {{ $child.Permalink }}
+{{- with $child.Description }}
+Summary: {{ . | markdownify | plainify }}
+{{- end }}
+
+{{- if $child.IsNode }}
+{{ partial "llms/index-section.txt" $child }}
+{{- end }}
+{{- end }}

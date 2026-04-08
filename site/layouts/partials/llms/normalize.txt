@@ -1,0 +1,22 @@
+{{- $value := printf "%s" . -}}
+{{- $value = htmlUnescape $value -}}
+{{- $value = printf "%s" $value -}}
+{{- $value = replace $value "&quot;" "\"" -}}
+{{- $value = replace $value "&apos;" "'" -}}
+{{- $value = replace $value "&#39;" "'" -}}
+{{- $value = replace $value "&#x27;" "'" -}}
+{{- $value = replace $value "&#34;" "\"" -}}
+{{- $value = replace $value "&#x22;" "\"" -}}
+{{- $value = replace $value "&lt;" "<" -}}
+{{- $value = replace $value "&gt;" ">" -}}
+{{- $value = replace $value "&#43;" "+" -}}
+{{- $value = replace $value "&plus;" "+" -}}
+{{- $value = replace $value "&nbsp;" " " -}}
+{{- $value = replace $value "&amp;" "&" -}}
+{{- $value = replace $value "\r\n" "\n" -}}
+{{- $value = replace $value "\r" "\n" -}}
+{{- $value = replaceRE "(?m)^[[:space:]]*\\{\\{[%<].*[>%]\\}\\}[[:space:]]*$" "" $value -}}
+{{- $value = replaceRE "\n[ \t]+" "\n" $value -}}
+{{- $value = replaceRE "\n{3,}" "\n\n" $value -}}
+{{- $value = strings.TrimSpace $value -}}
+{{- $value }}

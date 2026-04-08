@@ -1,0 +1,29 @@
+{{- $section := . -}}
+{{- if not $section }}
+{{- return }}
+{{- end -}}
+
+## [{{ $section.Title }}]({{ $section.Permalink }})
+
+{{- with $section.Description }}
+Summary: {{ partial "llms/normalize.txt" (. | markdownify) }}
+{{- end }}
+
+{{- $rawBody := "" -}}
+{{- if strings.Contains $section.Site.Hugo.Version "0.160" -}}
+{{- $rawBody = transform.HTMLToMarkdown $section.Content -}}
+{{- else -}}
+{{- $rawBody = $section.RawContent -}}
+{{- end -}}
+
+{{- $body := partial "llms/normalize.txt" $rawBody }}
+{{- if $body }}
+{{- safeHTML $body }}
+
+{{- end }}
+
+{{- if $section.IsNode }}
+{{- range $child := $section.Pages.ByWeight }}
+{{ partial "llms/render-section.txt" $child }}
+{{- end }}
+{{- end }}
