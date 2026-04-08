@@ -1,0 +1,64 @@
+# Specification Mapper
+URL: https://softleader.github.io/specification-mapper/
+Language: zh-TW
+Summary: Specification Mapper 是一套協助建構 Spring Data JPA Specifications 的工具，提供注解式、可擴充且可讀性高的查詢條件組合能力。
+
+## Documentation Index
+
+- Mapper — https://softleader.github.io/specification-mapper/zh/docs/mapper/
+Summary: Core Domain
+
+- SpecMapper — https://softleader.github.io/specification-mapper/zh/docs/mapper/spec/
+Summary: 操作入口
+
+
+- Simple Specs — https://softleader.github.io/specification-mapper/zh/docs/mapper/simple/
+Summary: 基本查詢條件
+
+
+- Combine Specs — https://softleader.github.io/specification-mapper/zh/docs/mapper/combine/
+Summary: 組合多個查詢條件
+
+
+- Nested Specs — https://softleader.github.io/specification-mapper/zh/docs/mapper/nested/
+Summary: 處理巢狀物件的查詢條件
+
+
+- Join — https://softleader.github.io/specification-mapper/zh/docs/mapper/join/
+Summary: 關聯查詢的過濾條件
+
+
+- Join Fetch — https://softleader.github.io/specification-mapper/zh/docs/mapper/fetch/
+Summary: 關聯查詢的過濾條件, 並同時選取指定欄位
+
+
+- Customize Specs — https://softleader.github.io/specification-mapper/zh/docs/mapper/customize/
+Summary: 客製化與擴充查詢條件
+
+
+- Logging — https://softleader.github.io/specification-mapper/zh/docs/mapper/logging/
+Summary: 物件轉換過程的日誌輸出
+
+
+- Limitation — https://softleader.github.io/specification-mapper/zh/docs/mapper/limit/
+Summary: 限制與考量
+
+
+
+- Starter — https://softleader.github.io/specification-mapper/zh/docs/starter/
+Summary: Spring Starter
+
+- Query by Spec — https://softleader.github.io/specification-mapper/zh/docs/starter/qbs/
+Summary: 介紹與使用 Query by Spec (QBS)
+
+
+- Config SpecMapper — https://softleader.github.io/specification-mapper/zh/docs/starter/config/
+Summary: 自動配置 SpecMapper
+
+
+
+- Compatibility — https://softleader.github.io/specification-mapper/zh/docs/compatibility/
+Summary: 通過相容性測試的版本清單
+
+
+
