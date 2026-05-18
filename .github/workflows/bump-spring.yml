@@ -43,8 +43,22 @@ jobs:
         with:
           version: ${{ needs.latest-version.outputs.spring-boot }}
           compare-to: ${{ needs.current-version.outputs.spring-boot }}
+      # 依 Spring Boot 升級幅度決定 PR 的 conventional commit 類型: 中版號 (或主版號) 升級用 feat, 僅升小版號用 fix
+      - name: Resolve commit type
+        id: commit-type
+        env:
+          CURRENT: ${{ needs.current-version.outputs.spring-boot }}
+          LATEST: ${{ needs.latest-version.outputs.spring-boot }}
+        run: |
+          # 去掉修訂號, 只比 major.minor
+          if [ "${CURRENT%.*}" = "${LATEST%.*}" ]; then
+            echo "type=fix" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=feat" >> "$GITHUB_OUTPUT"
+          fi
     outputs:
       comparison-result: ${{ steps.semver-compare.outputs.comparison-result }}
+      commit-type: ${{ steps.commit-type.outputs.type }}
 
   bump-spring:
     runs-on: ubuntu-latest
@@ -76,8 +90,8 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ steps.app-token.outputs.token }}
-          commit-message: "chore: bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
-          title: "Bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
+          commit-message: "${{ needs.compare-version.outputs.commit-type }}: bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
+          title: "${{ needs.compare-version.outputs.commit-type }}: bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
           committer: bot 👾 <bot-noreply@softleader.com.tw>
           author: bot 👾 <bot-noreply@softleader.com.tw>
           body: >-
