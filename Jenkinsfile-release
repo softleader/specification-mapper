@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-currentBuild.description = "${ref} -> ${tag}"
+currentBuild.description = "${params.ref} -> ${params.tag}"
 // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 def semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
@@ -49,6 +49,11 @@ spec:
     }
   }
 
+  parameters {
+    string(name: 'tag', defaultValue: '', description: 'Release tag, e.g. 3.2.3')
+    string(name: 'ref', defaultValue: '', description: 'Release commit SHA')
+  }
+
   environment {
     // 在 Jenkins 中 System Configuration > Manage Credential
     // ref: https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/injecting-secrets
@@ -85,27 +90,11 @@ spec:
       steps {
         container('git') {
           script {
-            def isSemVer = ("${tag}" ==~ semverPattern)
+            def isSemVer = ("${params.tag}" ==~ semverPattern)
             if (!isSemVer) {
-              error "Tag must matches semantic versioning 2 (https://semver.org/) but got: ${tag}";
-            }
-            TAG_EXISTS = sh(
-              script: 'gh release view ${tag} --json name',
-              returnStatus: true
-            )
-            def tagExists = ("${TAG_EXISTS}" == "0")
-            if (tagExists) {
-              error "Tag ${tag} already exists";
+              error "Tag must matches semantic versioning 2 (https://semver.org/) but got: ${params.tag}";
             }
           }
-        }
-      }
-    }
-
-    stage ('Create Release') {
-      steps {
-        container('git') {
-          sh "gh release create ${tag} --target ${ref} --generate-notes --draft"
         }
       }
     }
@@ -116,17 +105,6 @@ spec:
         echo /var/gpg/softleader.passphrase | gpg --batch --yes --import /var/gpg/softleader.key
         make release
         """
-      }
-      post {
-        success {
-          script {
-            container('git') {
-              sh """
-              gh release edit ${tag} --draft=false --latest
-              """
-            }
-          }
-        }
       }
     }
   }

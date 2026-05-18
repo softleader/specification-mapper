@@ -1,0 +1,47 @@
+# 自動發行 release: push to default branch → release-please 開 release PR → 人工 merge
+# → 自動 tag + GitHub Release → trigger Jenkins build & deploy
+name: Release Please
+
+on:
+  push:
+    branches: [jakarta]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+# 序列化, 避免短時間多次 push 導致雙開 release PR / 雙觸發 Jenkins
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      tag_name: ${{ steps.rp.outputs.tag_name }}
+      sha: ${{ steps.rp.outputs.sha }}
+    steps:
+      - uses: googleapis/release-please-action@v5.0.0
+        id: rp
+        with:
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  trigger-jenkins:
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    steps:
+      - id: specification-mapper-release
+        uses: shihyuho/go-jenkins-trigger@v2
+        with:
+          jenkins-url: "${{ secrets.JENKINS_URL }}"
+          jenkins-user: "${{ secrets.JENKINS_USER }}"
+          jenkins-pat: "${{ secrets.JENKINS_PAT }}"
+          job: "${{ github.action }}"
+          params: "ref=${{ needs.release-please.outputs.sha }},tag=${{ needs.release-please.outputs.tag_name }},"
+          wait: false
