@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "maven",
+      "package-name": "specification-mapper",
+      "changelog-path": "CHANGELOG.md",
+      "include-v-in-tag": false,
+      "include-component-in-tag": false,
+      "skip-snapshot": true
+    }
+  }
+}
