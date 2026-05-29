@@ -157,6 +157,9 @@ params:
 
   # User interface configuration
   ui:
+    # Docsy 0.14+ defaults the navbar to a light theme; keep it dark (brand-blue
+    # navbar restored via $primary override in _styles_project.scss).
+    navbar_theme: dark
     # Set to true to disable breadcrumb navigation.
     breadcrumb_disable: false
     # Set to false if you don't want to display a logo (/assets/icons/logo.svg) in the top navbar
@@ -207,7 +210,7 @@ module:
   # workspace: "docsy.work"
   hugoVersion:
     extended: true
-    min: "0.110.0"
+    min: "0.157.0"
   imports:
     - path: "github.com/google/docsy"
       disable: false
