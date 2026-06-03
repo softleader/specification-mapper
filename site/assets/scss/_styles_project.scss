@@ -1,6 +1,11 @@
 @import 'td/code-dark';
 
 .td-navbar {
+  // Docsy 0.14+ derives the navbar background from --bs-body-bg. Restore the
+  // pre-upgrade brand-blue navbar (was docsy 0.12's $primary default) and drop
+  // the new bottom border to match the previous look.
+  --td-navbar-bg-color: #{$primary};
+  --td-navbar-border-bottom: none;
 
   .navbar-brand {
     background: white;

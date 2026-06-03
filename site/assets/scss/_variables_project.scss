@@ -3,31 +3,36 @@ Override variables from the theme here. */
 
 
 // Theme colors
+// NOTE: Docsy 0.14+ reordered SCSS loading so Bootstrap sets these first; any
+// brand override left as `!default` would silently revert to Bootstrap's value.
+// The variables below dropped `!default` to keep the colors that were already
+// in effect before the upgrade. ($gray-600/$blue intentionally keep `!default`:
+// they never took effect even on the old theme — leftover example defaults.)
 $primary: #255276;
 $primary-light: lighten($primary, 75%) !default;
-$secondary: #FFA630 !default;
-$success: #17752C !default;
-$info: #0D5ED3 !default;
-$warning: #7749DA !default;
-$danger: #CA1F27 !default;
+$secondary: #FFA630;
+$success: #17752C;
+$info: #0D5ED3;
+$warning: #7749DA;
+$danger: #CA1F27;
 $white: #fff !default;
-$light: #D3F3EE !default;
+$light: #D3F3EE;
 
-$dark: #403F4C !default;
+$dark: #403F4C;
 $blue: #72A1E5 !default;
-$orange: #BA5A31 !default;
+$orange: #BA5A31;
 $gray-100: #f8f9fa !default;
-$gray-200: #eee !default;
+$gray-200: #eee;
 $gray-300: #dee2e6 !default;
-$gray-400: #ccc !default;
+$gray-400: #ccc;
 $gray-500: #adb5bd !default;
 $gray-600: #797676 !default;
 $gray-700: #495057 !default;
-$gray-800: #333 !default;
-$gray-900: #222 !default;
+$gray-800: #333;
+$gray-900: #222;
 $black: #000 !default;
 
-$code-color: darken($secondary, 20%) !default;
+$code-color: darken($secondary, 20%);
 $link-color: #1C5D8C;
 
 // Font weights
