@@ -111,7 +111,10 @@ class NestedSpecificationResolverTest {
             .extracting("specs", LIST)
             .hasSize(2);
     depth1.first().isInstanceOf(Equals.class);
-    depth1
+    var depth2 =
+        depth1.element(1).isInstanceOf(Conjunction.class).extracting("specs", LIST).hasSize(2);
+    depth2.first().isInstanceOf(Equals.class);
+    depth2
         .element(1)
         .isInstanceOf(Conjunction.class)
         .extracting("specs", LIST)
@@ -389,7 +392,7 @@ class NestedSpecificationResolverTest {
   @AllArgsConstructor
   public static class NestedInNestedAnd {
 
-    @NestedSpec String name;
+    @Spec String name;
   }
 
   @Builder
