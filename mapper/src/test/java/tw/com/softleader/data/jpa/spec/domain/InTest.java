@@ -25,9 +25,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 import java.util.Arrays;
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
@@ -55,5 +59,23 @@ class InTest {
         .isThrownBy(() -> new In<Customer>(context, "name", value))
         .withMessage(
             "Failed to convert value of type 'java.lang.Object' to required type 'java.lang.Iterable'");
+  }
+
+  @Test
+  void typeMismatchThroughMapper() {
+    var mapper = SpecMapper.builder().build();
+    var criteria = InCriteria.builder().name("matt").build();
+    assertThatExceptionOfType(TypeMismatchException.class)
+        .isThrownBy(() -> mapper.toSpec(criteria, Customer.class))
+        .withMessage(
+            "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Iterable'");
+  }
+
+  @Builder
+  @Data
+  static class InCriteria {
+
+    @Spec(path = "name", value = In.class)
+    String name;
   }
 }
