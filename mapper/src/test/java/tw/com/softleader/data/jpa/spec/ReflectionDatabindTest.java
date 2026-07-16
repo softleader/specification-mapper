@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -49,17 +50,28 @@ class ReflectionDatabindTest {
 
     assertThat(databind).hasSize(5);
 
-    var numberOfThreads = 1;
+    // Release every thread at the same instant so multiple threads race into
+    // getFieldValue() on the *same* Databind instances and genuinely contend on
+    // the AtomicBoolean CAS + CountDownLatch dedup.
+    var numberOfThreads = 32;
     var service = newFixedThreadPool(numberOfThreads);
-    var latch = new CountDownLatch(numberOfThreads);
+    var startBarrier = new CyclicBarrier(numberOfThreads);
+    var done = new CountDownLatch(numberOfThreads);
     for (int i = 0; i < numberOfThreads; i++) {
       service.submit(
           () -> {
-            databind.forEach(Databind::getFieldValue);
-            latch.countDown();
+            try {
+              startBarrier.await();
+              databind.forEach(Databind::getFieldValue);
+            } catch (Exception e) {
+              throw new RuntimeException(e);
+            } finally {
+              done.countDown();
+            }
           });
     }
-    latch.await();
+    done.await();
+    service.shutdown();
 
     databind.forEach(
         bind -> {
