@@ -26,6 +26,7 @@ import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.StringJoiner;
 import lombok.Builder;
@@ -63,8 +64,22 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
       @NonNull Class<? extends SimpleSpecification> domainClass,
       @NonNull String path,
       @NonNull Object value) {
-    return accessibleConstructor(domainClass, Context.class, String.class, Object.class)
-        .newInstance(context, path, value);
+    try {
+      return accessibleConstructor(domainClass, Context.class, String.class, Object.class)
+          .newInstance(context, path, value);
+    } catch (InvocationTargetException e) {
+      // Constructor.newInstance wraps any exception thrown inside the constructor in an
+      // InvocationTargetException; surface the original cause (e.g. TypeMismatchException,
+      // IllegalArgumentException) so it reaches SpecMapper.toSpec callers.
+      var cause = e.getCause();
+      if (cause instanceof RuntimeException runtimeException) {
+        throw runtimeException;
+      }
+      if (cause instanceof Error error) {
+        throw error;
+      }
+      throw new IllegalStateException(cause);
+    }
   }
 
   @SuppressWarnings({"unchecked"})
