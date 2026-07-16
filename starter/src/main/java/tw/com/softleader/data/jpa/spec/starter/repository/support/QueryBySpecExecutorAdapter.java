@@ -113,7 +113,8 @@ public interface QueryBySpecExecutorAdapter<T>
     var domainClass = getDomainClass();
     notNull(mapper, "getSpecMapper() must not returns null");
     notNull(domainClass, "getDomainClass() must not returns null");
-    return findBy(mapper.toSpec(spec, domainClass), queryFunction);
+    var specification = mapper.toSpec(spec, domainClass);
+    return findBy(specification != null ? specification : (root, query, cb) -> null, queryFunction);
   }
 
   SpecMapper getSpecMapper();

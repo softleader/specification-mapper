@@ -27,19 +27,19 @@ import static org.springframework.util.Assert.notNull;
 import static tw.com.softleader.data.jpa.spec.ASTWriterFactory.impersonation;
 import static tw.com.softleader.data.jpa.spec.starter.autoconfigure.SpecMapperProperties.PREFIX_SPEC_MAPPER;
 
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.repository.core.support.RepositoryFactoryCustomizer;
@@ -57,7 +57,7 @@ import tw.com.softleader.data.jpa.spec.starter.repository.support.QueryBySpecExe
  */
 @Slf4j
 @RequiredArgsConstructor
-@Configuration(proxyBeanMethods = false)
+@AutoConfiguration(after = JpaRepositoriesAutoConfiguration.class)
 @EnableConfigurationProperties(SpecMapperProperties.class)
 @ConditionalOnProperty(prefix = PREFIX_SPEC_MAPPER, value = "enabled", matchIfMissing = true)
 public class SpecMapperAutoConfiguration {
@@ -113,8 +113,8 @@ public class SpecMapperAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    JpaRepositoryFactoryBeanPostProcessor jpaRepositoryFactoryBeanPostProcessor(
-        List<RepositoryFactoryCustomizer> customizers) {
+    static JpaRepositoryFactoryBeanPostProcessor jpaRepositoryFactoryBeanPostProcessor(
+        ObjectProvider<RepositoryFactoryCustomizer> customizers) {
       return new JpaRepositoryFactoryBeanPostProcessor(customizers);
     }
 

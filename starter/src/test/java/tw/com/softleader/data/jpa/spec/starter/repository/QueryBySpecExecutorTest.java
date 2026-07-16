@@ -147,6 +147,17 @@ class QueryBySpecExecutorTest {
     assertThat(actual).hasSize(1).contains(matt);
   }
 
+  @Test
+  void findByEmptySpecAndQuery() {
+    var matt = repository.save(Customer.builder().name("matt").build());
+    var bob = repository.save(Customer.builder().name("bob").build());
+    var mary = repository.save(Customer.builder().name("mary").build());
+
+    var criteria = MyCriteria.builder().build();
+    var actual = repository.findBySpec(criteria, FluentQuery.FetchableFluentQuery::all);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
+  }
+
   @Builder
   @Data
   static class MyCriteria {
