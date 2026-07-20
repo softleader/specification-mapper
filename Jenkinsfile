@@ -154,7 +154,10 @@ spec:
     }
     failure {
       script {
-        if (env.BRANCH_NAME == 'main'
+        // BRANCH_IS_PRIMARY 由 multibranch 的 branch-api 在 SCM 預設分支上設為 'true',
+        // 不必隨預設分支改名而改這裡; 非 multibranch job 不會有這個變數, 故 fallback 比對分支名
+        def isPrimaryBranch = env.BRANCH_IS_PRIMARY == 'true' || env.BRANCH_NAME == 'jakarta'
+        if (isPrimaryBranch
             // 若短時間太密集的 push, 之前的 job 會被 jenkins 中斷，這樣就可能會就連第一步都還沒執行的狀況，但也算是失敗
             // 然而取得 git 資訊就在第一步，所以至少要第一步都有執行完才發佈 slack 吧
             && env.LAST_COMMIT_AUTHOR_NAME && env.LAST_COMMIT_AUTHOR_EMAIL && env.LAST_COMMIT_TIME) {
