@@ -26,6 +26,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Arrays;
 import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
@@ -45,10 +47,21 @@ import org.springframework.lang.Nullable;
  * ... WHERE x.firstname IN (?, ?, ...)
  * }</pre>
  *
+ * <p>Collections larger than {@link #MAX_CHUNK_SIZE} are partitioned into OR-combined {@code IN}
+ * clauses.
+ *
  * @author Matt Ho
  * @see NotIn
  */
 public class In<T> extends SimpleSpecification<T> {
+
+  /**
+   * The maximum number of elements expanded into a single {@code IN} clause.
+   *
+   * <p>Several RDBMS cap the number of elements of an {@code IN} clause, commonly at 1000, and huge
+   * lists degrade the query plan; tune this to the target RDBMS if needed.
+   */
+  public static final int MAX_CHUNK_SIZE = 1000;
 
   public In(@NonNull Context context, @NonNull String path, @NonNull Object value) {
     super(context, path, value);
@@ -60,7 +73,16 @@ public class In<T> extends SimpleSpecification<T> {
   @Override
   public Predicate toPredicate(
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
-    return getPath(root)
-        .in(stream(((Iterable<?>) value).spliterator(), false).toArray(Object[]::new));
+    var path = getPath(root);
+    var values = stream(((Iterable<?>) value).spliterator(), false).toArray(Object[]::new);
+    if (values.length <= MAX_CHUNK_SIZE) {
+      return path.in(values);
+    }
+    var chunks = new ArrayList<Predicate>();
+    for (var from = 0; from < values.length; from += MAX_CHUNK_SIZE) {
+      var to = Math.min(from + MAX_CHUNK_SIZE, values.length);
+      chunks.add(path.in(Arrays.copyOfRange(values, from, to)));
+    }
+    return builder.or(chunks.toArray(Predicate[]::new));
   }
 }

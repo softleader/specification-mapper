@@ -24,7 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
@@ -45,6 +47,20 @@ class NotInTest {
     var spec = new NotIn<Customer>(noopContext(), "name", Arrays.asList("matt", "bob"));
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(mary);
+  }
+
+  @Test
+  void moreValuesThanChunkSize() {
+    repository.save(Customer.builder().name("matt").build());
+    var bob = repository.save(Customer.builder().name("bob").build());
+
+    var values = new ArrayList<String>();
+    IntStream.rangeClosed(1, In.MAX_CHUNK_SIZE).mapToObj(i -> "name-" + i).forEach(values::add);
+    values.add("matt");
+
+    var spec = new NotIn<Customer>(noopContext(), "name", values);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(bob);
   }
 
   @Test
