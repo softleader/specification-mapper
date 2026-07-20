@@ -20,15 +20,19 @@
  */
 package tw.com.softleader.data.jpa.spec.domain.yet_another_package;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.mockito.Mockito.mock;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.NoSuchElementException;
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
+import tw.com.softleader.data.jpa.spec.SpecContext;
 import tw.com.softleader.data.jpa.spec.domain.Context;
 import tw.com.softleader.data.jpa.spec.domain.SimpleSpecification;
 
@@ -84,6 +88,33 @@ class ConstructSimpleSpecificationTest {
                     .path("")
                     .value(new Object())
                     .build());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void multiSegmentPathWithoutJoinContextShouldExplainTheMapperPipeline() {
+    // 直接 new 出來的 spec, 其 Context 不會有 SpecMapper 放進去的 JoinContext
+    var spec = new DottedPathSpec(new SpecContext(), "o.itemName", new Object());
+    Root<Object> root = mock(Root.class);
+
+    assertThatIllegalStateException()
+        .isThrownBy(() -> spec.toPredicate(root, null, mock(CriteriaBuilder.class)))
+        .withMessageContaining("o.itemName")
+        .withMessageContaining("SpecMapper.toSpec")
+        .withCauseInstanceOf(NoSuchElementException.class);
+  }
+
+  public static class DottedPathSpec extends SimpleSpecification<Object> {
+
+    DottedPathSpec(@NonNull Context context, @NonNull String path, @NonNull Object value) {
+      super(context, path, value);
+    }
+
+    @Override
+    public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
+      getPath(root);
+      return null;
+    }
   }
 
   public static class ProtectedConstructorSpec extends SimpleSpecification<Object> {
