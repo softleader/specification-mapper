@@ -20,11 +20,13 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
+import static java.util.Comparator.comparing;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.Collection;
+import java.util.List;
 import java.util.StringJoiner;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +38,27 @@ import org.springframework.data.jpa.domain.Specification;
 @RequiredArgsConstructor
 abstract class CompoundSpecification<T> implements Specification<T> {
 
-  @NonNull protected final transient Collection<Specification<T>> specs;
+  @NonNull protected final transient List<Specification<T>> specs;
 
+  /**
+   * Fold 的結果會相依於 element 的順序, 因此在 Fold 前會先把所有覆寫了預設運算子的 element 穩定排序到最後, 如此一來第一個 element
+   * 就必定是使用預設運算子的, 也就不會有 Wrapper 被忽略的問題; 換句話說, 無論欄位的宣告順序為何, 都會得到相同的組合結果
+   */
   @Override
   public Predicate toPredicate(
       @NonNull Root<T> root, CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     return specs.stream()
+        .sorted(comparing(this::overridesOperator))
         .reduce(this::combine)
         .map(spec -> spec.toPredicate(root, query, builder))
         .orElse(null);
   }
+
+  /**
+   * @param element 要檢查的元素
+   * @return 該元素是否覆寫了本 Compound 的預設運算子
+   */
+  protected abstract boolean overridesOperator(Specification<T> element);
 
   /**
    * @param result 到目前 Combine 的結果

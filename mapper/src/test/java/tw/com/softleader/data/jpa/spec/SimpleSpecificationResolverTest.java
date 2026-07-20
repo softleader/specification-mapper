@@ -21,6 +21,7 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -248,12 +249,13 @@ class SimpleSpecificationResolverTest {
                 .gender(Gender.MALE)
                 .birthday(LocalDate.now().plusDays(1))
                 .build());
-    repository.save(
-        Customer.builder()
-            .name("mary")
-            .gender(Gender.FEMALE)
-            .birthday(LocalDate.now().minusDays(1))
-            .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now().minusDays(1))
+                .build());
 
     var criteria =
         ForceOr2.builder()
@@ -278,10 +280,99 @@ class SimpleSpecificationResolverTest {
         .isInstanceOf(After.class);
     depth1.element(2).isInstanceOf(Equals.class);
     var actual = repository.findAll(spec);
-    assertThat(actual).hasSize(2).contains(matt, bob);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
 
     verify(simpleResolver, times(numberOfLocalField(ForceOr2.class)))
         .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("Force Or 3 - @Or 宣告在第一順位")
+  @Test
+  void forceOr3() {
+    var matt =
+        repository.save(
+            Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    var bob =
+        repository.save(
+            Customer.builder()
+                .name("bob")
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now().plusDays(1))
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now().minusDays(1))
+                .build());
+
+    var criteria =
+        ForceOr3.builder()
+            .name(bob.getName())
+            .gender(bob.getGender())
+            .birthday(LocalDate.now())
+            .build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Conjunction.class)
+            .extracting("specs", LIST)
+            .hasSize(3);
+    depth1
+        .first()
+        .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.Or.class)
+        .extracting("spec")
+        .isInstanceOf(Not.class)
+        .extracting("spec")
+        .isInstanceOf(After.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    depth1.element(2).isInstanceOf(Equals.class);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(matt, bob, mary);
+
+    verify(simpleResolver, times(numberOfLocalField(ForceOr3.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("@Or 無論宣告在哪個順位都得到相同的結果")
+  @Test
+  void forceOrIsPermutationInvariant() {
+    repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .gender(Gender.MALE)
+            .birthday(LocalDate.now().plusDays(1))
+            .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .gender(Gender.FEMALE)
+            .birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var birthday = LocalDate.now();
+    var expected =
+        repository.findAll(
+            mapper.toSpec(
+                ForceOr.builder().name("bob").gender(Gender.MALE).birthday(birthday).build(),
+                Customer.class));
+    assertThat(expected).isNotEmpty();
+    assertThat(
+            repository.findAll(
+                mapper.toSpec(
+                    ForceOr2.builder().name("bob").gender(Gender.MALE).birthday(birthday).build(),
+                    Customer.class)))
+        .containsExactlyInAnyOrderElementsOf(expected);
+    assertThat(
+            repository.findAll(
+                mapper.toSpec(
+                    ForceOr3.builder().name("bob").gender(Gender.MALE).birthday(birthday).build(),
+                    Customer.class)))
+        .containsExactlyInAnyOrderElementsOf(expected);
   }
 
   @DisplayName("Force And")
@@ -331,6 +422,112 @@ class SimpleSpecificationResolverTest {
 
     verify(simpleResolver, times(numberOfLocalField(ForceAnd.class)))
         .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("Force And 2 - @And 宣告在第一順位")
+  @Test
+  void forceAnd2() {
+    var matt =
+        repository.save(
+            Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .gender(Gender.MALE)
+            .birthday(LocalDate.now().plusDays(1))
+            .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .gender(Gender.FEMALE)
+                .birthday(LocalDate.now().minusDays(1))
+                .build());
+
+    var criteria =
+        ForceAnd2.builder()
+            .name(matt.getName())
+            .gender(mary.getGender())
+            .birthday(LocalDate.now())
+            .build();
+    var spec = mapper.toSpec(criteria, Customer.class);
+    var depth1 =
+        assertThat(spec)
+            .isNotNull()
+            .isInstanceOf(Disjunction.class)
+            .extracting("specs", LIST)
+            .hasSize(3);
+    depth1
+        .first()
+        .isInstanceOf(tw.com.softleader.data.jpa.spec.domain.And.class)
+        .extracting("spec")
+        .isInstanceOf(Not.class)
+        .extracting("spec")
+        .isInstanceOf(After.class);
+    depth1.element(1).isInstanceOf(Equals.class);
+    depth1.element(2).isInstanceOf(Equals.class);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(2).contains(matt, mary);
+
+    verify(simpleResolver, times(numberOfLocalField(ForceAnd2.class)))
+        .buildSpecification(any(Context.class), any(Databind.class));
+  }
+
+  @DisplayName("@And 無論宣告在哪個順位都得到相同的結果")
+  @Test
+  void forceAndIsPermutationInvariant() {
+    repository.save(
+        Customer.builder().name("matt").gender(Gender.MALE).birthday(LocalDate.now()).build());
+    repository.save(
+        Customer.builder()
+            .name("bob")
+            .gender(Gender.MALE)
+            .birthday(LocalDate.now().plusDays(1))
+            .build());
+    repository.save(
+        Customer.builder()
+            .name("mary")
+            .gender(Gender.FEMALE)
+            .birthday(LocalDate.now().minusDays(1))
+            .build());
+
+    var birthday = LocalDate.now();
+    var expected =
+        repository.findAll(
+            mapper.toSpec(
+                ForceAnd.builder().name("matt").gender(Gender.FEMALE).birthday(birthday).build(),
+                Customer.class));
+    assertThat(expected).isNotEmpty();
+    assertThat(
+            repository.findAll(
+                mapper.toSpec(
+                    ForceAnd2.builder()
+                        .name("matt")
+                        .gender(Gender.FEMALE)
+                        .birthday(birthday)
+                        .build(),
+                    Customer.class)))
+        .containsExactlyInAnyOrderElementsOf(expected);
+    assertThat(
+            repository.findAll(
+                mapper.toSpec(
+                    ForceAnd3.builder()
+                        .name("matt")
+                        .gender(Gender.FEMALE)
+                        .birthday(birthday)
+                        .build(),
+                    Customer.class)))
+        .containsExactlyInAnyOrderElementsOf(expected);
+  }
+
+  @DisplayName("同一個欄位同時標註 @And 及 @Or 時拋出例外")
+  @Test
+  void andOrAreMutuallyExclusive() {
+    var criteria = AndOrConflict.builder().name("matt").build();
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> mapper.toSpec(criteria, Customer.class))
+        .withMessageContaining("@And and @Or are mutually exclusive")
+        .withMessageContaining(AndOrConflict.class.getName() + ".name");
   }
 
   int numberOfLocalField(@NonNull Class<?> clazz) {
@@ -446,6 +643,19 @@ class SimpleSpecificationResolverTest {
     @Spec Gender gender;
   }
 
+  @Builder
+  @Data
+  public static class ForceOr3 {
+
+    @Or
+    @Spec(value = After.class, not = true)
+    LocalDate birthday;
+
+    @Spec String name;
+
+    @Spec Gender gender;
+  }
+
   @Or
   @Builder
   @Data
@@ -458,6 +668,41 @@ class SimpleSpecificationResolverTest {
     @And
     @Spec(value = After.class, not = true)
     LocalDate birthday;
+  }
+
+  @Or
+  @Builder
+  @Data
+  public static class ForceAnd2 {
+
+    @And
+    @Spec(value = After.class, not = true)
+    LocalDate birthday;
+
+    @Spec String name;
+
+    @Spec Gender gender;
+  }
+
+  @Or
+  @Builder
+  @Data
+  public static class ForceAnd3 {
+
+    @Spec String name;
+
+    @And
+    @Spec(value = After.class, not = true)
+    LocalDate birthday;
+
+    @Spec Gender gender;
+  }
+
+  @Builder
+  @Data
+  public static class AndOrConflict {
+
+    @And @Or @Spec String name;
   }
 
   @Builder
