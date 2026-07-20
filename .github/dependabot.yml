@@ -6,3 +6,14 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "maven"
+    directories:
+      - "/"
+      - "/mapper"
+      - "/starter"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # Spring Boot has its own bump lane (.github/workflows/bump-spring.yml),
+      # which is pinned to the supported line. Leave it to that workflow.
+      - dependency-name: "org.springframework.boot:*"
