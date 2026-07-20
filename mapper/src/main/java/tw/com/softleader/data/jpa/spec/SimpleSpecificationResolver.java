@@ -85,10 +85,19 @@ class SimpleSpecificationResolver implements SpecificationResolver {
     if (def.not()) {
       spec = new Not<>(spec);
     }
-    if (databind.getField().isAnnotationPresent(And.class)) {
+    var and = databind.getField().isAnnotationPresent(And.class);
+    var or = databind.getField().isAnnotationPresent(Or.class);
+    if (and && or) {
+      throw new IllegalArgumentException(
+          "@And and @Or are mutually exclusive, but both are present on "
+              + databind.getTarget().getClass().getName()
+              + "."
+              + databind.getField().getName());
+    }
+    if (and) {
       return new tw.com.softleader.data.jpa.spec.domain.And<>(spec);
     }
-    if (databind.getField().isAnnotationPresent(Or.class)) {
+    if (or) {
       return new tw.com.softleader.data.jpa.spec.domain.Or<>(spec);
     }
     return spec;
