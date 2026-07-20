@@ -24,6 +24,7 @@ import static java.lang.String.copyValueOf;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.Writer;
+import java.util.function.Function;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -45,14 +46,43 @@ public interface ASTWriterFactory {
    */
   Writer createWriter(@NonNull Object rootObject, @Nullable Specification<Object> spec);
 
+  /**
+   * Whether the AST should be written at all for the given root object.
+   *
+   * <p>{@link SpecMapper} consults this before mapping and, when it returns {@code false}, skips
+   * building and stringifying the AST entirely, so nothing is allocated for an output that would be
+   * thrown away. Defaults to {@code true}, meaning every AST is handed to {@link #createWriter}.
+   *
+   * @param rootObject The target object to be mapped, never null
+   */
+  default boolean isEnabled(@NonNull Object rootObject) {
+    return true;
+  }
+
   /** Create a writer that using {@link SpecMapper}'s logger */
   static ASTWriterFactory domain() {
-    return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(SpecMapper.class));
+    return new Slf4jDebugWriterFactory(rootObject -> getLogger(SpecMapper.class));
   }
 
   /** Create a writer that using the mapped object's logger */
   static ASTWriterFactory impersonation() {
-    return (rootObject, spec) -> new Slf4jDebugWriter(getLogger(rootObject.getClass()));
+    return new Slf4jDebugWriterFactory(rootObject -> getLogger(rootObject.getClass()));
+  }
+}
+
+@RequiredArgsConstructor
+class Slf4jDebugWriterFactory implements ASTWriterFactory {
+
+  @NonNull private final Function<Object, Logger> loggerFactory;
+
+  @Override
+  public Writer createWriter(@NonNull Object rootObject, @Nullable Specification<Object> spec) {
+    return new Slf4jDebugWriter(loggerFactory.apply(rootObject));
+  }
+
+  @Override
+  public boolean isEnabled(@NonNull Object rootObject) {
+    return loggerFactory.apply(rootObject).isDebugEnabled();
   }
 }
 
