@@ -20,7 +20,7 @@
  */
 package tw.com.softleader.data.jpa.spec.domain;
 
-import java.util.Collection;
+import java.util.List;
 import lombok.NonNull;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -29,13 +29,18 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public class Disjunction<T> extends CompoundSpecification<T> {
 
-  public Disjunction(@NonNull Collection<Specification<T>> specs) {
+  public Disjunction(@NonNull List<Specification<T>> specs) {
     super(specs);
   }
 
   @Override
+  protected boolean overridesOperator(Specification<T> element) {
+    return element instanceof And;
+  }
+
+  @Override
   protected Specification<T> combine(Specification<T> result, Specification<T> element) {
-    if (element instanceof And) {
+    if (overridesOperator(element)) {
       return result.and(element);
     }
     return result.or(element);
