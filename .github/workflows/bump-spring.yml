@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: get-latest-version
-        uses: shihyuho/go-spring-version@v1
+        uses: shihyuho/go-spring-version@9f72980d26ef9ec6b1b4858724135a4dc65e409a # v1
         with:
           boot-version: "~3.x"
     outputs:
@@ -39,7 +39,7 @@ jobs:
     needs: [latest-version, current-version]
     steps:
       - id: semver-compare
-        uses: madhead/semver-utils@latest
+        uses: madhead/semver-utils@4cf918affe9106ea59f86c6250e5ec4570ac4389 # v5.0.0
         with:
           version: ${{ needs.latest-version.outputs.spring-boot }}
           compare-to: ${{ needs.current-version.outputs.spring-boot }}
@@ -73,7 +73,7 @@ jobs:
           private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           commit-message: "chore: bump spring-boot from ${{ needs.current-version.outputs.spring-boot }} to ${{ needs.latest-version.outputs.spring-boot }}"
@@ -98,4 +98,4 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v7
-      - uses: liskin/gh-workflow-keepalive@v1
+      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c # v1.2.1

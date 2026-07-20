@@ -30,7 +30,7 @@ jobs:
         with:
           client-id: ${{ vars.CI_APP_CLIENT_ID }}
           private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
-      - uses: googleapis/release-please-action@v5.0.0
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: rp
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -43,7 +43,7 @@ jobs:
     if: needs.release-please.outputs.release_created == 'true'
     steps:
       - id: specification-mapper-release
-        uses: shihyuho/go-jenkins-trigger@v2
+        uses: shihyuho/go-jenkins-trigger@d6f3216fa650324688da24cbf081472e29d35d57 # v2
         with:
           jenkins-url: "${{ secrets.JENKINS_URL }}"
           jenkins-user: "${{ secrets.JENKINS_USER }}"

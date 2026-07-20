@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: wagoid/commitlint-github-action@v6
+      - uses: wagoid/commitlint-github-action@b948419dd99f3fd78a6548d48f94e3df7f6bf3ed # v6.2.1
 
   # squash_merge_commit_title=COMMIT_OR_PR_TITLE -> 多 commit PR 的 squash subject = PR 標題,
   # 即 release-please 解析的 conventional commit。wagoid 只 lint commits 不 lint 標題,故額外補這個 job。

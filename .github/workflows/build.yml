@@ -1,0 +1,29 @@
+# PR 建置門檻: 讓 auto-merge 的 PR (如 bump-spring 開的相依升版 PR) 在合併前
+# 有一個 in-repo 的建置/測試狀態可被 branch protection 要求, 不必只依賴 repo 外的 Jenkins。
+# 註: 完整的 java/spring 交叉測試仍由 Jenkinsfile 的 Matrix Tests 負責, 這裡只跑 pom.xml 當前組合。
+name: Build
+
+on:
+  pull_request:
+    branches: [jakarta]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - run: make test
