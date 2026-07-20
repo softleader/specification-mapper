@@ -58,6 +58,7 @@ class DomainRuntimeHintsTest {
     assertThat(reflection().onType(LessThan.class)).accepts(hints);
     assertThat(reflection().onType(LessThanEqual.class)).accepts(hints);
     assertThat(reflection().onType(Like.class)).accepts(hints);
+    assertThat(reflection().onType(LikePattern.class)).accepts(hints);
     assertThat(reflection().onType(Not.class)).accepts(hints);
     assertThat(reflection().onType(NotEquals.class)).accepts(hints);
     assertThat(reflection().onType(NotIn.class)).accepts(hints);

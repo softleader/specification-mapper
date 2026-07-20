@@ -36,14 +36,16 @@ import org.springframework.lang.Nullable;
  * <p>In Criteria API, an equivalent expression might be:
  *
  * <pre>{@code
- * cb.notLike(root.get(path), "%" + value + "%");
+ * cb.notLike(root.get(path), "%" + value + "%", '\\');
  * }</pre>
  *
  * <p>This typically translates to SQL like:
  *
  * <pre>{@code
- * ... where x.firstname not like %?%
+ * ... where x.firstname not like %?% escape '\'
  * }</pre>
+ *
+ * <p>The value is matched literally, see {@link LikePattern}.
  *
  * @author Matt Ho
  * @see Like
@@ -51,12 +53,12 @@ import org.springframework.lang.Nullable;
 public class NotLike<T> extends SimpleSpecification<T> {
 
   public NotLike(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path, "%" + value + "%");
+    super(context, path, "%" + LikePattern.escape(value) + "%");
   }
 
   @Override
   public Predicate toPredicate(
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
-    return builder.notLike(getPath(root), Objects.toString(value));
+    return builder.notLike(getPath(root), Objects.toString(value), LikePattern.ESCAPE_CHAR);
   }
 }
