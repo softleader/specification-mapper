@@ -35,14 +35,16 @@ import org.springframework.lang.Nullable;
  * <p>In Criteria API, an equivalent expression might be:
  *
  * <pre>{@code
- * cb.like(root.get(path), "%" + value);
+ * cb.like(root.get(path), "%" + value, '\\');
  * }</pre>
  *
  * <p>This typically translates to SQL like:
  *
  * <pre>
- * {@code ... where x.firstname like %?}
+ * {@code ... where x.firstname like %? escape '\'}
  * </pre>
+ *
+ * <p>The value is matched literally, see {@link LikePattern}.
  *
  * @author Matt Ho
  * @see StartingWith
@@ -50,12 +52,12 @@ import org.springframework.lang.Nullable;
 public class EndingWith<T> extends SimpleSpecification<T> {
 
   public EndingWith(@NonNull Context context, @NonNull String path, @NonNull Object value) {
-    super(context, path, "%" + value);
+    super(context, path, "%" + LikePattern.escape(value));
   }
 
   @Override
   public Predicate toPredicate(
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
-    return builder.like(getPath(root), Objects.toString(value));
+    return builder.like(getPath(root), Objects.toString(value), LikePattern.ESCAPE_CHAR);
   }
 }

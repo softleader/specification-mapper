@@ -45,6 +45,9 @@ import org.springframework.lang.Nullable;
  * ... where x.firstname not in (?, ?, ...)
  * }</pre>
  *
+ * <p>Collections larger than {@link In#MAX_CHUNK_SIZE} are partitioned the same way {@link In}
+ * does, negating the OR-combined chunks as a whole.
+ *
  * @author Matt Ho
  * @see In
  */

@@ -23,9 +23,13 @@ package tw.com.softleader.data.jpa.spec.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
@@ -42,5 +46,26 @@ class StartingWithTest {
     var spec = new StartingWith<Customer>(noopContext(), "name", "ma");
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
+  }
+
+  /** A bare {@code %} must not bypass the prefix scoping by matching every row. */
+  @Test
+  void wildcardsMatchLiterally() {
+    var wildcard = repository.save(Customer.builder().name("%bypass").build());
+    repository.save(Customer.builder().name("matt").build());
+    repository.save(Customer.builder().name("bob").build());
+
+    var mapper = SpecMapper.builder().build();
+    var spec = mapper.toSpec(StartingWithCriteria.builder().name("%").build(), Customer.class);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(1).contains(wildcard);
+  }
+
+  @Builder
+  @Data
+  static class StartingWithCriteria {
+
+    @Spec(path = "name", value = StartingWith.class)
+    String name;
   }
 }
