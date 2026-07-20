@@ -21,10 +21,12 @@
 package tw.com.softleader.data.jpa.spec;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.Mockito.spy;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.JoinType;
 import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
@@ -305,6 +307,129 @@ class JoinSpecificationResolverTest {
     assertThat(root.getJoins()).hasSize(1);
   }
 
+  @DisplayName("多個 Join 的 distinct 應累加, 不應被最後執行的 Join 覆寫")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void distinctShouldBeAccumulatedAcrossJoins() {
+
+    var spec = mapper.toSpec(new MixedDistinctJoinsOnClassOnly(), Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    spec.toPredicate(root, query, cb);
+
+    assertThat(query.isDistinct()).isTrue();
+  }
+
+  @DisplayName("相同 alias 但 path 不同的 Join 應拋出例外")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void conflictingPathOnSameAliasShouldThrow() {
+
+    var criteria = ConflictingPathAliasOnField.builder().orderId(1L).badgeId(2L).build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> spec.toPredicate(root, query, cb))
+        .withMessageContaining("shared")
+        .withMessageContaining("orders")
+        .withMessageContaining("badges");
+  }
+
+  @DisplayName("相同 alias 但 joinType 不同的 Join 應拋出例外")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void conflictingJoinTypeOnSameAliasShouldThrow() {
+
+    var criteria = ConflictingJoinTypeAliasOnField.builder().orderId(1L).itemName("Pizza").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> spec.toPredicate(root, query, cb))
+        .withMessageContaining("order")
+        .withMessageContaining(JoinType.INNER.name())
+        .withMessageContaining(JoinType.LEFT.name());
+  }
+
+  @DisplayName("超過兩層的 Join path 應拋出例外")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void joinPathWithMoreThanTwoSegmentsShouldThrow() {
+
+    var spec = mapper.toSpec(new ThreeSegmentJoinPathOnClassOnly(), Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> spec.toPredicate(root, query, cb))
+        .withMessageContaining("o.tags.name")
+        .withMessageContaining("3 segments")
+        .withMessageContaining("2 segments");
+  }
+
+  @DisplayName("Spec 參照到未註冊的 join alias 應拋出例外, 而不是靜默地查 root 的同名屬性")
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void unregisteredJoinAliasShouldThrow() {
+
+    // orderId 為 null, 因此定義在它身上的 join 不會被套用, alias 'o' 也就不會被註冊
+    var criteria = NullValuedJoinAliasOnField.builder().itemName("Pizza").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    var cb = entityManager.getCriteriaBuilder();
+    var query = cb.createQuery(Customer.class);
+    var root = query.from(Customer.class);
+
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> spec.toPredicate(root, query, cb))
+        .withMessageContaining("o.itemName")
+        .withMessageContaining("declared before this spec")
+        .withMessageContaining("null-valued field");
+  }
+
+  @DisplayName("重複使用同一個 Specification 執行多次, 結果應一致")
+  @Test
+  void reusedSpecificationShouldStayConsistentAcrossExecutions() {
+    var matt =
+        repository.save(
+            Customer.builder()
+                .name("matt")
+                .order(Order.builder().itemName("Pizza").build())
+                .build());
+    var mary =
+        repository.save(
+            Customer.builder()
+                .name("mary")
+                .order(Order.builder().itemName("Hamburger").build())
+                .build());
+    repository.save(
+        Customer.builder().name("bob").order(Order.builder().itemName("Coke").build()).build());
+
+    var criteria = SingleJoinOnField.builder().item("Pizza").item("Hamburger").build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    for (var execution = 0; execution < 3; execution++) {
+      assertThat(repository.findAll(spec)).hasSize(2).contains(matt, mary);
+      assertThat(repository.count(spec)).isEqualTo(2);
+    }
+  }
+
   @Builder
   @Data
   public static class SingleJoinOnField {
@@ -363,6 +488,52 @@ class JoinSpecificationResolverTest {
 
     @Join(path = "orders", alias = "order")
     @Spec(path = "order.itemName", value = Like.class)
+    String itemName;
+  }
+
+  @Join(path = "orders", alias = "o", distinct = true)
+  @Join(path = "badges", alias = "b", distinct = false)
+  public static class MixedDistinctJoinsOnClassOnly {}
+
+  @Join(path = "orders", alias = "o")
+  @Join(path = "o.tags.name", alias = "deep")
+  public static class ThreeSegmentJoinPathOnClassOnly {}
+
+  @Builder
+  @Data
+  public static class ConflictingPathAliasOnField {
+
+    @Join(path = "orders", alias = "shared")
+    @Spec(path = "shared.id")
+    Long orderId;
+
+    @Join(path = "badges", alias = "shared")
+    @Spec(path = "shared.id")
+    Long badgeId;
+  }
+
+  @Builder
+  @Data
+  public static class ConflictingJoinTypeAliasOnField {
+
+    @Join(path = "orders", alias = "order")
+    @Spec(path = "order.id")
+    Long orderId;
+
+    @Join(path = "orders", alias = "order", joinType = JoinType.LEFT)
+    @Spec(path = "order.itemName", value = Like.class)
+    String itemName;
+  }
+
+  @Builder
+  @Data
+  public static class NullValuedJoinAliasOnField {
+
+    @Join(path = "orders", alias = "o")
+    @Spec(path = "o.id")
+    Long orderId;
+
+    @Spec(path = "o.itemName")
     String itemName;
   }
 }

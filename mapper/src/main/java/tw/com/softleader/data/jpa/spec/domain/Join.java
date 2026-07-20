@@ -25,6 +25,7 @@ import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -81,7 +82,9 @@ public class Join<T> implements Specification<T> {
   public Predicate toPredicate(
       @NonNull Root<T> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     if (query != null) {
-      query.distinct(distinct);
+      // accumulate rather than overwrite: every join contributes to the query, so a join declared
+      // with distinct=false must not silently undo the distinct=true of an earlier one
+      query.distinct(query.isDistinct() || distinct);
     }
     join(root);
     return null;
@@ -89,17 +92,23 @@ public class Join<T> implements Specification<T> {
 
   private void join(Root<T> root) {
     var jc = context.getAs(CTX_JOIN, JoinContext.class);
-
-    // check if alias already exists, skip creating a new join
-    if (jc.getJoin(root, alias) != null) {
-      return;
-    }
+    var existing = jc.getJoin(root, alias);
 
     if (!pathToJoinOn.contains(".")) {
+      // alias already exists, reuse it as long as it stands for the very same join
+      if (existing != null) {
+        verifyNoConflict(existing, root, pathToJoinOn);
+        return;
+      }
       jc.putIfAbsent(root, alias, root.join(pathToJoinOn, joinType));
       return;
     }
     var byDot = pathToJoinOn.split("\\.");
+    if (byDot.length != 2) {
+      throw new IllegalArgumentException(
+          "Join path: '%s' (alias: '%s') consists of %d segments, but a join path is limited to 2 segments in the form of '<parent-alias>.<association>'! Define an intermediate join for each additional segment and refer to its alias here."
+              .formatted(pathToJoinOn, alias, byDot.length));
+    }
 
     var extractedAlias = byDot[0];
     var joined = jc.getJoin(root, extractedAlias);
@@ -110,6 +119,30 @@ public class Join<T> implements Specification<T> {
     }
 
     var extractedPathToJoin = byDot[1];
+    // alias already exists, reuse it as long as it stands for the very same join
+    if (existing != null) {
+      verifyNoConflict(existing, joined, extractedPathToJoin);
+      return;
+    }
     jc.putIfAbsent(root, alias, joined.join(extractedPathToJoin, joinType));
+  }
+
+  private void verifyNoConflict(
+      @NonNull jakarta.persistence.criteria.Join<?, ?> existing,
+      @NonNull From<?, ?> parent,
+      @NonNull String attributeName) {
+    if (existing.getParent() == parent
+        && existing.getAttribute().getName().equals(attributeName)
+        && existing.getJoinType() == joinType) {
+      return;
+    }
+    throw new IllegalArgumentException(
+        "Conflicting join definitions share the alias: '%s'! It is already defined as a %s join on the attribute: '%s', so it can not be redefined as a %s join on the path: '%s'. Every join alias must be declared with the same path and joinType."
+            .formatted(
+                alias,
+                existing.getJoinType(),
+                existing.getAttribute().getName(),
+                joinType,
+                pathToJoinOn));
   }
 }

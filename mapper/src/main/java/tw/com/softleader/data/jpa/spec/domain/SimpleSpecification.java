@@ -27,6 +27,7 @@ import static tw.com.softleader.data.jpa.spec.domain.JoinContext.CTX_JOIN;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.StringJoiner;
 import lombok.Builder;
@@ -98,26 +99,57 @@ public abstract class SimpleSpecification<T> implements Specification<T> {
   }
 
   private Path<?> getExpr(@NonNull Root<T> root, @NonNull String field) {
-    return getJoin(root, field).or(() -> getFetch(root, field)).orElseGet(() -> root.get(field));
+    return getJoin(root, field)
+        .or(() -> getFetch(root, field))
+        .orElseGet(() -> getAttribute(root, field));
   }
 
   @SuppressWarnings({"unchecked"})
   private Optional<Path<T>> getJoin(@NonNull Root<T> root, @NonNull String field) {
-    return ofNullable(context.getAs(CTX_JOIN, JoinContext.class).getJoin(root, field))
-        .map(joined -> (Path<T>) joined);
+    return ofNullable(joinContext().getJoin(root, field)).map(joined -> (Path<T>) joined);
   }
 
   private Optional<Path<T>> getFetch(@NonNull Root<T> root, @NonNull String field) {
-    return ofNullable(context.getAs(CTX_JOIN, JoinContext.class).getFetch(root, field))
-        .map(ref -> getFetchPath(root, ref));
+    return ofNullable(joinContext().getFetch(root, field)).map(ref -> getFetchPath(root, ref));
   }
 
+  @SuppressWarnings({"unchecked"})
   private Path<T> getFetchPath(@NonNull Root<T> root, @NonNull FetchRef ref) {
+    // Resolve through the fetch node itself, since it carries the joinType the fetch was declared
+    // with. Re-navigating the paths from the root would emit an implicit inner join instead, so a
+    // non-INNER @JoinFetch would restrict the content query differently from the count query -
+    // which resolves the very same alias as a real join - and page totals would disagree with the
+    // page content.
+    if (ref.fetch() instanceof Path<?> fetched) {
+      return (Path<T>) fetched;
+    }
     Path<T> current = root;
     for (var path : ref.paths()) {
       current = current.get(path);
     }
     return current;
+  }
+
+  private Path<T> getAttribute(@NonNull Root<T> root, @NonNull String field) {
+    try {
+      return root.get(field);
+    } catch (RuntimeException e) {
+      throw new IllegalArgumentException(
+          "Unable to resolve: '%s' of the path: '%s'! It is neither a join alias registered on this query nor an attribute of %s. If '%s' is meant to be a join alias, make sure the @Join or @JoinFetch defining it is declared before this spec - declaration order matters, and a join declared on a null-valued field is never applied."
+              .formatted(field, path, root.getJavaType().getSimpleName(), field),
+          e);
+    }
+  }
+
+  private JoinContext joinContext() {
+    try {
+      return context.getAs(CTX_JOIN, JoinContext.class);
+    } catch (NoSuchElementException e) {
+      throw new IllegalStateException(
+          "No JoinContext registered under the context key: '%s'! Resolving the multi-segment path: '%s' needs the join registry that SpecMapper populates while it builds the specification, so build this spec through SpecMapper.toSpec(..) instead of constructing it directly."
+              .formatted(CTX_JOIN, path),
+          e);
+    }
   }
 
   @Override
