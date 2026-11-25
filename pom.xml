@@ -55,7 +55,7 @@
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
     <maven.version.ignore>(?i).*(?:-|\.)(alpha|beta|m|rc|cr)(-?\d+)?$</maven.version.ignore>
-    <license-maven-plugin.version>4.6</license-maven-plugin.version>
+    <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
     <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <jandex-maven-plugin.version>3.4.0</jandex-maven-plugin.version>
     <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
