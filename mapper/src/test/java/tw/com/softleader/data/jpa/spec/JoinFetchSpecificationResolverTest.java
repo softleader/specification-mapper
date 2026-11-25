@@ -25,6 +25,7 @@ import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.Mockito.spy;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.JoinType;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,12 +35,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch;
 import tw.com.softleader.data.jpa.spec.annotation.JoinFetch.JoinFetches;
 import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.domain.Conjunction;
 import tw.com.softleader.data.jpa.spec.domain.Equals;
 import tw.com.softleader.data.jpa.spec.domain.In;
+import tw.com.softleader.data.jpa.spec.domain.IsNull;
 import tw.com.softleader.data.jpa.spec.domain.Like;
 import tw.com.softleader.data.jpa.spec.usecase.*;
 
@@ -350,6 +353,28 @@ class JoinFetchSpecificationResolverTest {
     assertThat(root.getFetches()).hasSize(1);
   }
 
+  @DisplayName("非 INNER 的 JoinFetch, count 與 content 應以相同的 join 語意解析 alias")
+  @Test
+  void nonInnerJoinFetchShouldKeepCountAndContentInSync() {
+    repository.save(
+        Customer.builder().name("matt").order(Order.builder().itemName("Pizza").build()).build());
+    // bob 沒有任何 order, 只有 LEFT JOIN 才找得到他
+    var bob = repository.save(Customer.builder().name("bob").build());
+
+    var criteria = LeftJoinFetchOnField.builder().withoutItem(true).build();
+
+    var spec = mapper.toSpec(criteria, Customer.class);
+
+    var content = repository.findAll(spec);
+    assertThat(content).containsExactly(bob);
+    assertThat(repository.count(spec)).isEqualTo(content.size());
+
+    // page size 1 讓 Spring Data 無法省略 count query
+    var page = repository.findAll(spec, PageRequest.of(0, 1));
+    assertThat(page.getTotalElements()).isEqualTo(content.size());
+    assertThat(page.getContent()).containsExactly(bob);
+  }
+
   @JoinFetch(path = "orders")
   @AllArgsConstructor
   @Data
@@ -417,5 +442,14 @@ class JoinFetchSpecificationResolverTest {
     @JoinFetch(path = "orders", alias = "order")
     @Spec(path = "order.itemName", value = Like.class)
     String itemName;
+  }
+
+  @Builder
+  @Data
+  public static class LeftJoinFetchOnField {
+
+    @JoinFetch(path = "orders", alias = "o", joinType = JoinType.LEFT)
+    @Spec(path = "o.itemName", value = IsNull.class)
+    Boolean withoutItem;
   }
 }

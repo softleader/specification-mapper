@@ -20,15 +20,28 @@
  */
 package tw.com.softleader.data.jpa.spec;
 
+import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static tw.com.softleader.data.jpa.spec.SpecJoinContext.HandleKey.identityHex;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.SpecJoinContext.HandleKey;
+import tw.com.softleader.data.jpa.spec.domain.JoinContext.FetchRef;
+import tw.com.softleader.data.jpa.spec.usecase.Customer;
 
+@IntegrationTest
 class SpecJoinContextTest {
+
+  @Autowired EntityManager entityManager;
 
   @Test
   void shouldConvertTargetAndFieldToIdentityHex() throws NoSuchFieldException {
@@ -98,6 +111,36 @@ class SpecJoinContextTest {
 
     assertThat(key1).isNotEqualTo(key2);
     assertThat(key1.field()).isNotEqualTo(key2.field());
+  }
+
+  @DisplayName("join/fetch 的登錄資料應隨著 Root 一起被回收, 不應無限累積")
+  @Test
+  void shouldNotRetainBookkeepingOfCollectedRoot() {
+    var context = new SpecJoinContext();
+    var cb = entityManager.getCriteriaBuilder();
+
+    var query = cb.createQuery(Customer.class);
+    Root<Customer> root = query.from(Customer.class);
+    context.putIfAbsent(root, "o", root.join("orders"));
+    context.putIfAbsent(root, "b", new FetchRef(root.fetch("badges"), "badges"));
+
+    assertThat(context.getJoin(root, "o")).isNotNull();
+    assertThat(context.getFetch(root, "b")).isNotNull();
+
+    var collected = new WeakReference<>(root);
+    // 放掉這次執行所建立的 criteria tree
+    root = null;
+    query = null;
+
+    await()
+        .atMost(ofSeconds(10))
+        .untilAsserted(
+            () -> {
+              System.gc();
+              assertThat(collected.get()).isNull();
+              assertThat(context).extracting("joined", MAP).isEmpty();
+              assertThat(context).extracting("fetched", MAP).isEmpty();
+            });
   }
 
   static class TargetA {

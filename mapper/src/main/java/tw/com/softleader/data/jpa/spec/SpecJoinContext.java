@@ -23,11 +23,14 @@ package tw.com.softleader.data.jpa.spec;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Optional.ofNullable;
 
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import lombok.NonNull;
 import org.springframework.lang.Nullable;
 import tw.com.softleader.data.jpa.spec.domain.JoinContext;
@@ -38,8 +41,23 @@ import tw.com.softleader.data.jpa.spec.domain.JoinContext;
 class SpecJoinContext implements JoinContext {
 
   private final Map<HandleKey, Object> handled = synchronizedMap(new HashMap<>());
-  private final Map<JoinKey, Join<?, ?>> joined = synchronizedMap(new HashMap<>());
-  private final Map<FetchKey, FetchRef> fetched = synchronizedMap(new HashMap<>());
+
+  /*
+   * Join and fetch bookkeeping belongs to the single query execution that created it: a reused
+   * Specification is executed against a brand new Root every time, so entries kept per Root would
+   * pile up for as long as that Specification lives.
+   *
+   * The Root is therefore a weak key, which lets an entry die together with the criteria tree it
+   * describes. The criteria nodes kept as values refer back to their Root, so they are held weakly
+   * as well - a strong value would keep its own key reachable and defeat the weak key entirely
+   * (see the WeakHashMap javadoc). That is safe because a Root owns every join and fetch built
+   * from it, which keeps the referents alive for as long as the execution can still reach them.
+   */
+  private final Map<Root<?>, Map<String, WeakReference<Join<?, ?>>>> joined =
+      synchronizedMap(new WeakHashMap<>());
+
+  private final Map<Root<?>, Map<String, FetchEntry>> fetched =
+      synchronizedMap(new WeakHashMap<>());
 
   @Override
   public boolean hasHandled(
@@ -54,22 +72,34 @@ class SpecJoinContext implements JoinContext {
 
   @Override
   public void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull Join<?, ?> join) {
-    joined.putIfAbsent(new JoinKey(root, alias), join);
+    byAlias(joined, root).putIfAbsent(alias, new WeakReference<>(join));
   }
 
   @Override
   public void putIfAbsent(@NonNull Root<?> root, @NonNull String alias, @NonNull FetchRef ref) {
-    fetched.putIfAbsent(new FetchKey(root, alias), ref);
+    byAlias(fetched, root)
+        .putIfAbsent(alias, new FetchEntry(new WeakReference<>(ref.fetch()), ref.paths()));
   }
 
   @Override
   public Join<?, ?> getJoin(@NonNull Root<?> root, @NonNull String alias) {
-    return joined.get(new JoinKey(root, alias));
+    return ofNullable(joined.get(root))
+        .map(aliases -> aliases.get(alias))
+        .map(WeakReference::get)
+        .orElse(null);
   }
 
   @Override
   public FetchRef getFetch(@NonNull Root<?> root, @NonNull String alias) {
-    return fetched.get(new FetchKey(root, alias));
+    return ofNullable(fetched.get(root))
+        .map(aliases -> aliases.get(alias))
+        .map(FetchEntry::toRef)
+        .orElse(null);
+  }
+
+  private static <V> Map<String, V> byAlias(
+      @NonNull Map<Root<?>, Map<String, V>> byRoot, @NonNull Root<?> root) {
+    return byRoot.computeIfAbsent(root, key -> synchronizedMap(new HashMap<>()));
   }
 
   record HandleKey(@NonNull String target, @Nullable String field, @NonNull Annotation def) {
@@ -82,7 +112,11 @@ class SpecJoinContext implements JoinContext {
     }
   }
 
-  record JoinKey(@NonNull Root<?> root, @NonNull String alias) {}
+  record FetchEntry(@NonNull WeakReference<Fetch<?, ?>> fetch, @NonNull String[] paths) {
 
-  record FetchKey(@NonNull Root<?> root, @NonNull String alias) {}
+    @Nullable
+    FetchRef toRef() {
+      return ofNullable(fetch.get()).map(f -> new FetchRef(f, paths)).orElse(null);
+    }
+  }
 }
