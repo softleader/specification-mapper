@@ -46,7 +46,7 @@
     <skip.signing>false</skip.signing>
 
     <!-- Plugins -->
-    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <spotless-maven-plugin.version>2.44.2</spotless-maven-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
