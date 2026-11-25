@@ -69,6 +69,15 @@ class ReflectionDatabind implements Databind {
     return of(target, skippingStrategy, ReflectionDatabind::new, ReflectionDatabind::new);
   }
 
+  /**
+   * Builds the field lookup for {@code target}.
+   *
+   * <p><b>Local-fields-only contract:</b> this uses {@link ReflectionUtils#doWithLocalFields},
+   * which visits only fields declared directly on {@code target}'s concrete class. Fields inherited
+   * from a superclass (e.g. a shared base criteria POJO) are <em>not</em> included and therefore
+   * are never databound. Switching to {@link ReflectionUtils#doWithFields} to also include
+   * inherited fields would be a deliberate behavior change.
+   */
   // Visible for testing
   static List<Databind> of(
       @NonNull Object target,

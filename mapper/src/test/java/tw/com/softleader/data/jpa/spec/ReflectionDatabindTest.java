@@ -33,6 +33,7 @@ import java.util.concurrent.CyclicBarrier;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 
 class ReflectionDatabindTest {
 
@@ -81,6 +82,22 @@ class ReflectionDatabindTest {
         });
   }
 
+  @Test
+  void inheritedFieldsAreNotDatabound() {
+
+    // Pins the current doWithLocalFields contract: fields inherited from a superclass criteria
+    // POJO are silently excluded from the field lookup. If this ever needs to change (e.g. to
+    // support inherited criteria fields via doWithFields), this test must be updated
+    // deliberately.
+    var object = new ChildCriteria("childValue", "parentValue");
+
+    var databind = ReflectionDatabind.of(object, new DefaultSkippingStrategy());
+
+    assertThat(databind)
+        .extracting(bind -> bind.getField().getName())
+        .containsExactly("@type", "child");
+  }
+
   @AllArgsConstructor
   static class MyObject {
 
@@ -88,5 +105,20 @@ class ReflectionDatabindTest {
     Integer b;
     Optional<Long> c;
     Collection<String> d;
+  }
+
+  static class ParentCriteria {
+
+    @Spec String parent;
+  }
+
+  static class ChildCriteria extends ParentCriteria {
+
+    String child;
+
+    ChildCriteria(String child, String parent) {
+      this.child = child;
+      this.parent = parent;
+    }
   }
 }
