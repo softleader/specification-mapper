@@ -23,9 +23,13 @@ package tw.com.softleader.data.jpa.spec.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tw.com.softleader.data.jpa.spec.IntegrationTest.TestApplication.noopContext;
 
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tw.com.softleader.data.jpa.spec.IntegrationTest;
+import tw.com.softleader.data.jpa.spec.SpecMapper;
+import tw.com.softleader.data.jpa.spec.annotation.Spec;
 import tw.com.softleader.data.jpa.spec.usecase.Customer;
 import tw.com.softleader.data.jpa.spec.usecase.CustomerRepository;
 
@@ -43,5 +47,26 @@ class NotLikeTest {
     var spec = new NotLike<Customer>(context, "name", "o");
     var actual = repository.findAll(spec);
     assertThat(actual).hasSize(1).contains(matt);
+  }
+
+  @Test
+  void wildcardsMatchLiterally() {
+    repository.save(Customer.builder().name("a%b").build());
+    var underscore = repository.save(Customer.builder().name("a_b").build());
+    var backslash = repository.save(Customer.builder().name("a\\b").build());
+    var plain = repository.save(Customer.builder().name("axb").build());
+
+    var mapper = SpecMapper.builder().build();
+    var spec = mapper.toSpec(NotLikeCriteria.builder().name("a%b").build(), Customer.class);
+    var actual = repository.findAll(spec);
+    assertThat(actual).hasSize(3).contains(underscore, backslash, plain);
+  }
+
+  @Builder
+  @Data
+  static class NotLikeCriteria {
+
+    @Spec(path = "name", value = NotLike.class)
+    String name;
   }
 }

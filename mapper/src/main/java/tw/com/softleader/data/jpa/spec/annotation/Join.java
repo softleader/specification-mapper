@@ -68,6 +68,10 @@ public @interface Join {
   /**
    * Whether the query should return distinct results. Defaults to {@code true} to prevent duplicate
    * records.
+   *
+   * <p>Only a to-many association can multiply rows, so joining a to-one association never produces
+   * duplicates. Set {@code distinct = false} on such joins to skip the {@code SELECT DISTINCT} and
+   * spare the database a needless sort/dedup pass.
    */
   boolean distinct() default true;
 

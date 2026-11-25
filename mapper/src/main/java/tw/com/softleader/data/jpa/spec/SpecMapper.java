@@ -82,10 +82,15 @@ public class SpecMapper implements SpecCodec {
     }
     var context = new SpecContext();
     context.put(CTX_JOIN, new SpecJoinContext());
-    var ast = new SpecAST();
     var depth = 0;
-    context.put(CTX_AST, ast);
     context.put(CTX_DEPTH, depth);
+    if (!astWriterFactory.isEnabled(rootObject)) {
+      // AST 純粹服務於 debug log, 沒人要收的話就完全不建構, 省下 hot path 上的無謂配置
+      context.put(CTX_AST, NoopAST.INSTANCE);
+      return toSpec(context, rootObject);
+    }
+    var ast = new SpecAST();
+    context.put(CTX_AST, ast);
     ast.add(
         depth,
         "+-[%s]: %s",
@@ -138,6 +143,24 @@ public class SpecMapper implements SpecCodec {
     var resolved = resolver.buildSpecification(context, databind);
     resolver.postVisit(node, resolved);
     return resolved;
+  }
+
+  /**
+   * An {@link AST} that discards everything, used when the configured {@link ASTWriterFactory} has
+   * no interest in the AST, so resolvers can keep reporting without anything being built.
+   */
+  private enum NoopAST implements AST {
+    INSTANCE;
+
+    @Override
+    public void add(int depth, @NonNull String message, Object... args) {
+      // no-op
+    }
+
+    @Override
+    public String print() {
+      return "";
+    }
   }
 
   /**
